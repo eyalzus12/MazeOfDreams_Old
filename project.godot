@@ -23,6 +23,10 @@ window/stretch/aspect="expand"
 main_run_args="--verbose"
 search_in_file_extensions=PoolStringArray( "gd", "shader", "cs" )
 
+[mono]
+
+project/assembly_name="Maze Of Dreams"
+
 [node]
 
 name_num_separator=1
