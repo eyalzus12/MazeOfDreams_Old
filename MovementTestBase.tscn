@@ -23,6 +23,7 @@ margin_bottom = 30.0
 [node name="TestCharacter" type="KinematicBody2D" parent="."]
 position = Vector2( 95, -60 )
 script = ExtResource( 1 )
+DashBounceDeacceleration = 0.1
 
 [node name="Camera2D" type="Camera2D" parent="TestCharacter"]
 current = true
