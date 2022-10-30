@@ -14,11 +14,11 @@ public class Character : KinematicBody2D
     [Export]
     public float DashSpeed = 1000f;
     [Export]
-    public float DashBounceDeacceleration = 10f;
+    public float DashBounceAddedForce = 500f;
     [Export]
     public float DashCooldown = 0.5f;//seconds
     [Export]
-    public float DashBounceWindow = 0.3f;//seconds
+    public float DashBounceWindow = 0.2f;//seconds
 
 	public bool Left{get; set;}
     public bool Right{get; set;}

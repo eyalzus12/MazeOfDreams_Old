@@ -20,7 +20,7 @@ public class BaseState : State
 			//bounce along collision normal
 			c.CurrentVelocity = c.CurrentVelocity.Bounce(col.Normal);
 			//apply bounce deacceleration
-			c.CurrentVelocity = c.CurrentVelocity.MoveToward(Vector2.Zero, c.DashBounceDeacceleration);
+			c.CurrentVelocity = c.CurrentVelocity.MoveToward(Vector2.Zero, -c.DashBounceAddedForce);
 		}
 
 		//update inputs and movement
