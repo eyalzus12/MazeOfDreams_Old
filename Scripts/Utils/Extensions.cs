@@ -43,4 +43,17 @@ public static class Extentions
     public static Vector2 Min(this Vector2 v1, Vector2 v2) => new Vector2(Math.Min(v1.x,v2.x), Math.Min(v1.y,v2.y));
 
     public static bool EqualsIgnoreCase(this string s1, string s2) => string.Equals(s1, s2,  StringComparison.OrdinalIgnoreCase);
+
+    public static Vector2 NormalizedOrZero(this Vector2 v) => (v == Vector2.Zero)?Vector2.Zero:v.Normalized();
+    public static Vector2 Round(this Vector2 v, int digits) => new Vector2(
+        Round(v.x, digits),
+        Round(v.y, digits)
+    );
+
+    public static bool IsZeroApprox(this Vector2 v) => Mathf.IsZeroApprox(v.x) && Mathf.IsZeroApprox(v.y);
+
+    public static float ZeroApproxNormalize(this float f) => Mathf.IsZeroApprox(f)?0f:f;
+    public static Vector2 ZeroApproxNormalize(this Vector2 v) => new Vector2(v.x.ZeroApproxNormalize(), v.y.ZeroApproxNormalize());
+
+    public static float Round(float f, int digits) => (float)Math.Round(f,digits);
 }

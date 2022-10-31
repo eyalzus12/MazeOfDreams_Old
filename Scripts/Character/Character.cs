@@ -2,8 +2,13 @@ using Godot;
 using System;
 public class Character : KinematicBody2D
 {
+    const string STATE_MACHINE_PATH = "StateMachine";
+    const string DEBUG_LABEL_PATH = "UILayer/DebugLabel";
+
+    const string START_STATE = "Base";
+
     [Signal]
-    public delegate void StateUpdate(Character c, float delta);
+    public delegate void CharacterUpdate(Character c, float delta);
 
     [Export]
     public float Speed = 300f;
@@ -14,7 +19,7 @@ public class Character : KinematicBody2D
     [Export]
     public float DashSpeed = 1000f;
     [Export]
-    public float DashBounceAddedForce = 500f;
+    public float DashBounceForceMultiplier = 1.3f;
     [Export]
     public float DashCooldown = 0.5f;//seconds
     [Export]
@@ -33,20 +38,44 @@ public class Character : KinematicBody2D
     public State CurrentState{get; set;}
     public long StateFrame{get; set;}
 
+    public bool DebugActive{get; set;} = false;
+    public CharacterDebugLabel DebugLabel{get; set;}
+
     public override void _Ready()
     {
-        var stateMachine = GetTree().Root.GetNode<StateMachine>("StateMachine");
-        Connect("StateUpdate", stateMachine, "StateUpdate");
-        CurrentState = stateMachine["Base"];
+        //setup state
+        var stateMachine = GetTree().Root.GetNode<StateMachine>(STATE_MACHINE_PATH);
+        Connect(nameof(CharacterUpdate), stateMachine, nameof(stateMachine.StateUpdate));
+        CurrentState = stateMachine[START_STATE];
+
+        //setup debug label
+        DebugLabel = GetNode<CharacterDebugLabel>(DEBUG_LABEL_PATH);
     }
 
     public override void _PhysicsProcess(float delta)
     {
-        EmitSignal("StateUpdate", this, delta);
-    }
+        //cause state update
+        EmitSignal(nameof(CharacterUpdate), this, delta);
 
-    public Vector2 InputVector => new Vector2(Right?1:Left?-1:0, Down?1:Up?-1:0);
-    public Vector2 VelocityVector => (InputVector == Vector2.Zero)?Vector2.Zero:InputVector.Normalized();
+        //toggle debug
+        if(Input.IsActionJustPressed(Consts.DEBUG_TOGGLE_INPUT)) DebugActive = !DebugActive;
+
+        //update debug label
+        DebugLabel.Visible = DebugActive;
+        if(DebugActive) DebugLabel.UpdateText(this, delta);
+
+        //remove inconsequental movements
+        CurrentVelocity = CurrentVelocity.ZeroApproxNormalize();
+    }
+    
+    public Vector2 LeftInputVector => Left?Vector2.Left:Vector2.Zero;
+    public Vector2 RightInputVector => Right?Vector2.Right:Vector2.Zero;
+    public Vector2 HorizontalInputVector => LeftInputVector + RightInputVector;
+    public Vector2 UpInputVector => Up?Vector2.Up:Vector2.Zero;
+    public Vector2 DownInputVector => Down?Vector2.Down:Vector2.Zero;
+    public Vector2 VerticalInputVector => UpInputVector + DownInputVector;
+    public Vector2 InputVector => HorizontalInputVector + VerticalInputVector;
+    public Vector2 VelocityVector => InputVector.NormalizedOrZero();
 
     public void SetInputs()
     {
@@ -56,21 +85,21 @@ public class Character : KinematicBody2D
 
     public void SetHorizontalInputs()
     {
-        if(Input.IsActionJustPressed("player_left")) {Left = true; Right = false;}
-        if(Input.IsActionJustPressed("player_right")) {Left = false; Right = true;}
-        if(!Input.IsActionPressed("player_left")) Left = false;
-        if(!Input.IsActionPressed("player_right")) Right = false;
-        if(Input.IsActionPressed("player_left") && !Right) Left = true;
-        if(Input.IsActionPressed("player_right") && !Left) Right = true;
+        if(Input.IsActionJustPressed(Consts.LEFT_INPUT)) {Left = true; Right = false;}
+        if(Input.IsActionJustPressed(Consts.RIGHT_INPUT)) {Left = false; Right = true;}
+        if(!Input.IsActionPressed(Consts.LEFT_INPUT)) Left = false;
+        if(!Input.IsActionPressed(Consts.RIGHT_INPUT)) Right = false;
+        if(Input.IsActionPressed(Consts.LEFT_INPUT) && !Right) Left = true;
+        if(Input.IsActionPressed(Consts.RIGHT_INPUT) && !Left) Right = true;
     }
     
     public void SetVerticalInputs()
     {
-        if(Input.IsActionJustPressed("player_up")) {Up = true; Down = false;}
-        if(Input.IsActionJustPressed("player_down")) {Up = false; Down = true;}
-        if(!Input.IsActionPressed("player_up")) Up = false;
-        if(!Input.IsActionPressed("player_down")) Down = false;
-        if(Input.IsActionPressed("player_up") && !Down) Up = true;
-        if(Input.IsActionPressed("player_down") && !Up) Down = true;
+        if(Input.IsActionJustPressed(Consts.UP_INPUT)) {Up = true; Down = false;}
+        if(Input.IsActionJustPressed(Consts.DOWN_INPUT)) {Up = false; Down = true;}
+        if(!Input.IsActionPressed(Consts.UP_INPUT)) Up = false;
+        if(!Input.IsActionPressed(Consts.DOWN_INPUT)) Down = false;
+        if(Input.IsActionPressed(Consts.UP_INPUT) && !Down) Up = true;
+        if(Input.IsActionPressed(Consts.DOWN_INPUT) && !Up) Down = true;
     }
 }
