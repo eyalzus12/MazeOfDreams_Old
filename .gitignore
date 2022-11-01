@@ -1,6 +1,7 @@
 .import/
 .godot/
 .vscode/
+.vs/
 *.translation
 export_presets.cfg
 .mono/
