@@ -5,8 +5,6 @@ public class BaseState : State
 {
 	public BaseState() : base() {}
 
-	//public override Action<Character> OnStart() => c => {};
-
 	public override Action<Character> Loop(float delta) => c =>
 	{
 		//apply movement
@@ -40,6 +38,4 @@ public class BaseState : State
 	};
 
 	public override Func<Character,string> NextState() => c => (!c.DashInCooldown && Input.IsActionJustPressed("player_dash"))?"Dash":"";
-
-	//public override Action<Character> OnChange(State s) => c => {};
 }

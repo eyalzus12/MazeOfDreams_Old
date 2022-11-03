@@ -56,4 +56,18 @@ public static class Extentions
     public static Vector2 ZeroApproxNormalize(this Vector2 v) => new Vector2(v.x.ZeroApproxNormalize(), v.y.ZeroApproxNormalize());
 
     public static float Round(float f, int digits) => (float)Math.Round(f,digits);
+
+    public static bool TryAdd<TKey, TValue>(this IDictionary<TKey,TValue> d, TKey key, TValue @value)
+    {
+        if(d.ContainsKey(key)) return false;
+        d.Add(key, @value);
+        return true;
+    }
+
+    public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> d, TKey key, TValue @default = default(TValue))
+    {
+        TValue result;
+        if(d.TryGetValue(key, out result)) return result;
+        else return @default;
+    }
 }

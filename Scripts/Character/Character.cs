@@ -1,8 +1,7 @@
 using Godot;
 using System;
-public class Character : KinematicBody2D
+public class Character : KinematicBody2D, IInteracter
 {
-	const string STATE_MACHINE_PATH = "StateMachine";
 	const string DEBUG_LABEL_PATH = "UILayer/DebugLabel";
 
 	const string START_STATE = "Base";
@@ -41,10 +40,27 @@ public class Character : KinematicBody2D
 	public bool DebugActive{get; set;} = false;
 	public CharacterDebugLabel DebugLabel{get; set;}
 
+	private IInteractable _currentInteractable;
+	public IInteractable CurrentInteractable{get => _currentInteractable; set
+	{
+		if(
+			_currentInteractable is null || //no current interactable
+			value is null || //overriding current interactable
+			//ensure change is valid
+			(
+				//ensure new interactable has higher priority
+				value.InteractionPriority > _currentInteractable.InteractionPriority &&
+				//ensure can interact with new interactable
+				CurrentState.CanInteract()(this, value)
+			)
+		)
+			_currentInteractable = value;
+	}}
+
 	public override void _Ready()
 	{
 		//setup state
-		var stateMachine = GetTree().Root.GetNode<StateMachine>(STATE_MACHINE_PATH);
+		var stateMachine = GetTree().Root.GetNode<StateMachine>(nameof(StateMachine));
 		Connect(nameof(CharacterUpdate), stateMachine, nameof(stateMachine.StateUpdate));
 		CurrentState = stateMachine[START_STATE];
 
@@ -66,6 +82,19 @@ public class Character : KinematicBody2D
 
 		//remove inconsequental movements
 		CurrentVelocity = CurrentVelocity.ZeroApproxNormalize();
+
+		//check for interactions
+		CheckInteraction();
+	}
+
+	public void CheckInteraction()
+	{
+		//if can't interact with current, leave it
+		if(!CurrentState.CanInteract()(this, CurrentInteractable)) CurrentInteractable = null;
+
+		//if has an interactable and interact is pressed, do interaction action
+		if(CurrentInteractable != null && Input.IsActionJustPressed(Consts.INTERACT_INPUT))
+			CurrentInteractable.OnInteract(this);
 	}
 	
 	public Vector2 LeftInputVector => Left?Vector2.Left:Vector2.Zero;

@@ -1,7 +1,5 @@
 ﻿using Godot;
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 public class DamageableCharacter : Character, IDamageable
 {

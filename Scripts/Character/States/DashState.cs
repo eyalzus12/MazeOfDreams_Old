@@ -17,4 +17,6 @@ public class DashState : State
 		c.SetTempVariable(nameof(c.DashInCooldown), c.DashCooldown, true, false);
 		c.SetTempVariable(nameof(c.InDash), c.DashTime, true, false);
 	};
+
+	public override Func<Character, IInteractable, bool> CanInteract() => (c, i) => false;
 }
