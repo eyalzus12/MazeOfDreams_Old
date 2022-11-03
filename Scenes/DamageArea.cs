@@ -10,6 +10,6 @@ public class DamageArea : Area2D
 
     public void OnBodyEnter(Node n)
     {
-        if(n is DamageableCharacter dc) dc.Health--;
+        if(n is IDamageable dc) dc.Health--;
     }
 }
