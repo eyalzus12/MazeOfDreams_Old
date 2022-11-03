@@ -18,6 +18,7 @@ boot_splash/image="res://Scripts/d.png"
 
 StateMachine="*res://Autoloads/StateMachine.tscn"
 UiLayer="*res://Autoloads/UILayer.tscn"
+InputDebugger="*res://Autoloads/InputDebugger.cs"
 
 [display]
 
@@ -78,6 +79,11 @@ game_exit={
 player_interact={
 "deadzone": 0.5,
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":69,"unicode":0,"echo":false,"script":null)
+ ]
+}
+toggle_input_debug={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777250,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
 

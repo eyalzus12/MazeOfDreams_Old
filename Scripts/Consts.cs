@@ -10,4 +10,6 @@ public static class Consts
     public const string DEBUG_TOGGLE_INPUT = "toggle_debug";
     public const string GAME_EXIT_INPUT = "game_exit";
     public const string INTERACT_INPUT = "player_interact";
+
+    public const string INPUT_DEBUG_INPUT = "toggle_input_debug";
 }
