@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Godot;
 
 public class Door : StaticBody2D, IInteractable
@@ -12,7 +14,27 @@ public class Door : StaticBody2D, IInteractable
     [Export]
     public int InteractionPriority{get; set;}
 
+    [Export]
+    public bool InitiallyOpen{get; set;} = false;
+
     public Area2D InteractionArea{get; set;}
+    public CollisionShape2D DoorCollision{get; set;}
+    public Sprite DoorOpenSprite{get; set;}
+    public Sprite DoorClosedSprite{get; set;}
+
+
+    private bool _open;
+    public bool Open
+    {
+        get => _open;
+        set
+        {
+            _open = value;
+            DoorCollision.SetDeferred("disabled", value);
+            DoorOpenSprite.Visible = value;
+            DoorClosedSprite.Visible = !value;
+        }
+    }
 
     public override void _Ready()
     {
@@ -26,9 +48,28 @@ public class Door : StaticBody2D, IInteractable
 
     public void InitInteractionArea()
     {
-        InteractionArea = GetNode<Area2D>("InteractionArea");
-        InteractionArea.Connect("body_entered", this, nameof(OnAreaBodyEnter));
-        InteractionArea.Connect("body_exited", this, nameof(OnAreaBodyExit));
+        InteractionArea = GetNodeOrNull<Area2D>("InteractionArea");
+        if(InteractionArea is null)
+        {
+            GD.PushError($"Door {Name} has no interaction area (If it does, make sure you named it InteractionArea).");
+        }
+        else
+        {
+            InteractionArea.Connect("body_entered", this, nameof(OnAreaBodyEnter));
+            InteractionArea.Connect("body_exited", this, nameof(OnAreaBodyExit));
+        }
+
+        
+        DoorCollision = GetNodeOrNull<CollisionShape2D>("DoorCollision");
+        if(DoorCollision is null) GD.PushError($"Door {Name} has no collision shape (If it does, make sure you named it DoorCollision).");
+
+        DoorOpenSprite = GetNodeOrNull<Sprite>("DoorOpenSprite");
+        if(DoorOpenSprite is null) GD.PushError($"Door {Name} ");
+        
+        DoorClosedSprite = GetNodeOrNull<Sprite>("DoorClosedSprite");
+        if(DoorClosedSprite is null) GD.PushError($"Door {Name} has no closed sprite (If it does, make sure you named it DoorClosedSprite).");
+
+        Open = InitiallyOpen;
     }
 
     public void OnAreaBodyEnter(Node2D n)

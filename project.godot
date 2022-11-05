@@ -11,7 +11,7 @@ config_version=4
 [application]
 
 config/name="Maze Of Dreams"
-run/main_scene="res://MovementTestBase.tscn"
+run/main_scene="res://Scenes/TestRoomLoading.tscn"
 boot_splash/image="res://Scripts/d.png"
 
 [autoload]
@@ -29,6 +29,10 @@ window/stretch/aspect="expand"
 
 main_run_args="--verbose"
 search_in_file_extensions=PoolStringArray( "gd", "shader", "cs" )
+
+[gui]
+
+common/drop_mouse_on_gui_input_disabled=true
 
 [input]
 

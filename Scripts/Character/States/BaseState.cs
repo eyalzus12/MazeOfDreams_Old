@@ -12,24 +12,19 @@ public class BaseState : State
 		
 		//update inputs
 		c.SetInputs();
-
-		//dash logic
-		if(c.InDash)
+		
+		if(c.IsOnWall())
 		{
-			//detect bounce
-			if(c.IsOnWall())
-			{
-				//get first collision
-				var col = c.GetSlideCollision(0);
+			//get first collision
+			var col = c.GetSlideCollision(0);
 
-				//ensure actually bouncing, and not just moving along
-				if(col.Normal.Dot(col.Travel) != 0f)
-				{
-					//bounce along collision normal
-					c.CurrentVelocity = c.CurrentVelocity.Bounce(col.Normal);
-					//apply bounce deacceleration
-					c.CurrentVelocity *= c.DashBounceForceMultiplier;
-				}
+			//detect bounce
+			if(c.InDash && !Mathf.IsZeroApprox(col.Normal.Dot(c.CurrentVelocity)))
+			{
+				//bounce along collision normal
+				c.CurrentVelocity = c.CurrentVelocity.Bounce(col.Normal);
+				//apply bounce deacceleration
+				c.CurrentVelocity *= c.DashBounceForceMultiplier;
 			}
 		}
 		

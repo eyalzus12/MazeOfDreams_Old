@@ -70,4 +70,13 @@ public static class Extentions
         if(d.TryGetValue(key, out result)) return result;
         else return @default;
     }
+
+    public static bool InstanceValid(this Godot.Object go) => Godot.Object.IsInstanceValid(go);
+
+    public static IEnumerable<T> GetChildren<T>(this Node n) => n.GetChildren().OfType<T>();
+
+    public static Dictionary<TGroup, List<TObject>> GroupByToDictionary<TGroup, TObject>(this IEnumerable<TObject> e, Func<TObject, TGroup> grouper) => e.GroupBy(grouper).ToDictionary(k=>k.Key, g=>g.ToList());
+
+    public static Vector2 WithLength(this Vector2 v, float length) => v.NormalizedOrZero() * length;
+    public static Vector2 CopyLength(this Vector2 v1, Vector2 v2) => v1.WithLength(v2.Length());
 }

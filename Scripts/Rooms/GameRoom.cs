@@ -18,15 +18,15 @@ public class GameRoom : Node2D
     public virtual void InitDoors()
     {
         //get door list
-        Doors = GetChildren().OfType<Door>().ToList();
+        Doors = this.GetChildren<Door>().ToList();
         //split into groups by direction
-        DoorsDict = Doors.GroupBy(d => d.Direction).ToDictionary(k=>k.Key, e=>e.ToList());
+        DoorsDict = Doors.GroupByToDictionary(d => d.Direction);
         //connect interaction signal to function
         foreach(var door in Doors) door.Connect(nameof(Door.Interacted), this, nameof(OnDoorInteract));
     }
 
     public virtual void OnDoorInteract(Door who)
     {
-        GD.Print(who.Direction);
+        who.Open = true;
     }
 }
