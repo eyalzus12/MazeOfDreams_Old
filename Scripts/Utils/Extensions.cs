@@ -78,5 +78,5 @@ public static class Extentions
     public static Dictionary<TGroup, List<TObject>> GroupByToDictionary<TGroup, TObject>(this IEnumerable<TObject> e, Func<TObject, TGroup> grouper) => e.GroupBy(grouper).ToDictionary(k=>k.Key, g=>g.ToList());
 
     public static Vector2 WithLength(this Vector2 v, float length) => v.NormalizedOrZero() * length;
-    public static Vector2 CopyLength(this Vector2 v1, Vector2 v2) => v1.WithLength(v2.Length());
+    public static Vector2 WithLength(this Vector2 v1, Vector2 v2) => v1.WithLength(v2.Length());
 }

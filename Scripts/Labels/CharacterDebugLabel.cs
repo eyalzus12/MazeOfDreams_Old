@@ -28,7 +28,7 @@ public class CharacterDebugLabel : Label
 		Add("IsOnWall", character.IsOnWall());
 		Add("CollisionNormal", (character.GetSlideCount() > 0)?(character.GetSlideCollision(0).Normal):Vector2.Zero);
 		Newline();
-		Add("CurrentInteractable", (character.CurrentInteractable is Node n)?n.Name:"None");
+		Add("CurrentInteractable", character.Interacter?.CurrentInteractable?.GetParent()?.Name??"None");
 		Commit();
 	}
 

@@ -16,5 +16,5 @@ public class State : Node
     public virtual Action<Character> Loop(float delta) => c => {};
     public virtual Func<Character,string> NextState() => c => "";
     public virtual Action<Character> OnChange(State s) => c => {};
-    public virtual Func<Character, IInteractable, bool> CanInteract() => (c,i) => true;
+    public virtual Func<Character, InteractableComponent, bool> CanInteract() => (c,i) => true;
 }

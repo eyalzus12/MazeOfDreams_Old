@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://Scripts/Rooms/Door.cs" type="Script" id=1]
+[ext_resource path="res://Scenes/Objects/InterctableComponent.tscn" type="PackedScene" id=2]
 
 [node name="DoorBase" type="StaticBody2D"]
 script = ExtResource( 1 )
@@ -12,6 +13,6 @@ visible = false
 
 [node name="DoorClosedSprite" type="Sprite" parent="."]
 
-[node name="InteractionArea" type="Area2D" parent="."]
+[node name="InteractableComponent" parent="." instance=ExtResource( 2 )]
 
-[node name="InteractionAreaCollision" type="CollisionShape2D" parent="InteractionArea"]
+[connection signal="Interacted" from="InteractableComponent" to="." method="OnInteracted"]

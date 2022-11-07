@@ -25,8 +25,8 @@ public class GameRoom : Node2D
         foreach(var door in Doors) door.Connect(nameof(Door.Interacted), this, nameof(OnDoorInteract));
     }
 
-    public virtual void OnDoorInteract(Door who)
+    public virtual void OnDoorInteract(Door door, InteracterComponent interacter)
     {
-        who.Open = true;
+        door.Open = true;
     }
 }

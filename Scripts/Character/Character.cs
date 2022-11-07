@@ -1,6 +1,6 @@
 using Godot;
 using System;
-public class Character : KinematicBody2D, IInteracter
+public class Character : KinematicBody2D
 {
 	const string DEBUG_LABEL_PATH = "UILayer/DebugLabel";
 
@@ -8,6 +8,8 @@ public class Character : KinematicBody2D, IInteracter
 
 	[Signal]
 	public delegate void CharacterUpdate(Character c, float delta);
+	[Signal]
+	public delegate void StateChanged(Character who, State to);
 
 	[Export]
 	public float Speed = 300f;
@@ -40,32 +42,30 @@ public class Character : KinematicBody2D, IInteracter
 	public bool DebugActive{get; set;} = false;
 	public CharacterDebugLabel DebugLabel{get; set;}
 
-	private IInteractable _currentInteractable;
-	public IInteractable CurrentInteractable{get => _currentInteractable; set
-	{
-		if(
-			_currentInteractable is null || //no current interactable
-			value is null || //overriding current interactable
-			//ensure change is valid
-			(
-				//ensure new interactable has higher priority
-				value.InteractionPriority > _currentInteractable.InteractionPriority &&
-				//ensure can interact with new interactable
-				CurrentState.CanInteract()(this, value)
-			)
-		)
-			_currentInteractable = value;
-	}}
+	public InteracterComponent Interacter{get; set;}
 
 	public override void _Ready()
 	{
 		//setup state
-		var stateMachine = GetTree().Root.GetNode<StateMachine>(nameof(StateMachine));
-		Connect(nameof(CharacterUpdate), stateMachine, nameof(stateMachine.StateUpdate));
-		CurrentState = stateMachine[START_STATE];
+		var stateMachine = GetTree().Root.GetNodeOrNull<StateMachine>(nameof(StateMachine));
+		if(stateMachine != null)
+		{
+			Connect(nameof(CharacterUpdate), stateMachine, nameof(stateMachine.StateUpdate));
+			CurrentState = stateMachine[START_STATE];
+			OnStateChanged(CurrentState);
+		}
+
+		//setup interacter component
+		Interacter = GetNodeOrNull<InteracterComponent>(nameof(InteracterComponent));
+		if(Interacter != null)
+		{
+			//this is a hack to get the interacter to always get our current state, and not stay at the first one
+			State GetCurrentState() => CurrentState;
+			Interacter.InteractionValidator = (i) => GetCurrentState().CanInteract()(this, i);
+		}
 
 		//setup debug label
-		DebugLabel = GetNode<CharacterDebugLabel>(DEBUG_LABEL_PATH);
+		DebugLabel = GetNodeOrNull<CharacterDebugLabel>(DEBUG_LABEL_PATH);
 	}
 
 	public override void _PhysicsProcess(float delta)
@@ -73,28 +73,26 @@ public class Character : KinematicBody2D, IInteracter
 		//cause state update
 		EmitSignal(nameof(CharacterUpdate), this, delta);
 
-		//toggle debug
-		if(Input.IsActionJustPressed(Consts.DEBUG_TOGGLE_INPUT)) DebugActive = !DebugActive;
-
 		//update debug label
-		DebugLabel.Visible = DebugActive;
-		if(DebugActive) DebugLabel.UpdateText(this, delta);
+		if(DebugLabel != null)
+		{
+			//toggle debug
+			if(Input.IsActionJustPressed(Consts.DEBUG_TOGGLE_INPUT)) DebugActive = !DebugActive;
+
+			DebugLabel.Visible = DebugActive;
+			if(DebugActive) DebugLabel.UpdateText(this, delta);	
+		}
 
 		//remove inconsequental movements
 		CurrentVelocity = CurrentVelocity.ZeroApproxNormalize();
-
-		//check for interactions
-		CheckInteraction();
 	}
 
-	public void CheckInteraction()
+	public void OnStateChanged(State newState)
 	{
-		//if can't interact with current, leave it
-		if(!CurrentState.CanInteract()(this, CurrentInteractable)) CurrentInteractable = null;
-
-		//if has an interactable and interact is pressed, do interaction action
-		if(CurrentInteractable != null && Input.IsActionJustPressed(Consts.INTERACT_INPUT))
-			CurrentInteractable.OnInteract(this);
+		CurrentState.OnChange(newState)(this);
+        CurrentState = newState;
+        StateFrame = 0;
+		EmitSignal(nameof(StateChanged), this, newState);
 	}
 	
 	public Vector2 LeftInputVector => Left?Vector2.Left:Vector2.Zero;

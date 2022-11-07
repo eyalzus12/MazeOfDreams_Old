@@ -1,9 +1,9 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://Scripts/Rooms/GameRoom.cs" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
-[ext_resource path="res://Scenes/Door.tscn" type="PackedScene" id=3]
-[ext_resource path="res://Scenes/Character.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Scenes/Objects/Door.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Scenes/Objects/Character.tscn" type="PackedScene" id=4]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 10, 310 )
@@ -23,8 +23,11 @@ extents = Vector2( 522, 10 )
 [sub_resource type="RectangleShape2D" id=6]
 extents = Vector2( 36, 10 )
 
-[sub_resource type="RectangleShape2D" id=7]
+[sub_resource type="RectangleShape2D" id=8]
 extents = Vector2( 40, 20 )
+
+[sub_resource type="RectangleShape2D" id=7]
+extents = Vector2( 20, 20 )
 
 [node name="RoomBase" type="Node2D"]
 position = Vector2( 512, 300 )
@@ -38,11 +41,23 @@ position = Vector2( -512, 0 )
 [node name="LeftWallCollision" type="CollisionShape2D" parent="RoomBounds/LeftWall"]
 shape = SubResource( 1 )
 
+[node name="LeftWallColorRect" type="ColorRect" parent="RoomBounds/LeftWall"]
+margin_left = -10.0
+margin_top = -310.0
+margin_right = 10.0
+margin_bottom = 310.0
+
 [node name="RightWall" type="StaticBody2D" parent="RoomBounds"]
 position = Vector2( 512, 0 )
 
 [node name="RightWallCollision" type="CollisionShape2D" parent="RoomBounds/RightWall"]
 shape = SubResource( 2 )
+
+[node name="RightWallColorRect" type="ColorRect" parent="RoomBounds/RightWall"]
+margin_left = -10.0
+margin_top = -310.0
+margin_right = 10.0
+margin_bottom = 310.0
 
 [node name="TopWall" type="StaticBody2D" parent="RoomBounds"]
 position = Vector2( 0, -300 )
@@ -55,11 +70,23 @@ shape = SubResource( 3 )
 position = Vector2( 279, 0 )
 shape = SubResource( 5 )
 
+[node name="TopWallColorRect" type="ColorRect" parent="RoomBounds/TopWall"]
+margin_left = -522.0
+margin_top = -10.0
+margin_right = 522.0
+margin_bottom = 10.0
+
 [node name="BottomWall" type="StaticBody2D" parent="RoomBounds"]
 position = Vector2( 0, 300 )
 
 [node name="BottomWallCollision" type="CollisionShape2D" parent="RoomBounds/BottomWall"]
 shape = SubResource( 4 )
+
+[node name="BottomWallColorRect" type="ColorRect" parent="RoomBounds/BottomWall"]
+margin_left = -522.0
+margin_top = -10.0
+margin_right = 522.0
+margin_bottom = 10.0
 
 [node name="NorthDoor" parent="." instance=ExtResource( 3 )]
 position = Vector2( 0, -300 )
@@ -78,9 +105,15 @@ position = Vector2( -4.79817e-06, 0 )
 scale = Vector2( 1.125, 0.3125 )
 texture = ExtResource( 2 )
 
-[node name="InteractionAreaCollision" parent="NorthDoor/InteractionArea" index="0"]
-shape = SubResource( 7 )
+[node name="InteractionArea" parent="NorthDoor/InteractableComponent" index="0"]
+shape = SubResource( 8 )
 
 [node name="Character" parent="." instance=ExtResource( 4 )]
 
+[node name="InteractionArea" parent="Character/InteracterComponent" index="0"]
+shape = SubResource( 7 )
+
 [editable path="NorthDoor"]
+[editable path="NorthDoor/InteractableComponent"]
+[editable path="Character"]
+[editable path="Character/InteracterComponent"]

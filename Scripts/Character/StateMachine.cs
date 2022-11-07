@@ -34,9 +34,7 @@ public class StateMachine : Node
                 return;
             }
             
-            c.CurrentState.OnChange(nextState)(c);
-            c.CurrentState = nextState;
-            c.StateFrame = 0;
+            c.OnStateChanged(nextState);
         }
     } 
 }

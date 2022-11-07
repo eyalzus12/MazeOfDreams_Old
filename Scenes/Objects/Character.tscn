@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Scripts/Character/Character.cs" type="Script" id=1]
 [ext_resource path="res://Scripts/Labels/CharacterDebugLabel.cs" type="Script" id=2]
+[ext_resource path="res://Scenes/Objects/InteracterComponent.tscn" type="PackedScene" id=3]
 
 [sub_resource type="RectangleShape2D" id=1]
 
@@ -11,10 +12,11 @@ load_path = "res://.import/icon.png-487276ed1e3a0c39cad0279d744ee560.stex"
 
 [node name="Character" type="KinematicBody2D"]
 script = ExtResource( 1 )
-DashBounceForceMultiplier = 1.3
 
 [node name="CharacterCamera" type="Camera2D" parent="."]
 current = true
+smoothing_enabled = true
+smoothing_speed = 8.0
 
 [node name="CharacterCollision" type="CollisionShape2D" parent="."]
 shape = SubResource( 1 )
@@ -28,3 +30,5 @@ texture = SubResource( 2 )
 
 [node name="DebugLabel" type="Label" parent="UILayer"]
 script = ExtResource( 2 )
+
+[node name="InteracterComponent" parent="." instance=ExtResource( 3 )]
