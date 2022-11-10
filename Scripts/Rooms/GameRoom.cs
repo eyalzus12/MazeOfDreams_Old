@@ -7,11 +7,16 @@ public class GameRoom : Node2D
 {
     public Dictionary<Door.DoorDirection, List<Door>> DoorsDict{get; set;} = new Dictionary<Door.DoorDirection, List<Door>>();
     public List<Door> Doors{get; set;} = new List<Door>();
+    public TileMap Tiles{get; set;}
+    
+    [Export]
+    public Shape2D BoundingShape{get; set;}
 
     public GameRoom() {}
 
     public override void _Ready()
     {
+        Tiles = GetNodeOrNull<TileMap>("Tiles");
         InitDoors();
     }
 

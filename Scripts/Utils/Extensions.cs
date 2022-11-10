@@ -5,18 +5,6 @@ using Godot;
 
 public static class Extentions
 {
-    public static void SetTempVariable<T>(this Node n, string variable, float seconds, T start, T end = default(T))
-    {
-        n.Set(variable, start);
-        n.GetTree().CreateTimer(seconds,false).Connect("timeout", n, "set", new Godot.Collections.Array{variable, end});
-    }
-
-    public static void SetDeferredTempVariable<T>(this Node n, string variable, float seconds, T start, T end = default(T))
-    {
-        n.SetDeferred(variable, start);
-        n.GetTree().CreateTimer(seconds,false).Connect("timeout", n, "set_deferred", new Godot.Collections.Array{variable, end}, (uint)Godot.Object.ConnectFlags.Deferred);
-    }
-
     public static Vector2 Center(this Rect2 rec) => rec.Position + rec.Size/2f;
 		
 	public static Rect2 Clamp(this Rect2 rec, float mx, float Mx, float my, float My)
@@ -79,4 +67,41 @@ public static class Extentions
 
     public static Vector2 WithLength(this Vector2 v, float length) => v.NormalizedOrZero() * length;
     public static Vector2 WithLength(this Vector2 v1, Vector2 v2) => v1.WithLength(v2.Length());
+
+    public static float RandfExclusive(this RandomNumberGenerator rng) => rng.RandfRange(0f, 1f-Mathf.Epsilon);
+
+    public static Vector2 GetRandomPointInCircle(this RandomNumberGenerator rng, float radius)
+    {
+        var t = 2*Mathf.Pi*rng.RandfExclusive();
+        var u = rng.RandfExclusive() + rng.RandfExclusive();
+        var r = (u > 1)?(2f-u):u;
+        return new Vector2(Mathf.Cos(t), Mathf.Sin(t))*radius*r;
+    }
+
+    public static T Choice<T>(this RandomNumberGenerator rng, IEnumerable<T> e)
+    {
+        var l = e.ToList();
+        return l[rng.RandiRange(0, l.Count-1)];
+    }
+
+    public static List<T> MultiChoice<T>(this RandomNumberGenerator rng, IEnumerable<T> e, int amount)
+    {
+        var l = e.ToList();
+        if(amount >= l.Count) throw new IndexOutOfRangeException();
+        var result = new List<T>();
+        for(int i = 0; i < amount; ++i)
+        {
+            var c = rng.RandiRange(i, l.Count-1);
+            l.Swap(i, c);
+            result.Add(l[i]);
+        }
+        return result;
+    }
+
+    public static void Swap<T>(this IList<T> list, int indexA, int indexB)
+    {
+        T tmp = list[indexA];
+        list[indexA] = list[indexB];
+        list[indexB] = tmp;
+    }
 }
