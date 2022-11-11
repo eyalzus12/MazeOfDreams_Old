@@ -6,15 +6,16 @@ using System.Linq;
 public class BodySeperationTest2 : Node2D
 {
     const int TILE_SIZE = 32;
-    const int ROOM_AMOUNT = 100;
-    const int SPAWN_RADIUS = 300;
+    const int ROOM_AMOUNT = 300;
+    const int SPAWN_RADIUS = 100;
     const float EXTRA_CON_CHANCE = 0.1f;
-    const int MAX_TILE_SEARCH = 50;
-    const int BRIDGE_TILE_ID = 2;
-    const int BLOCK_TILE_ID = 1;
-    const float H_DEVIATION = 2f;
+    const int MAX_TILE_SEARCH = int.MaxValue;
+    const float DISCOURGE_PENALTY = 3f;
+    const float H_DEVIATION = 0.3f;
+    
+    static readonly HashSet<string> NON_PASSABLE = new HashSet<string>{"wall","corner","door"};
 
-    const string TEST_ROOM = "res://Scenes/Rooms/MainRoomTest.tscn";
+    static readonly string[] TEST_ROOMS = {"res://Scenes/Rooms/MainRoomTest.tscn", "res://Scenes/Rooms/MainRoomTest2.tscn", "res://Scenes/Rooms/MainRoomTest3.tscn"};
 
     private RandomNumberGenerator RNG;
 
@@ -30,13 +31,14 @@ public class BodySeperationTest2 : Node2D
         Tiles = GetNodeOrNull<TileMap>("TileMap");
         if(Tiles.TileSet is null) Tiles.TileSet = new TileSet();
 
-        var room = ResourceLoader.Load<PackedScene>(TEST_ROOM);
+        var rooms = TEST_ROOMS.Select(r => ResourceLoader.Load<PackedScene>(r)).ToList();
 
         var shapes = new List<Shape2D>();
 
         for(int i = 0; i < ROOM_AMOUNT; ++i)
         {
-            var newRoom = room.Instance<GameRoom>();
+            var newRoomType = RNG.Choice(rooms);
+            var newRoom = newRoomType.Instance<GameRoom>();
             Rooms.Add(newRoom);
             shapes.Add(newRoom.BoundingShape);
         }
@@ -50,8 +52,10 @@ public class BodySeperationTest2 : Node2D
     {
         var tileSetSet = new HashSet<ulong>();
         var idDictDict = new Dictionary<ulong, Dictionary<int, int>>();
+        var roomBounds = new List<List<Vector2>>(new List<Vector2>[Rooms.Count]);
         for(int i = 0; i < Rooms.Count; ++i)
         {
+            roomBounds[i] = new List<Vector2>();
             var room = Rooms[i];
             room.Position = positions[i];
             AddChild(room);
@@ -134,10 +138,12 @@ public class BodySeperationTest2 : Node2D
             {
                 //get tile index
                 var idx = tileMap.GetCellv(c);
+                
                 var newTileID = idDictDict[tileMap.TileSet.GetInstanceId()][idx];
                 //get tile position in our tilemap
                 var worldPos = tileMap.ToGlobal(tileMap.MapToWorld(c));
                 var selfPos = Tiles.WorldToMap(Tiles.ToLocal(worldPos));
+                if(tileMap.TileSet.TileGetName(idx) == "wall") roomBounds[i].Add(selfPos);
                 //place tile
                 Tiles.SetCellv(selfPos,newTileID);
             }
@@ -151,43 +157,49 @@ public class BodySeperationTest2 : Node2D
         {
             var first = Rooms[edge.First];
             var second = Rooms[edge.Second];
-            var bridge = RoomAStar(first, second);
+            var bridge = RoomAStar(first, second, roomBounds[edge.First], roomBounds[edge.Second]);
             if(bridge is null)
             {
                 GD.PushError($"Failed to connect rooms {edge.First} and {edge.Second}");
                 continue;
             }
 
-            foreach(var pos in bridge)
+            for(int i = 0; i < bridge.Count; ++i)
             {
-                Tiles.SetCellv(pos,BRIDGE_TILE_ID);
+                var tileName = (i == 0 || i == bridge.Count-1)?"door":"bridge";
+                Tiles.SetCellv(bridge[i],Tiles.TileSet.FindTileByName(tileName));
             }
         }
     }
 
-    private List<Vector2> RoomAStar(GameRoom from, GameRoom to)
+    private List<Vector2> RoomAStar(GameRoom from, GameRoom to, List<Vector2> fromBounds, List<Vector2> toBounds)
     {
-        List<Vector2> best = null;
-        foreach(var tdoor in to.Doors)
-        {
-            var fdoorposs = from.Doors.Select(fdoor => Tiles.WorldToMap(Tiles.ToLocal(fdoor.GlobalPosition))).ToList();
-            var tdoorpos = Tiles.WorldToMap(Tiles.ToLocal(tdoor.GlobalPosition));
-            var result = GridAStar(fdoorposs, tdoorpos);
-            if(result != null && (best is null || result.Count < best.Count)) best = result;
-        }
-        return best;
+        return GridAStar(fromBounds, Tiles.WorldToMap(Tiles.ToLocal(to.GlobalPosition)), toBounds.ToHashSet());
     }
 
     private static readonly Vector2[] dirs = {Vector2.Up, Vector2.Down, Vector2.Left, Vector2.Right};
-    private List<Vector2> GridAStar(List<Vector2> froms, Vector2 to)
+    private List<Vector2> GridAStar(List<Vector2> froms, Vector2 to, HashSet<Vector2> tos)
     {
-        int H(Vector2 v) => (int)Math.Abs(v.x-to.x+RNG.RandfRange(-H_DEVIATION,H_DEVIATION)) + (int)Math.Abs(v.y-to.y+RNG.RandfRange(-H_DEVIATION,H_DEVIATION));
+        if(froms.Count == 0 || tos.Count == 0) return null;
 
-        var candidates = new PriorityQueue<Vector2, int>();
+        float ExtraCornerPenalty(Vector2 v)
+        {
+            var ID = Tiles.GetCellv(v);
+            if(ID == TileMap.InvalidCell) return 0f;
+            var tileName = Tiles.TileSet.TileGetName(ID);
+            if(tileName == "discourge") return DISCOURGE_PENALTY;
+            else return 0f;
+        }
+
+        float ExtraRandomPenalty() => RNG.RandfRange(-H_DEVIATION,H_DEVIATION);
+
+        float H(Vector2 v) => v.GridDistanceTo(to) + ExtraRandomPenalty() + ExtraCornerPenalty(v);
+
+        var candidates = new PriorityQueue<Vector2, float>();
         var candidates_set = new HashSet<Vector2>();
         var pre = new Dictionary<Vector2, Vector2>();
-        var gscore = new Dictionary<Vector2, int>();
-        var fscore = new Dictionary<Vector2, int>();
+        var gscore = new Dictionary<Vector2, float>();
+        var fscore = new Dictionary<Vector2, float>();
 
         foreach(var from in froms)
         {
@@ -198,26 +210,31 @@ public class BodySeperationTest2 : Node2D
             candidates_set.Add(from);
         }
 
+        var end = Vector2.One * float.PositiveInfinity;
+
         while(candidates.Count != 0)
         {
             var current = candidates.Dequeue();
             candidates_set.Remove(current);
-            if(gscore[current] > MAX_TILE_SEARCH) return null;//don't move over 50 cells
-            if(current == to) break;//reached goal
+            if(gscore[current] > MAX_TILE_SEARCH) continue;//don't move too much
+            if(tos.Contains(current)) {end = current; break;}
 
             foreach(var d in dirs)
             {
                 var neighbor = current+d;
-                if(neighbor == to)
+                if(tos.Contains(neighbor))
                 {
-                    pre[to] = current;
+                    pre[neighbor] = current;
+                    end = neighbor;
                     candidates.Clear();
                     break;
                 }
 
-                if(Tiles.GetCellv(neighbor) == BLOCK_TILE_ID) continue;//occupied
-                gscore.TryAdd(neighbor, int.MaxValue);
-                fscore.TryAdd(neighbor, int.MaxValue);
+                var neighborID = Tiles.GetCellv(neighbor);
+                if(neighborID != TileMap.InvalidCell && NON_PASSABLE.Contains(Tiles.TileSet.TileGetName(neighborID))) continue;//occupied
+
+                gscore.TryAdd(neighbor, float.PositiveInfinity);
+                fscore.TryAdd(neighbor, float.PositiveInfinity);
 
                 var tent = gscore[current] + 1;
                 if(tent < gscore[neighbor])
@@ -234,7 +251,9 @@ public class BodySeperationTest2 : Node2D
             }
         }
 
-        var iter = to;
+        if(float.IsPositiveInfinity(end.x)) return null;
+
+        var iter = end;
         var path = Enumerable.Empty<Vector2>().Prepend(iter);
         while(pre.ContainsKey(iter))
         {

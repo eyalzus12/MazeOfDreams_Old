@@ -5,6 +5,8 @@ using System.Linq;
 
 public class RoomSpreader : Node2D
 {
+    const float WAIT_TIME = 2;
+
     [Signal]
     public delegate void SpreadingFinished(List<Vector2> positions);
 
@@ -15,6 +17,7 @@ public class RoomSpreader : Node2D
     public RandomNumberGenerator RNG{get; private set;}
 
     private int _engineIterations;
+    private RID _space;
 
     public RoomSpreader() {}
     public RoomSpreader(int tileSize, int spawnRadius, IEnumerable<Shape2D> shapes)
@@ -35,6 +38,11 @@ public class RoomSpreader : Node2D
         //get RNG
         RNG = GetTree().Root.GetNode<Randomizer>(nameof(Randomizer)).RNG;
 
+        //create a space
+        _space = Physics2DServer.SpaceCreate();
+        //make the space active
+        Physics2DServer.SpaceSetActive(_space, true);
+
         for(int i = 0; i < Shapes.Count; ++i)
         {
             //create a body
@@ -42,7 +50,7 @@ public class RoomSpreader : Node2D
             //set it to be rigid, and not rotate
             Physics2DServer.BodySetMode(body, Physics2DServer.BodyMode.Character);
             //put inside the space
-            Physics2DServer.BodySetSpace(body, GetWorld2d().Space);
+            Physics2DServer.BodySetSpace(body, _space);
             //set it to a random position
             var position = RNG.GetRandomPointInCircle(SpawnRadius).Snapped(TileSize*Vector2.One);
             Physics2DServer.BodySetState(body, Physics2DServer.BodyState.Transform, new Transform2D(0f, position));
@@ -61,18 +69,23 @@ public class RoomSpreader : Node2D
         Physics2DServer.SetActive(true);
         
         //in 2 seconds, gather positions
-        //FIX: this runs in the normal process instead of the physics one
-        GetTree().CreateTimer(2).Connect("timeout", this, nameof(OnTimeout));
+        this.TimePhysicsAction(WAIT_TIME, nameof(OnTimeout));
     }
 
     public void OnTimeout()
     {
         //restore physics speed
         Engine.IterationsPerSecond = _engineIterations;
+
         //get the resulting positions
         var result = _bodies.Select(b => ((Transform2D)Physics2DServer.BodyGetState(b, Physics2DServer.BodyState.Transform)).origin.Snapped(TileSize*Vector2.One)).ToList();
+
+        //Note: This is needed to prevent a memory leak
         //dispose of the bodies
         for(int i = 0; i < _bodies.Count; ++i) Physics2DServer.FreeRid(_bodies[i]);
+        //dispose of the space
+        Physics2DServer.FreeRid(_space);
+
         //return result
         EmitSignal(nameof(SpreadingFinished), result);
     }

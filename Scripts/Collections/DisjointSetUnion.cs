@@ -6,7 +6,7 @@ public class DisjointSetUnion
 {
     public Dictionary<int,int> Parent{get; private set;} = new Dictionary<int, int>();
 
-    public bool MakeSet(int i) => Parent.TryAdd(i, ~0);
+    public bool MakeSet(int i) => Parent.TryAdd(i, -1);
 
     public int FindSet(int i)
     {
@@ -27,18 +27,17 @@ public class DisjointSetUnion
         var pi = FindSet(i); var pj = FindSet(j);
         if(pi == pj) return false;
 
-        var ic = ~Parent[pi];
-        var jc = ~Parent[pj];
+        var ic = -Parent[pi];
+        var jc = -Parent[pj];
 
-        //NOTE: Parent[pi]+Parent[pj]+1 = ~(~Parent[pi]+~Parent[pj])
         if(ic < jc)
         {
-            Parent[pi] += Parent[pj]+1;
+            Parent[pi] -= jc;
             Parent[pj] = pi;
         }
         else
         {
-            Parent[pj] += Parent[pi]+1;
+            Parent[pj] -= ic;
             Parent[pi] = pj;
         }
 

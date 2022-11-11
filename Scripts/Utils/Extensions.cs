@@ -104,4 +104,17 @@ public static class Extentions
         list[indexA] = list[indexB];
         list[indexB] = tmp;
     }
+
+    public static float GridDistanceTo(this Vector2 v1, Vector2 v2) => Mathf.Abs(v1.x-v2.x) + Mathf.Abs(v1.y-v2.y);
+
+    public static void TimePhysicsAction(this Node n, float seconds, string action)
+    {
+        var timer = new Timer();
+        timer.WaitTime = seconds;
+        timer.ProcessMode = Timer.TimerProcessMode.Physics;
+        n.AddChild(timer);
+        timer.Connect("timeout", n, action);
+        timer.Connect("timeout", timer, "queue_free");//remove timer after that time
+        timer.Start();
+    }
 }
