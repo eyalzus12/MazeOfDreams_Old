@@ -10,7 +10,7 @@ public class RoomSpreader : Node2D
     [Signal]
     public delegate void SpreadingFinished(List<Vector2> positions);
 
-    public int TileSize{get; set;} = 1;
+    public Vector2 TileSize{get; set;} = 64*Vector2.One;
     public int SpawnRadius{get; set;} = 50;
     private List<RID> _bodies = new List<RID>();
     public List<Shape2D> Shapes{get; set;}
@@ -20,7 +20,7 @@ public class RoomSpreader : Node2D
     private RID _space;
 
     public RoomSpreader() {}
-    public RoomSpreader(int tileSize, int spawnRadius, IEnumerable<Shape2D> shapes)
+    public RoomSpreader(Vector2 tileSize, int spawnRadius, IEnumerable<Shape2D> shapes)
     {
         Shapes = shapes.ToList();
         TileSize = tileSize;
@@ -52,7 +52,7 @@ public class RoomSpreader : Node2D
             //put inside the space
             Physics2DServer.BodySetSpace(body, _space);
             //set it to a random position
-            var position = RNG.GetRandomPointInCircle(SpawnRadius).Snapped(TileSize*Vector2.One);
+            var position = RNG.GetRandomPointInCircle(SpawnRadius);
             Physics2DServer.BodySetState(body, Physics2DServer.BodyState.Transform, new Transform2D(0f, position));
             //remove gravity
             Physics2DServer.BodySetParam(body, Physics2DServer.BodyParameter.GravityScale, 0f);
@@ -78,7 +78,17 @@ public class RoomSpreader : Node2D
         Engine.IterationsPerSecond = _engineIterations;
 
         //get the resulting positions
-        var result = _bodies.Select(b => ((Transform2D)Physics2DServer.BodyGetState(b, Physics2DServer.BodyState.Transform)).origin.Snapped(TileSize*Vector2.One)).ToList();
+        var result = _bodies.Select
+        //for each
+        (
+            b =>
+            //get body transform
+            ((Transform2D)Physics2DServer.BodyGetState(b, Physics2DServer.BodyState.Transform))
+            //get origin (position)
+            .origin
+            //snap to grid
+            .Snapped(TileSize)
+        ).ToList();
 
         //Note: This is needed to prevent a memory leak
         //dispose of the bodies

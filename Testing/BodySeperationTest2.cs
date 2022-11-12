@@ -5,16 +5,23 @@ using System.Linq;
 
 public class BodySeperationTest2 : Node2D
 {
-    const int TILE_SIZE = 32;
+    //amount of rooms to load
     const int ROOM_AMOUNT = 300;
+    //radius of circle to spawn rooms in
     const int SPAWN_RADIUS = 100;
+    //chance to reconnect rooms
     const float EXTRA_CON_CHANCE = 0.1f;
+    //maximum distance to try and connect
     const int MAX_TILE_SEARCH = int.MaxValue;
+    //penalty for going near corners
     const float DISCOURGE_PENALTY = 3f;
+    //randomness of penalty. keep below 0.5f
     const float H_DEVIATION = 0.3f;
     
+    //tiles you can't pass through when connecting
     static readonly HashSet<string> NON_PASSABLE = new HashSet<string>{"wall","corner","door"};
 
+    //list of rooms you could load
     static readonly string[] TEST_ROOMS = {"res://Scenes/Rooms/MainRoomTest.tscn", "res://Scenes/Rooms/MainRoomTest2.tscn", "res://Scenes/Rooms/MainRoomTest3.tscn"};
 
     private RandomNumberGenerator RNG;
@@ -27,39 +34,57 @@ public class BodySeperationTest2 : Node2D
 
     public override void _Ready()
     {
+        //get the RNG
         RNG = GetTree().Root.GetNode<Randomizer>(nameof(Randomizer)).RNG;
+        //get the tilemap
         Tiles = GetNodeOrNull<TileMap>("TileMap");
         if(Tiles.TileSet is null) Tiles.TileSet = new TileSet();
 
+        //get room loaders
         var rooms = TEST_ROOMS.Select(r => ResourceLoader.Load<PackedScene>(r)).ToList();
 
+        //create the shape and room list
         var shapes = new List<Shape2D>();
-
         for(int i = 0; i < ROOM_AMOUNT; ++i)
         {
+            //choose random room type
             var newRoomType = RNG.Choice(rooms);
+            //create room
             var newRoom = newRoomType.Instance<GameRoom>();
+            //add data to lists
             Rooms.Add(newRoom);
             shapes.Add(newRoom.BoundingShape);
         }
 
-        Spreader = new RoomSpreader(TILE_SIZE, SPAWN_RADIUS, shapes);
+        //create the room spreader with the shape list
+        Spreader = new RoomSpreader(Tiles.CellSize, SPAWN_RADIUS, shapes);
+        //run OnSpreadFinished when the spreading is finished
         Spreader.Connect(nameof(RoomSpreader.SpreadingFinished), this, nameof(OnSpreadFinished));
+        //add to the scene
         AddChild(Spreader);
     }
 
     public void OnSpreadFinished(List<Vector2> positions)
     {
+        //stores the instance IDs of tilesets we load
         var tileSetSet = new HashSet<ulong>();
+        //stores dictionaries to convert old tile IDs to new tile IDs
         var idDictDict = new Dictionary<ulong, Dictionary<int, int>>();
+        //stores the room bounds
         var roomBounds = new List<List<Vector2>>(new List<Vector2>[Rooms.Count]);
+
         for(int i = 0; i < Rooms.Count; ++i)
         {
             roomBounds[i] = new List<Vector2>();
             var room = Rooms[i];
+            //put room in its position
             room.Position = positions[i];
+            //add room to scene
             AddChild(room);
+
             var tileMap = room.Tiles;
+
+            //we now merge the tilesets
             if(!tileSetSet.Contains(tileMap.TileSet.GetInstanceId()))
             {
                 //copy tiles
@@ -70,8 +95,10 @@ public class BodySeperationTest2 : Node2D
                     //get new ID
                     var newTileID = Tiles.TileSet.GetLastUnusedTileId();
                     idDict.Add(idx,newTileID);
+
                     //create tile
                     Tiles.TileSet.CreateTile(newTileID);
+
                     //copy shape
                     for(int j = 0; j < tileMap.TileSet.TileGetShapeCount(idx); ++j)
                     {
@@ -136,34 +163,45 @@ public class BodySeperationTest2 : Node2D
             var cells = new Godot.Collections.Array<Vector2>(tileMap.GetUsedCells());
             foreach(var c in cells)
             {
-                //get tile index
+                //get tile ID
                 var idx = tileMap.GetCellv(c);
-                
+                //get new tile ID
                 var newTileID = idDictDict[tileMap.TileSet.GetInstanceId()][idx];
                 //get tile position in our tilemap
                 var worldPos = tileMap.ToGlobal(tileMap.MapToWorld(c));
                 var selfPos = Tiles.WorldToMap(Tiles.ToLocal(worldPos));
+                //add to bounds list if wall
                 if(tileMap.TileSet.TileGetName(idx) == "wall") roomBounds[i].Add(selfPos);
                 //place tile
                 Tiles.SetCellv(selfPos,newTileID);
             }
 
+            //remove room's original tilemap
             tileMap.QueueFree();
         }
 
-        var connections = WeightedGraph.GenerateFromPointList(positions, new HashSet<(int, int)>()).RandomKruskal(RNG, EXTRA_CON_CHANCE);
+        
+        var connections =
+            //create room connection graph from rooms positions
+            WeightedGraph.GenerateFromPointList(positions, new HashSet<(int, int)>())
+            //create a sub-graph with no loops that has minimum total distance, then readd some edges
+            .RandomKruskal(RNG, EXTRA_CON_CHANCE);
 
+        //create bridges
         foreach(var edge in connections.Edges)
         {
             var first = Rooms[edge.First];
             var second = Rooms[edge.Second];
             var bridge = RoomAStar(first, second, roomBounds[edge.First], roomBounds[edge.Second]);
+
+            //connection failed
             if(bridge is null)
             {
                 GD.PushError($"Failed to connect rooms {edge.First} and {edge.Second}");
                 continue;
             }
 
+            //add bridge
             for(int i = 0; i < bridge.Count; ++i)
             {
                 var tileName = (i == 0 || i == bridge.Count-1)?"door":"bridge";
@@ -180,8 +218,10 @@ public class BodySeperationTest2 : Node2D
     private static readonly Vector2[] dirs = {Vector2.Up, Vector2.Down, Vector2.Left, Vector2.Right};
     private List<Vector2> GridAStar(List<Vector2> froms, Vector2 to, HashSet<Vector2> tos)
     {
+        //nothing to connect
         if(froms.Count == 0 || tos.Count == 0) return null;
 
+        //penalty for going near a corner
         float ExtraCornerPenalty(Vector2 v)
         {
             var ID = Tiles.GetCellv(v);
@@ -191,16 +231,23 @@ public class BodySeperationTest2 : Node2D
             else return 0f;
         }
 
+        //a bit of random penalty
         float ExtraRandomPenalty() => RNG.RandfRange(-H_DEVIATION,H_DEVIATION);
 
+        //total penalty - distance to target + some random + going through corners
         float H(Vector2 v) => v.GridDistanceTo(to) + ExtraRandomPenalty() + ExtraCornerPenalty(v);
 
+        //the cells that still need to get checked
         var candidates = new PriorityQueue<Vector2, float>();
         var candidates_set = new HashSet<Vector2>();
+        //stores the path from each cell
         var pre = new Dictionary<Vector2, Vector2>();
+        //distance
         var gscore = new Dictionary<Vector2, float>();
+        //distance + penalty
         var fscore = new Dictionary<Vector2, float>();
 
+        //initialize shit
         foreach(var from in froms)
         {
             gscore[from] = 0;
