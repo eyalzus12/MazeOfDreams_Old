@@ -11,15 +11,11 @@ public class BodySeperationTest2 : Node2D
     const int SPAWN_RADIUS = 100;
     //chance to reconnect rooms
     const float EXTRA_CON_CHANCE = 0.1f;
-    //maximum distance to try and connect
-    const int MAX_TILE_SEARCH = int.MaxValue;
     //penalty for going near corners
     const float DISCOURGE_PENALTY = 3f;
-    //randomness of penalty. keep below 0.5f
-    const float H_DEVIATION = 0.3f;
-    
+
     //tiles you can't pass through when connecting
-    static readonly HashSet<string> NON_PASSABLE = new HashSet<string>{"wall","corner","door"};
+    static readonly HashSet<string> NON_PASSABLE = new HashSet<string>{"wall","corner","door", "possible_door"};
 
     //list of rooms you could load
     static readonly string[] TEST_ROOMS = {"res://Scenes/Rooms/MainRoomTest.tscn", "res://Scenes/Rooms/MainRoomTest2.tscn", "res://Scenes/Rooms/MainRoomTest3.tscn"};
@@ -171,7 +167,7 @@ public class BodySeperationTest2 : Node2D
                 var worldPos = tileMap.ToGlobal(tileMap.MapToWorld(c));
                 var selfPos = Tiles.WorldToMap(Tiles.ToLocal(worldPos));
                 //add to bounds list if wall
-                if(tileMap.TileSet.TileGetName(idx) == "wall") roomBounds[i].Add(selfPos);
+                if(tileMap.TileSet.TileGetName(idx) == "possible_door") roomBounds[i].Add(selfPos);
                 //place tile
                 Tiles.SetCellv(selfPos,newTileID);
             }
@@ -208,15 +204,19 @@ public class BodySeperationTest2 : Node2D
                 Tiles.SetCellv(bridge[i],Tiles.TileSet.FindTileByName(tileName));
             }
         }
+
+        var possibleDoorCells = Tiles.GetUsedCells().Typed<Vector2>().Where(v => Tiles.TileSet.TileGetName(Tiles.GetCellv(v)) == "possible_door");
+        foreach(var pdc in possibleDoorCells)
+            Tiles.SetCellv(pdc, Tiles.TileSet.FindTileByName("wall"));
     }
 
     private List<Vector2> RoomAStar(GameRoom from, GameRoom to, List<Vector2> fromBounds, List<Vector2> toBounds)
     {
-        return GridAStar(fromBounds, Tiles.WorldToMap(Tiles.ToLocal(to.GlobalPosition)), toBounds.ToHashSet());
+        return GridAStar(fromBounds, toBounds.ToHashSet());
     }
 
     private static readonly Vector2[] dirs = {Vector2.Up, Vector2.Down, Vector2.Left, Vector2.Right};
-    private List<Vector2> GridAStar(List<Vector2> froms, Vector2 to, HashSet<Vector2> tos)
+    private List<Vector2> GridAStar(List<Vector2> froms, HashSet<Vector2> tos)
     {
         //nothing to connect
         if(froms.Count == 0 || tos.Count == 0) return null;
@@ -231,11 +231,8 @@ public class BodySeperationTest2 : Node2D
             else return 0f;
         }
 
-        //a bit of random penalty
-        float ExtraRandomPenalty() => RNG.RandfRange(-H_DEVIATION,H_DEVIATION);
-
-        //total penalty - distance to target + some random + going through corners
-        float H(Vector2 v) => v.GridDistanceTo(to) + ExtraRandomPenalty() + ExtraCornerPenalty(v);
+        //total penalty - distance to target + going through corners
+        float H(Vector2 v) => tos.Min(to => v.GridDistanceTo(to)) + ExtraCornerPenalty(v);
 
         //the cells that still need to get checked
         var candidates = new PriorityQueue<Vector2, float>();
@@ -263,7 +260,6 @@ public class BodySeperationTest2 : Node2D
         {
             var current = candidates.Dequeue();
             candidates_set.Remove(current);
-            if(gscore[current] > MAX_TILE_SEARCH) continue;//don't move too much
             if(tos.Contains(current)) {end = current; break;}
 
             foreach(var d in dirs)
@@ -300,6 +296,7 @@ public class BodySeperationTest2 : Node2D
 
         if(float.IsPositiveInfinity(end.x)) return null;
 
+        //reconstruct path
         var iter = end;
         var path = Enumerable.Empty<Vector2>().Prepend(iter);
         while(pre.ContainsKey(iter))

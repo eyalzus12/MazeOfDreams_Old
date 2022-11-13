@@ -117,4 +117,6 @@ public static class Extentions
         timer.Connect("timeout", timer, "queue_free");//remove timer after that time
         timer.Start();
     }
+
+    public static Godot.Collections.Array<T> Typed<T>(this Godot.Collections.Array a) => new Godot.Collections.Array<T>(a);
 }
