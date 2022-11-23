@@ -80,30 +80,34 @@ public class WeightedGraph
         var dsu = new DisjointSetUnion();
         var result = new WeightedGraph(NodeCount);
 
-        foreach(var edge in Edges) if(!dsu.SameSet(edge.First, edge.Second))
+        foreach(var edge in Edges) if(dsu[edge.First] != dsu[edge.Second])
         {
             result.Edges.Add(edge);
-            dsu.Union(edge.First, edge.Second);
+            dsu[edge.First] = edge.Second;
         }
 
         return result;
     }
 
-    public WeightedGraph RandomKruskal(RandomNumberGenerator rng, float extraChance)
+    public WeightedGraph RandomKruskal(RandomNumberGenerator rng, float extraChance, float curveMult)
     {
         Edges.Sort();
         var dsu = new DisjointSetUnion();
         var result = new WeightedGraph(NodeCount);
         var edgeSet = new HashSet<WeightedGraphEdge>();
 
-        foreach(var edge in Edges) if(!dsu.SameSet(edge.First, edge.Second))
+        foreach(var edge in Edges) if(dsu[edge.First] != dsu[edge.Second])
         {
             result.Edges.Add(edge);
-            dsu.Union(edge.First, edge.Second);
+            dsu[edge.First] = edge.Second;
             edgeSet.Add(edge);
         }
 
-        foreach(var edge in Edges) if(!edgeSet.Contains(edge) && rng.RandfExclusive() < extraChance)
+        foreach(var edge in Edges)
+        if(
+            !edgeSet.Contains(edge) &&
+            rng.RandfExclusive() < extraChance*(1f-Mathf.Tanh(curveMult*edge.Weight))
+        )
         {
             result.Edges.Add(edge);
         }

@@ -6,38 +6,27 @@ public class DisjointSetUnion
 {
     public Dictionary<int,int> Parent{get; private set;} = new Dictionary<int, int>();
 
+    public int this[int i] {get => FindSet(i); set => Union(i, value);}
+
     public bool MakeSet(int i) => Parent.TryAdd(i, -1);
 
-    public int FindSet(int i)
-    {
-        MakeSet(i);
-        var p = Parent[i];
-        if(p < 0) return i;
-        else return Parent[i] = FindSet(p);
-    }
+    public int FindSet(int i) {MakeSet(i); return (Parent[i] < 0)?i:(Parent[i] = FindSet(Parent[i]));}
 
-    public bool SameSet(int i, int j)
-    {
-        MakeSet(i); MakeSet(j);
-        return FindSet(i) == FindSet(j);
-    }
+    public bool SameSet(int i, int j) => FindSet(i) == FindSet(j);
 
     public bool Union(int i, int j)
     {
         var pi = FindSet(i); var pj = FindSet(j);
         if(pi == pj) return false;
 
-        var ic = -Parent[pi];
-        var jc = -Parent[pj];
-
-        if(ic < jc)
+        if(Parent[pi] > Parent[pj])
         {
-            Parent[pi] -= jc;
+            Parent[pi] += Parent[pj];
             Parent[pj] = pi;
         }
         else
         {
-            Parent[pj] -= ic;
+            Parent[pj] += Parent[pi];
             Parent[pi] = pj;
         }
 

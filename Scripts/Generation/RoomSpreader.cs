@@ -90,7 +90,9 @@ public class RoomSpreader : Node2D
             .Snapped(TileSize)
         ).ToList();
 
-        //Note: This is needed to prevent a memory leak
+        //the references for the bodies and space still exist
+        //so we need to get rid of them to prevent a memory leak
+
         //dispose of the bodies
         for(int i = 0; i < _bodies.Count; ++i) Physics2DServer.FreeRid(_bodies[i]);
         //dispose of the space
