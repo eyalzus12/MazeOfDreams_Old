@@ -19,6 +19,18 @@ public class GameRoom : Node2D
     [Export(PropertyHint.Enum)]
     public RoomType Type{get; set;}
 
+    [Export]
+    public Godot.Collections.Array<string> BridgePassBlockers{get; set;} = new Godot.Collections.Array<string>();
+
+    [Export]
+    public Godot.Collections.Dictionary<string, string> BridgeConnectionReplacements{get; set;} = new Godot.Collections.Dictionary<string, string>();
+
+    [Export]
+    public Godot.Collections.Dictionary<string, string> PostBridgeReplacements{get; set;} = new Godot.Collections.Dictionary<string, string>();
+
+    [Export]
+    public Godot.Collections.Array<string> DiscourgeNear{get; set;} = new Godot.Collections.Array<string>();
+
     public GameRoom() {}
 
     public override void _Ready()

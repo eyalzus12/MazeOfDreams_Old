@@ -20,9 +20,7 @@ public static class Extentions
 
     public static Rect2 RectWithAll(this IEnumerable<Vector2> ev)
 	{
-		var agg = ev.Aggregate<Vector2, (Vector2,Vector2)>((Vector2.Inf,-Vector2.Inf), (a,v) => (a.Item1.Min(v), a.Item2.Max(v)));
-		var pos = agg.Item1;
-		var end = agg.Item2;
+		(Vector2 pos, Vector2 end) = ev.Aggregate<Vector2, (Vector2,Vector2)>((Vector2.Inf,-Vector2.Inf), (a,v) => (a.Item1.Min(v), a.Item2.Max(v)));
 		var size = (end-pos).Abs();
 		return new Rect2(pos,size);
 	}
@@ -118,5 +116,28 @@ public static class Extentions
         timer.Start();
     }
 
-    public static Godot.Collections.Array<T> Typed<T>(this Godot.Collections.Array a) => new Godot.Collections.Array<T>(a);
+    public static void Deconstruct<TKey, TValue>(this KeyValuePair<TKey, TValue> kvp, out TKey key, out TValue value)
+    {key = kvp.Key; value = kvp.Value;}
+
+    public static void Deconstruct(this Vector2 v, out float x, out float y) {x = v.x; y = v.y;}
+    public static void Deconstruct(this Vector3 v, out float x, out float y, out float z) {x = v.x; y = v.y; z = v.z;}
+    public static void Deconstruct(this Quat v, out float x, out float y, out float z, out float w) {x = v.x; y = v.y; z = v.z; w = v.w;}
+
+    public static void Deconstruct(this Rect2 r, out Vector2 pos, out Vector2 end) {pos = r.Position; end = r.End;}
+
+    public static void ForEach<T>(this IEnumerable<T> e, Action<T> a) {foreach(var h in e) a(h);}
+
+    public static void TryInvokeValue<TKey, TValue>(this IDictionary<TKey, TValue> d, TKey key, Action<TValue> a)
+    {
+        TValue value; if(d.TryGetValue(key, out value)) a(value);
+    }
+
+    ///<summary>
+    ///Moves a position between two <see cref="Godot.TileMap"/>s.
+    ///</summary>
+    ///<param name="originTileMap">The <see cref="Godot.TileMap"/> where the position originated from.</param>
+    ///<param name="targetTileMap">The <see cref="Godot.TileMap"/> to move the position to.</param>
+    ///<param name="position">The position to move, in originTileMap's map coordinates.</param>
+    ///<returns>The given position in targetTileMap's map coordinates.</returns>
+    public static Vector2 MapToMap(this TileMap originTileMap, TileMap targetTileMap, Vector2 position) => targetTileMap.WorldToMap(targetTileMap.ToLocal(originTileMap.ToGlobal(originTileMap.MapToWorld(position))));
 }
