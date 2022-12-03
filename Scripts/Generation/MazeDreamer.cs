@@ -3,29 +3,37 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public class BodySeperationTest2 : Node2D
+public class MazeDreamer : Node2D
 {
-    //amount of rooms to load
-    const int ROOM_AMOUNT = 300;
-    //radius of circle to spawn rooms in
-    const int SPAWN_RADIUS = 100;
-    //chance to reconnect rooms
-    const float EXTRA_CON_CHANCE = 0.3f;
-    //how much does the connection distance correlate to the chance (higher = longer is less likely)
-    //practically, is a multiplier for the squared length of the connection,
-    //which is then put through a 1-Tanh(x) function
-    const float EXTRA_CON_CURVE_MULTIPLIER = 0.00005f;
-    //penalty for going near corners
-    const float DISCOURGE_PENALTY = 4f;
+    [Signal]
+    public delegate void DreamingFinished(GameRoom spawn);
 
-    //list of rooms you could load
-    static readonly string[] TEST_ROOMS = {"res://Scenes/Rooms/MainRoomTest.tscn", "res://Scenes/Rooms/MainRoomTest2.tscn", "res://Scenes/Rooms/MainRoomTest3.tscn"};
+    [Export]
+    public int RoomAmount = 300;
+    [Export]
+    public int SpawnRadius = 100;
+    [Export]
+    public float ExtraConnectionChance = 0.3f;
+    [Export]
+    public float ExtraConnectionCurveMultiplier = 0.00005f;
+    [Export]
+    public float DiscourgePenalty = 4f;
+    [Export]
+    public Godot.Collections.Array<PackedScene> Rooms;
+    [Export]
+    public PackedScene SpawnRoom;
+    [Export]
+    public TileSet BridgeTileSet;
+    [Export]
+    public string BridgeTile = "bridge";
+    [Export]
+    public string BridgeEdgeTile = "bridge edge";
 
     private RandomNumberGenerator RNG;
 
-    public List<GameRoom> Rooms{get; set;} = new List<GameRoom>();
+    public List<GameRoom> LoadedRooms{get; set;} = new List<GameRoom>();
     public TileMap Tiles{get; set;}
-    public RoomSpreader Spreader{get; set;}
+    private RoomSpreader _spreader;
 
     //a by-room set of tile ids you can't pass when building a bridge
     private Dictionary<int, HashSet<int>> _noBridgePass = new Dictionary<int, HashSet<int>>();
@@ -35,57 +43,84 @@ public class BodySeperationTest2 : Node2D
     private Dictionary<int, Dictionary<int, int>> _postBridgesReplacements = new Dictionary<int, Dictionary<int, int>>();
     //a by-room dictionary of tile ids that indicates what can be connected to with a bridge and what to change it to
     private Dictionary<int, Dictionary<int, int>> _bridgeConnections = new Dictionary<int, Dictionary<int, int>>();
+    private Dictionary<int, Dictionary<int, PackedScene>> _bridgeScenes = new Dictionary<int, Dictionary<int, PackedScene>>();
     //a dictionary that matches tile position to room index
     private Dictionary<Vector2, int> _roomTileDict = new Dictionary<Vector2, int>();
+    private List<List<Vector2>> _roomBounds;
+    private List<int> _generationIndexList = new List<int>();
+    //stores the instance IDs of tilesets we load
+    private HashSet<ulong> _tileSetSet = new HashSet<ulong>();
+    //stores dictionaries to convert old tile IDs to new tile IDs
+    private Dictionary<ulong, Dictionary<int, int>> _idDictDict = new Dictionary<ulong, Dictionary<int, int>>();
 
-    public BodySeperationTest2() {}
+    private int _bridgeTileID;
+    private int _bridgeEdgeTileID;
+
+    private GameRoom _spawnRoom;
+
+    public MazeDreamer() {}
 
     public override void _Ready()
     {
         //get the RNG
-        RNG = GetTree().Root.GetNode<Randomizer>(nameof(Randomizer)).RNG;
+        RNG = GetTree().Root.GetNodeOrNull<Randomizer>(nameof(Randomizer))?.RNG;
+        if(RNG is null)
+        {
+            GD.PushError("Cannot generate floor {Name} as the RNG is non-existent or null");
+            return;
+        }
         //get the tilemap
         Tiles = GetNodeOrNull<TileMap>(nameof(Tiles));
-        if(Tiles.TileSet is null) Tiles.TileSet = new TileSet();
+        Tiles.TileSet = BridgeTileSet;
 
-        //get room loaders
-        var rooms = TEST_ROOMS.Select(r => ResourceLoader.Load<PackedScene>(r)).ToList();
+        _bridgeTileID = Tiles.TileSet.FindTileByName(BridgeTile);
+        _bridgeEdgeTileID = Tiles.TileSet.FindTileByName(BridgeEdgeTile);
 
         //create the shape and room list
-        var shapes = new List<Shape2D>();
-        for(int i = 0; i < ROOM_AMOUNT; ++i)
+        var shapes = new List<List<(Transform2D, Shape2D)>>();
+
+        _spawnRoom = SpawnRoom.Instance<GameRoom>();
+        _spawnRoom.RoomIndex = 0;
+        LoadedRooms.Add(_spawnRoom);
+        AddChild(_spawnRoom);
+        shapes.Add(_spawnRoom.BoundShapes);
+        RemoveChild(_spawnRoom);
+        
+        for(int i = 0; i < RoomAmount; ++i)
         {
             //choose random room type
-            var newRoomType = RNG.Choice(rooms);
+            var newRoomType = RNG.Choice(Rooms);
             //create room
             var newRoom = newRoomType.Instance<GameRoom>();
             //set room index
-            newRoom.RoomIndex = i;
+            newRoom.RoomIndex = i+1;
             //add data to lists
-            Rooms.Add(newRoom);
-            shapes.Add(newRoom.BoundingShape);
+            LoadedRooms.Add(newRoom);
+            AddChild(newRoom);
+            shapes.Add(newRoom.BoundShapes);
+            RemoveChild(newRoom);
         }
 
         //create the room spreader with the shape list
-        Spreader = new RoomSpreader(Tiles.CellSize, SPAWN_RADIUS, shapes);
+        _spreader = new RoomSpreader(Tiles.CellSize, SpawnRadius, shapes);
         //run OnSpreadFinished when the spreading is finished
-        Spreader.Connect(nameof(RoomSpreader.SpreadingFinished), this, nameof(OnSpreadFinished));
+        _spreader.Connect(nameof(RoomSpreader.SpreadingFinished), this, nameof(OnSpreadFinished));
         //add to the scene
-        AddChild(Spreader);
+        AddChild(_spreader);
     }
 
-    private List<List<Vector2>> _roomBounds;
-    private List<int> _generationIndexList = new List<int>();
     public void OnSpreadFinished(List<Vector2> positions)
     {
+        _spreader.QueueFree();
+
         //stores the room bounds
-        _roomBounds = new List<List<Vector2>>(new List<Vector2>[Rooms.Count]);
+        _roomBounds = new List<List<Vector2>>(new List<Vector2>[LoadedRooms.Count]);
 
         var mainPositions = new List<Vector2>();
 
-        for(int i = 0; i < Rooms.Count; ++i)
+        for(int i = 0; i < LoadedRooms.Count; ++i)
         {
-            var room = Rooms[i];
+            var room = LoadedRooms[i];
             //put room in its position
             room.Position = positions[i];
             //add room tiles to dict
@@ -102,7 +137,7 @@ public class BodySeperationTest2 : Node2D
             //create room connection graph from rooms positions
             WeightedGraph.GenerateFromPointList(mainPositions, new HashSet<(int, int)>())
             //create a sub-graph with no loops that has minimum total distance, then readd some edges
-            .RandomKruskal(RNG, EXTRA_CON_CHANCE, EXTRA_CON_CURVE_MULTIPLIER);
+            .RandomKruskal(RNG, ExtraConnectionChance, ExtraConnectionCurveMultiplier);
 
         //create bridges
         for(int i = 0; i < connections.Edges.Count; ++i)
@@ -129,17 +164,29 @@ public class BodySeperationTest2 : Node2D
                 {
                     case BridgeType.Start:
                         _bridgeConnections[edgeFirst].TryInvokeValue(ID, d => Tiles.SetCellv(pos,d));
+                        _bridgeScenes[edgeFirst].TryInvokeValue(ID, p => 
+                        {
+                            var n = p.Instance<Node2D>();
+                            LoadedRooms[edgeFirst].AddChild(n);
+                            n.GlobalPosition = Tiles.ToGlobal(Tiles.MapToWorld(pos) + Tiles.CellSize/2f);
+                        });
                         break;
                     case BridgeType.End:
                         _bridgeConnections[edgeSecond].TryInvokeValue(ID, d => Tiles.SetCellv(pos,d));
+                        _bridgeScenes[edgeSecond].TryInvokeValue(ID, p => 
+                        {
+                            var n = p.Instance<Node2D>();
+                            LoadedRooms[edgeSecond].AddChild(n);
+                            n.GlobalPosition = Tiles.ToGlobal(Tiles.MapToWorld(pos) + Tiles.CellSize/2f);
+                        });
                         break;
                     case BridgeType.Edge:
                         if(ID == TileMap.InvalidCell)
-                            Tiles.SetCellv(pos, Tiles.TileSet.FindTileByName("bridge_edge"));
+                            Tiles.SetCellv(pos, _bridgeEdgeTileID);
                         break;
                     case BridgeType.Bridge:
-                        if(ID == TileMap.InvalidCell || Tiles.TileSet.TileGetName(ID) == "bridge_edge")
-                            Tiles.SetCellv(pos, Tiles.TileSet.FindTileByName("bridge"));
+                        if(ID == TileMap.InvalidCell || ID == _bridgeEdgeTileID)
+                            Tiles.SetCellv(pos, _bridgeTileID);
                         break;
                     default:
                         GD.PushError($"Unknown bridge part type {type}");
@@ -162,8 +209,20 @@ public class BodySeperationTest2 : Node2D
             )
         );
 
-        //remove the unused rooms
-        for(int i = 0; i < Rooms.Count; ++i) if(!Rooms[i].GenerationUsed) Rooms[i].QueueFree();
+        //dispose of the unused rooms, as they're no longer needed, plus the bound shapes
+        for(int i = 0; i < LoadedRooms.Count; ++i)
+        {
+            var room = LoadedRooms[i];
+            if(!room.GenerationUsed) room.QueueFree();
+            else
+            {
+                room.OnDreamingFinished();
+                room.GetNode(nameof(room.BoundShapes)).QueueFree();
+            }
+        }
+
+        //emit ended
+        EmitSignal(nameof(DreamingFinished), _spawnRoom);
     }
 
     public void AddRoomTiles(GameRoom room)
@@ -198,7 +257,7 @@ public class BodySeperationTest2 : Node2D
         PlaceTilemap(tileMap);
 
         var _idDict = _idDictDict[room.Tiles.TileSet.GetInstanceId()];
-
+        
         _postBridgesReplacements[room.RoomIndex] = new Dictionary<int, int>();
         foreach((string key, string value) in room.PostBridgeReplacements)
             _postBridgesReplacements[room.RoomIndex][_idDict[tileMap.TileSet.FindTileByName(key)]] = _idDict[tileMap.TileSet.FindTileByName(value)];
@@ -206,13 +265,18 @@ public class BodySeperationTest2 : Node2D
         _bridgeConnections[room.RoomIndex] = new Dictionary<int, int>();
         foreach((string key, string value) in room.BridgeConnectionReplacements)
             _bridgeConnections[room.RoomIndex][_idDict[tileMap.TileSet.FindTileByName(key)]] = _idDict[tileMap.TileSet.FindTileByName(value)];
+        
+        _bridgeScenes[room.RoomIndex] = new Dictionary<int, PackedScene>();
+        foreach((string key, PackedScene value) in room.BridgeConnectionScenes)
+            _bridgeScenes[room.RoomIndex][_idDict[tileMap.TileSet.FindTileByName(key)]] = value;
 
         _noBridgePass[room.RoomIndex] = new HashSet<int>(room.BridgePassBlockers.Select(bpb => _idDict[tileMap.TileSet.FindTileByName(bpb)]));
         _discourgeNear[room.RoomIndex] = new HashSet<int>(room.DiscourgeNear.Select(bpb => _idDict[tileMap.TileSet.FindTileByName(bpb)]));
 
         foreach(Vector2 c in tileMap.GetUsedCells())
         {
-            if(_bridgeConnections[room.RoomIndex].ContainsKey(_idDict[tileMap.GetCellv(c)]))
+            var id = _idDict[tileMap.GetCellv(c)];
+            if(_bridgeConnections[room.RoomIndex].ContainsKey(id) || _bridgeScenes[room.RoomIndex].ContainsKey(id))
                 _roomBounds[room.RoomIndex].Add(tileMap.MapToMap(Tiles, c));
         }
 
@@ -220,10 +284,6 @@ public class BodySeperationTest2 : Node2D
         tileMap.QueueFree();
     }
 
-    //stores the instance IDs of tilesets we load
-    private HashSet<ulong> _tileSetSet = new HashSet<ulong>();
-    //stores dictionaries to convert old tile IDs to new tile IDs
-    private Dictionary<ulong, Dictionary<int, int>> _idDictDict = new Dictionary<ulong, Dictionary<int, int>>();
     public void PlaceTilemap(TileMap tileMap)
     {
         //merge the tilesets
@@ -326,21 +386,21 @@ public class BodySeperationTest2 : Node2D
         if(froms.Count == 0 || tos.Count == 0) return null;
 
         //penalty for going near a corner
-        float DiscourgePenalty(Vector2 v) => DIRS.Any(d =>
+        float HDiscourge(Vector2 v) => DIRS.Any(d =>
         {
             var neighbor = v+d;
             var nid = Tiles.GetCellv(neighbor);
             if(nid == TileMap.InvalidCell || !_roomTileDict.ContainsKey(neighbor)) return false;
 
             var nindex = _roomTileDict[neighbor];
-            var neighborRoom = Rooms[nindex];
+            var neighborRoom = LoadedRooms[nindex];
             if(!neighborRoom.GenerationUsed) return false;
 
             return _discourgeNear[nindex].Contains(nid);
-        })?DISCOURGE_PENALTY:0f;
+        })?DiscourgePenalty:0f;
 
         //total penalty - distance to target + going through corners
-        float H(Vector2 v) => tos.Min(to => v.GridDistanceTo(to)) + DiscourgePenalty(v);
+        float H(Vector2 v) => tos.Min(to => v.GridDistanceTo(to)) + HDiscourge(v);
 
         //the cells that still need to get checked
         var candidates = new PriorityQueue<Vector2, float>();
@@ -388,9 +448,9 @@ public class BodySeperationTest2 : Node2D
                 if(neighborID == TileMap.InvalidCell && _roomTileDict.ContainsKey(neighbor))
                 {
                     var roomIdx = _roomTileDict[neighbor];
-                    var roomRoom = Rooms[roomIdx];
+                    var roomRoom = LoadedRooms[roomIdx];
                     //belonging to a side room
-                    if(Rooms[roomIdx].Type == GameRoom.RoomType.Side)
+                    if(LoadedRooms[roomIdx].Type == GameRoom.RoomType.Side)
                     {
                         AddRoom(roomRoom);
                         var roomGenIdx = roomRoom.GenerationIndex;

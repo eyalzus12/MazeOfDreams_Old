@@ -12,9 +12,6 @@ public class GameRoom : Node2D
     public int RoomIndex{get; set;}
     public int GenerationIndex{get; set;}
     public bool GenerationUsed{get; set;}
-    
-    [Export]
-    public Shape2D BoundingShape{get; set;}
 
     [Export(PropertyHint.Enum)]
     public RoomType Type{get; set;}
@@ -26,17 +23,22 @@ public class GameRoom : Node2D
     public Godot.Collections.Dictionary<string, string> BridgeConnectionReplacements{get; set;} = new Godot.Collections.Dictionary<string, string>();
 
     [Export]
+    public Godot.Collections.Dictionary<string, PackedScene> BridgeConnectionScenes{get; set;} = new Godot.Collections.Dictionary<string, PackedScene>();
+
+    [Export]
     public Godot.Collections.Dictionary<string, string> PostBridgeReplacements{get; set;} = new Godot.Collections.Dictionary<string, string>();
 
     [Export]
     public Godot.Collections.Array<string> DiscourgeNear{get; set;} = new Godot.Collections.Array<string>();
+
+    public List<(Transform2D, Shape2D)> BoundShapes{get; set;}
 
     public GameRoom() {}
 
     public override void _Ready()
     {
         Tiles = GetNodeOrNull<TileMap>(nameof(Tiles));
-        InitDoors();
+        BoundShapes = GetNode(nameof(BoundShapes)).GetChildren().OfType<CollisionShape2D>().Select(c => (c.Transform, c.Shape)).ToList();
     }
 
     public virtual void InitDoors()
@@ -47,6 +49,11 @@ public class GameRoom : Node2D
         DoorsDict = Doors.GroupByToDictionary(d => d.Direction);
         //connect interaction signal to function
         foreach(var door in Doors) door.Connect(nameof(Door.Interacted), this, nameof(OnDoorInteract));
+    }
+
+    public virtual void OnDreamingFinished()
+    {
+        InitDoors();
     }
 
     public virtual void OnDoorInteract(Door door, InteracterComponent interacter)
