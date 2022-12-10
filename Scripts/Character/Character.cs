@@ -40,9 +40,12 @@ public class Character : KinematicBody2D
 	public long StateFrame{get; set;}
 
 	public bool DebugActive{get; set;} = false;
-	public CharacterDebugLabel DebugLabel{get; set;}
+	public CharacterDebugLabel DebugLabel{get; private set;}
 
-	public InteracterComponent Interacter{get; set;}
+	public InteracterComponent Interacter{get; private set;}
+
+	public Timer DashCooldownTimer{get; private set;}
+	public Timer InDashTimer{get; private set;}
 
 	public override void _Ready()
 	{
@@ -66,6 +69,12 @@ public class Character : KinematicBody2D
 
 		//setup debug label
 		DebugLabel = GetNodeOrNull<CharacterDebugLabel>(DEBUG_LABEL_PATH);
+
+		//get timers
+		DashCooldownTimer = GetNodeOrNull<Timer>(nameof(DashCooldownTimer));
+		DashCooldownTimer.WaitTime = DashCooldown;
+		InDashTimer = GetNodeOrNull<Timer>(nameof(InDashTimer));
+		InDashTimer.WaitTime = DashTime;
 	}
 
 	public override void _PhysicsProcess(float delta)

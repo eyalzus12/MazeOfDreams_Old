@@ -25,6 +25,7 @@ public class Door : StaticBody2D
         {
             _open = value;
             DoorCollision?.SetDeferred("disabled", value);
+            Interactable?.SetDeferred("monitoring", !value);
             if(DoorOpenSprite != null) DoorOpenSprite.Visible = value;
             if(DoorClosedSprite != null) DoorClosedSprite.Visible = !value;
         }
@@ -36,7 +37,6 @@ public class Door : StaticBody2D
         DoorCollision = GetNodeOrNull<CollisionShape2D>(nameof(DoorCollision));
         DoorOpenSprite = GetNodeOrNull<Sprite>(nameof(DoorOpenSprite));
         DoorClosedSprite = GetNodeOrNull<Sprite>(nameof(DoorClosedSprite));
-
         Open = InitiallyOpen;
     }
 

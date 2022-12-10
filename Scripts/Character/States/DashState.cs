@@ -22,8 +22,11 @@ public class DashState : State
 	//set dash cooldown and dash bounce timers
 	public override Action<Character> OnChange(State s) => c =>
 	{
-		c.SetTempVariable(nameof(c.DashInCooldown), c.DashCooldown, true, false);
-		c.SetTempVariable(nameof(c.InDash), c.DashTime, true, false);
+		c.DashInCooldown = true;
+		c.DashCooldownTimer.Start();
+
+		c.InDash = true;
+		c.InDashTimer.Start();
 	};
 
 	//can't interact during dash startup
