@@ -15,7 +15,7 @@ public class MazeDreamer : Node2D
     [Export]
     public float ExtraConnectionChance = 0.3f;
     [Export]
-    public float ExtraConnectionCurveMultiplier = 0.00005f;
+    public float ExtraConnectionCurveMultiplier = 0.01f;
     [Export]
     public float DiscourgePenalty = 4f;
     [Export]
@@ -66,11 +66,12 @@ public class MazeDreamer : Node2D
         RNG = GetTree().Root.GetNodeOrNull<Randomizer>(nameof(Randomizer))?.RNG;
         if(RNG is null)
         {
-            GD.PushError("Cannot generate floor {Name} as the RNG is non-existent or null");
+            GD.PushError($"Cannot generate floor {Name} as the RNG is non-existent or null");
             return;
         }
         //get the tilemap
-        Tiles = GetNodeOrNull<TileMap>(nameof(Tiles));
+        Tiles = GetNodeOrNull<TileMap>("NavRegion/" + nameof(Tiles));
+        //Tiles.SetProcess(false);
         Tiles.TileSet = BridgeTileSet;
 
         _bridgeTileID = Tiles.TileSet.FindTileByName(BridgeTile);
@@ -114,23 +115,23 @@ public class MazeDreamer : Node2D
         _spreader.QueueFree();
 
         //stores the room bounds
+        
         _roomBounds = new List<List<Vector2>>(new List<Vector2>[LoadedRooms.Count]);
-
+        
         var mainPositions = new List<Vector2>();
-
         for(int i = 0; i < LoadedRooms.Count; ++i)
         {
             var room = LoadedRooms[i];
             //put room in its position
             room.Position = positions[i];
-            //add room tiles to dict
-            AddRoomTiles(room);
             //add room if main
             if(room.Type == GameRoom.RoomType.Main)
             {
                 mainPositions.Add(room.Position);
                 AddRoom(room);
             }
+            //add room tiles to dict
+            AddRoomTiles(room);
         }
         
         var connections =
@@ -138,7 +139,7 @@ public class MazeDreamer : Node2D
             WeightedGraph.GenerateFromPointList(mainPositions, new HashSet<(int, int)>())
             //create a sub-graph with no loops that has minimum total distance, then readd some edges
             .RandomKruskal(RNG, ExtraConnectionChance, ExtraConnectionCurveMultiplier);
-
+        
         //create bridges
         for(int i = 0; i < connections.Edges.Count; ++i)
         {
@@ -195,16 +196,17 @@ public class MazeDreamer : Node2D
             }
         }
 
-        Tiles.GetUsedCells().OfType<Vector2>() //get cells
-        .ForEach(   //for each
-        v =>
-            _roomTileDict
-            .TryInvokeValue(v,   //if they belong to a room
-            r =>
-                _postBridgesReplacements[r]
-                .TryInvokeValue(Tiles.GetCellv(v), //and if they have a replacement
-                h =>
-                    Tiles.SetCellv(v, h)   //replace them
+        //for each cell
+        Tiles.GetUsedCells().OfType<Vector2>().ForEach(   
+        cell =>
+            //if they belong to a room
+            _roomTileDict.TryInvokeValue(cell,
+            roomIndex =>
+                //and if the cell has a replacement
+                _postBridgesReplacements[roomIndex].TryInvokeValue(Tiles.GetCellv(cell),
+                replacement =>
+                    //replace them
+                    Tiles.SetCellv(cell, replacement)   
                 )
             )
         );
@@ -221,17 +223,32 @@ public class MazeDreamer : Node2D
             }
         }
 
+        GD.Print("Finished dreaming");
+
+        /*var timer = new Timer();
+        timer.OneShot = true;
+        timer.Autostart = true;
+        timer.WaitTime = 5f;
+        timer.Connect("timeout", Tiles, "set_bake_navigation", new Godot.Collections.Array{true});
+        timer.Connect("timeout", timer, "queue_free");
+        AddChild(timer);*/
+
         //emit ended
         EmitSignal(nameof(DreamingFinished), _spawnRoom);
     }
 
     public void AddRoomTiles(GameRoom room)
     {
-        AddChild(room);
-        var tileMap = room.Tiles;
-        foreach(Vector2 c in tileMap.GetUsedCells())
-            _roomTileDict.Add(tileMap.MapToMap(Tiles, c), room.RoomIndex);
-        RemoveChild(room);
+        var alreadyIn = room.IsInsideTree();
+        
+        if(!alreadyIn) AddChild(room);
+
+        room.Tiles
+            .GetUsedCells().OfType<Vector2>() //get used cells
+            .Select(c => room.Tiles.MapToMap(Tiles, c)) //transfer to new tilemap
+            .ForEach(c => _roomTileDict[c] = room.RoomIndex); //add to dict
+        
+        if(!alreadyIn) RemoveChild(room);
     }
 
     public void AddRoom(GameRoom room)
@@ -250,12 +267,11 @@ public class MazeDreamer : Node2D
         room.GenerationIndex = _generationIndexList.Count;
         //add to generation->original index list
         _generationIndexList.Add(room.RoomIndex);
-
         var tileMap = room.Tiles;
 
         //add tiles to the floor
         PlaceTilemap(tileMap);
-
+        
         var _idDict = _idDictDict[room.Tiles.TileSet.GetInstanceId()];
         
         _postBridgesReplacements[room.RoomIndex] = new Dictionary<int, int>();
@@ -279,15 +295,16 @@ public class MazeDreamer : Node2D
             if(_bridgeConnections[room.RoomIndex].ContainsKey(id) || _bridgeScenes[room.RoomIndex].ContainsKey(id))
                 _roomBounds[room.RoomIndex].Add(tileMap.MapToMap(Tiles, c));
         }
-
+        
         //remove room's original tilemap
         tileMap.QueueFree();
     }
 
     public void PlaceTilemap(TileMap tileMap)
     {
+        var instanceId = tileMap.TileSet.GetInstanceId();
         //merge the tilesets
-        if(!_tileSetSet.Contains(tileMap.TileSet.GetInstanceId()))
+        if(!_tileSetSet.Contains(instanceId))
         {
             //copy tiles
             var ids = new Godot.Collections.Array<int>(tileMap.TileSet.GetTilesIds());
@@ -357,8 +374,8 @@ public class MazeDreamer : Node2D
                 Tiles.TileSet.TileSetName(newTileID, name);
             }
 
-            _idDictDict.Add(tileMap.TileSet.GetInstanceId(), idDict);
-            _tileSetSet.Add(tileMap.TileSet.GetInstanceId());
+            _idDictDict.Add(instanceId, idDict);
+            _tileSetSet.Add(instanceId);
         }
 
         //place tiles
@@ -367,7 +384,7 @@ public class MazeDreamer : Node2D
             //get tile ID
             var idx = tileMap.GetCellv(c);
             //get new tile ID
-            var newTileID = _idDictDict[tileMap.TileSet.GetInstanceId()][idx];
+            var newTileID = _idDictDict[instanceId][idx];
             //place tile
             Tiles.SetCellv(tileMap.MapToMap(Tiles, c),newTileID);
         }
@@ -400,7 +417,7 @@ public class MazeDreamer : Node2D
         })?DiscourgePenalty:0f;
 
         //total penalty - distance to target + going through corners
-        float H(Vector2 v) => tos.Min(to => v.GridDistanceTo(to)) + HDiscourge(v);
+        float H(Vector2 v) => tos.Contains(v)?float.NegativeInfinity:(tos.Min(to => v.GridDistanceTo(to)) + HDiscourge(v));
 
         //the cells that still need to get checked
         var candidates = new PriorityQueue<Vector2, float>();
@@ -422,7 +439,7 @@ public class MazeDreamer : Node2D
             candidates_set.Add(from);
         }
 
-        var end = Vector2.One * float.PositiveInfinity;
+        var end = Vector2.Inf;
 
         while(candidates.Count != 0)
         {
@@ -433,14 +450,6 @@ public class MazeDreamer : Node2D
             foreach(var d in DIRS)
             {
                 var neighbor = current+d;
-
-                if(tos.Contains(neighbor))
-                {
-                    pre[neighbor] = current;
-                    end = neighbor;
-                    candidates.Clear();
-                    break;
-                }
 
                 var neighborID = Tiles.GetCellv(neighbor);
 
@@ -464,8 +473,12 @@ public class MazeDreamer : Node2D
                     }
                 }
 
-                //found an occupied cell
-                if(neighborID != TileMap.InvalidCell && _roomTileDict.ContainsKey(neighbor) && _noBridgePass[_roomTileDict[neighbor]].Contains(neighborID)) continue;
+                if(
+                    !tos.Contains(neighbor) && //not a target
+                    neighborID != TileMap.InvalidCell && //not empty
+                    _roomTileDict.ContainsKey(neighbor) && //belongs to a room
+                    _noBridgePass[_roomTileDict[neighbor]].Contains(neighborID) //is a pathing preventer
+                ) continue;
 
                 gscore.TryAdd(neighbor, float.PositiveInfinity);
                 fscore.TryAdd(neighbor, float.PositiveInfinity);
@@ -485,7 +498,7 @@ public class MazeDreamer : Node2D
             }
         }
 
-        if(float.IsPositiveInfinity(end.x)) return null;
+        if(Mathf.IsInf(end.x)) return null;
 
         //reconstruct path
         var iter = end;

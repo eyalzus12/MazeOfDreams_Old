@@ -25,7 +25,7 @@ public class WeightedGraph
     public static WeightedGraph GenerateFromPointList(List<Vector2> points, HashSet<(int,int)> illegals)
     {
         var triangulation = Geometry.TriangulateDelaunay2d(points.ToArray());
-        if(triangulation.Length == 0) GD.PushError("Room triangluation failed");
+        if(triangulation.Length == 0) GD.PushError("Room triangluation failed. Please report this rng seed.");
         var result = new WeightedGraph(points.Count);
         var edgeSet = new HashSet<(int,int)>();
         for(int i = 0; i < triangulation.Length; i += 3)
@@ -103,14 +103,18 @@ public class WeightedGraph
             edgeSet.Add(edge);
         }
 
-        foreach(var edge in Edges)
-        if(
-            !edgeSet.Contains(edge) &&
-            rng.RandfExclusive() < extraChance*(1f-Mathf.Tanh(curveMult*edge.Weight))
-        )
+        for(int i = 0; i < Edges.Count; ++i)
         {
-            result.Edges.Add(edge);
+            var edge = Edges[i];
+            if(
+                !edgeSet.Contains(edge) &&
+                rng.RandfExclusive() < extraChance*(1f-Mathf.Tanh(curveMult*i))
+            )
+            {
+                result.Edges.Add(edge);
+            }
         }
+        
 
         return result;
     }

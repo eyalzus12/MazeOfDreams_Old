@@ -10,9 +10,9 @@ public class DashState : State
 		//calculate desired acceleration
 		var dashAcceleration = c.DashSpeed/Mathf.Ceil(c.DashStartup);
 		//apply acceleration
-		c.CurrentVelocity = c.CurrentVelocity.MoveToward(c.DashSpeed * c.VelocityVector, dashAcceleration);
+		c.Velocity = c.Velocity.MoveToward(c.DashSpeed * c.VelocityVector, dashAcceleration);
 		//apply movement
-		c.MoveAndSlide(c.CurrentVelocity, Vector2.Zero);
+		c.MoveAndSlide(c.Velocity, Vector2.Zero);
 	};
 	
 	//transition into Base if more than DashStartup (rounded up) frames passed

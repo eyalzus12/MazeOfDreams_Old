@@ -108,12 +108,13 @@ public static class Extentions
     public static void TimePhysicsAction(this Node n, float seconds, string action)
     {
         var timer = new Timer();
+        timer.OneShot = true;
+        timer.Autostart = true;
         timer.WaitTime = seconds;
         timer.ProcessMode = Timer.TimerProcessMode.Physics;
-        n.AddChild(timer);
         timer.Connect("timeout", n, action);
         timer.Connect("timeout", timer, "queue_free");//remove timer after that time
-        timer.Start();
+        n.AddChild(timer);
     }
 
     public static void Deconstruct<TKey, TValue>(this KeyValuePair<TKey, TValue> kvp, out TKey key, out TValue value)
@@ -131,6 +132,7 @@ public static class Extentions
     {
         TValue value; if(d.TryGetValue(key, out value)) a(value);
     }
+
 
     ///<summary>
     ///Moves a position between two <see cref="Godot.TileMap"/>s.

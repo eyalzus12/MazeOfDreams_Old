@@ -11,7 +11,7 @@ config_version=4
 [application]
 
 config/name="Maze Of Dreams"
-run/main_scene="res://Testing/FloorTest1.tscn"
+run/main_scene="res://Scenes/Floors/TestFloor1.tscn"
 boot_splash/image="res://Scripts/d.png"
 
 [autoload]
@@ -28,7 +28,6 @@ window/stretch/aspect="expand"
 
 [editor]
 
-main_run_args="--verbose"
 search_in_file_extensions=PoolStringArray( "gd", "shader", "cs" )
 
 [gui]
@@ -92,9 +91,22 @@ toggle_input_debug={
  ]
 }
 
+[input_devices]
+
+buffering/agile_event_flushing=true
+
+[layer_names]
+
+2d_physics/layer_1="objects"
+2d_physics/layer_2="agents"
+
 [mono]
 
 project/assembly_name="Maze Of Dreams"
+
+[navigation]
+
+2d/default_edge_connection_margin=18.0
 
 [node]
 

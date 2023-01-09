@@ -34,7 +34,7 @@ public class Character : KinematicBody2D
 	public bool DashInCooldown{get; set;}
 	public bool InDash{get; set;}
 
-	public Vector2 CurrentVelocity{get; set;}
+	public Vector2 Velocity{get; set;}
 
 	public State CurrentState{get; set;}
 	public long StateFrame{get; set;}
@@ -93,7 +93,7 @@ public class Character : KinematicBody2D
 		}
 
 		//remove inconsequental movements
-		CurrentVelocity = CurrentVelocity.ZeroApproxNormalize();
+		Velocity = Velocity.ZeroApproxNormalize();
 	}
 
 	public void OnStateChanged(State newState)

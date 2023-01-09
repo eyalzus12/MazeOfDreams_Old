@@ -7,6 +7,7 @@ public static class Consts
     public const string LEFT_INPUT = "player_left";
     public const string DOWN_INPUT = "player_down";
     public const string RIGHT_INPUT = "player_right";
+    public const string DASH_INPUT = "player_dash";
     public const string DEBUG_TOGGLE_INPUT = "toggle_debug";
     public const string GAME_EXIT_INPUT = "game_exit";
     public const string INTERACT_INPUT = "player_interact";

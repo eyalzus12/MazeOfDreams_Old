@@ -22,17 +22,19 @@ public class CharacterDebugLabel : Label
 		Add("DashInCooldown", character.DashInCooldown);
 		Add("InDash", character.InDash);
 		Newline();
-		Add("Velocity", character.CurrentVelocity.Round(2));
+		Add("Velocity", character.Velocity.Round(2));
 		Add("Position", character.Position.Round(2));
 		Newline();
 		Add("IsOnWall", character.IsOnWall());
 		Add("CollisionNormal", (character.GetSlideCount() > 0)?(character.GetSlideCollision(0).Normal):Vector2.Zero);
 		Newline();
 		Add("CurrentInteractable", character.Interacter?.CurrentInteractable?.GetParent()?.Name??"None");
+		Newline();
+		Add("FPS", Engine.GetFramesPerSecond());
 		Commit();
 	}
 
 	public void Commit() {Text = Builder.ToString(); Builder.Clear();}
-	public void Add<T>(string name, T property, bool dot = true) => Builder.Append($"{name}: {property.ToString()}    ");
+	public void Add<T>(string name, T property, bool dot = true) => Builder.Append($"{name}{(dot?":":"")} {property.ToString()}    ");
 	public void Newline() => Builder.AppendLine();
 }

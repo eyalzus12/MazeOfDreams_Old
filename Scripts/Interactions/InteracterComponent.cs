@@ -11,11 +11,21 @@ public class InteracterComponent : Area2D
 		if(
 			_currentInteractable is null || //no current interactable
 			value is null || //overriding current interactable
-			//ensure change is valid
+			//if not overriding and current interactable exists,
 			(
-				//ensure new interactable has higher priority
-				value.InteractionPriority > _currentInteractable.InteractionPriority &&
-				//ensure can interact with new interactable
+				//ensure new interactable has proper priority. either
+				(
+					//strictly higher priority
+					value.InteractionPriority > _currentInteractable.InteractionPriority ||
+					//or
+					(
+						//same priority
+						value.InteractionPriority == _currentInteractable.InteractionPriority &&
+						//and closer
+						GlobalPosition.DistanceSquaredTo(value.GlobalPosition) < GlobalPosition.DistanceSquaredTo(_currentInteractable.GlobalPosition)
+					)
+				) &&
+				//ensure we can interact with new interactable
 				InteractionValidator(value)
 			)
 		)

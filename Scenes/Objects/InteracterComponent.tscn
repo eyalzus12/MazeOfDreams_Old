@@ -2,7 +2,7 @@
 
 [ext_resource path="res://Scripts/Interactions/InteracterComponent.cs" type="Script" id=1]
 
-[node name="InteracterComponent" type="Area2D"]
+[node name="InteracterComponent" type="Area2D" groups=["interacter_component"]]
 script = ExtResource( 1 )
 
 [node name="InteractionArea" type="CollisionShape2D" parent="."]

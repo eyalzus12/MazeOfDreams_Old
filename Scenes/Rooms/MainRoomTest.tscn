@@ -1,14 +1,29 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://Scenes/Rooms/BaseRoom.tscn" type="PackedScene" id=1]
 [ext_resource path="res://cum.png" type="Texture" id=2]
 [ext_resource path="res://Scenes/Rooms/MainRoomDoorTest.tscn" type="PackedScene" id=3]
+
+[sub_resource type="NavigationPolygon" id=17]
+vertices = PoolVector2Array( 28, 28, 4, 28, 4, 4, 28, 4 )
+polygons = [ PoolIntArray( 0, 1, 2, 3 ) ]
+outlines = [ PoolVector2Array( 28, 28, 4, 28, 4, 4, 28, 4 ) ]
 
 [sub_resource type="OccluderPolygon2D" id=10]
 polygon = PoolVector2Array( 32, 32, 0, 32, 0, 0, 32, 0 )
 
 [sub_resource type="ConvexPolygonShape2D" id=7]
 points = PoolVector2Array( 32, 32, 0, 32, 0, 0, 32, 0 )
+
+[sub_resource type="NavigationPolygon" id=18]
+vertices = PoolVector2Array( 28, 28, 4, 28, 4, 4, 28, 4 )
+polygons = [ PoolIntArray( 0, 1, 2, 3 ) ]
+outlines = [ PoolVector2Array( 28, 28, 4, 28, 4, 4, 28, 4 ) ]
+
+[sub_resource type="NavigationPolygon" id=19]
+vertices = PoolVector2Array( 28, 28, 4, 28, 4, 4, 28, 4 )
+polygons = [ PoolIntArray( 0, 1, 2, 3 ) ]
+outlines = [ PoolVector2Array( 28, 28, 4, 28, 4, 4, 28, 4 ) ]
 
 [sub_resource type="ConvexPolygonShape2D" id=12]
 points = PoolVector2Array( 32, 32, 0, 32, 0, 0, 32, 0 )
@@ -25,6 +40,7 @@ points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
 0/tile_mode = 0
 0/occluder_offset = Vector2( 0, 0 )
 0/navigation_offset = Vector2( 0, 0 )
+0/navigation = SubResource( 17 )
 0/shape_offset = Vector2( 0, 0 )
 0/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
 0/shape_one_way = false
@@ -61,6 +77,7 @@ points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
 2/tile_mode = 0
 2/occluder_offset = Vector2( 0, 0 )
 2/navigation_offset = Vector2( 0, 0 )
+2/navigation = SubResource( 18 )
 2/shape_offset = Vector2( 0, 0 )
 2/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
 2/shape_one_way = false
@@ -75,6 +92,7 @@ points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
 6/tile_mode = 0
 6/occluder_offset = Vector2( 0, 0 )
 6/navigation_offset = Vector2( 0, 0 )
+6/navigation = SubResource( 19 )
 6/shape_offset = Vector2( 0, 0 )
 6/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
 6/shape_one_way = false

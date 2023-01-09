@@ -17,5 +17,7 @@ public class GameFloor : Node2D
     {
         var character = GetNodeOrNull<Character>(nameof(Character));
         character.GlobalPosition = spawn.GlobalPosition;
+        var enemy = GetNodeOrNull<Enemy>(nameof(Enemy));
+        enemy.GlobalPosition = spawn.GlobalPosition;
     }
 }

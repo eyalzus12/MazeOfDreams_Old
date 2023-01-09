@@ -32,17 +32,12 @@ public class RoomSpreader : Node2D
         //save physics speed for later
         _engineIterations = Engine.IterationsPerSecond;
 
-        //increase physics speed
-        Engine.IterationsPerSecond = 240;
-
         //get RNG
         RNG = GetTree().Root.GetNode<Randomizer>(nameof(Randomizer)).RNG;
 
         //create a space
         _space = Physics2DServer.SpaceCreate();
-        //make the space active
-        Physics2DServer.SpaceSetActive(_space, true);
-
+        
         for(int i = 0; i < Shapes.Count; ++i)
         {
             //create a body
@@ -68,10 +63,11 @@ public class RoomSpreader : Node2D
             //add to the list
             _bodies.Add(body);
         }
+        //make the space active
+        Physics2DServer.SpaceSetActive(_space, true);
 
-        //make sure physics happen
-        Physics2DServer.SetActive(true);
-        
+        //increase physics speed
+        //Engine.IterationsPerSecond = 240;
         //in 2 seconds, gather positions
         this.TimePhysicsAction(WAIT_TIME, nameof(OnTimeout));
     }
@@ -80,6 +76,8 @@ public class RoomSpreader : Node2D
     {
         //restore physics speed
         Engine.IterationsPerSecond = _engineIterations;
+        //make space inactive
+        Physics2DServer.SpaceSetActive(_space, false);
 
         //get the resulting positions
         var result = _bodies.Select
