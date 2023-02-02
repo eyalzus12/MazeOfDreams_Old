@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Scenes/Objects/Enemies/BaseEnemy/Enemy.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Scripts/Enemies/TestFlyingChargingEnemy/TestFlyingChargingEnemy.cs" type="Script" id=2]
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 40.0
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 90.0
+
+[node name="TestFlyingChargingEnemy" instance=ExtResource( 1 )]
+script = ExtResource( 2 )
+ChargeCooldown = 0.0
+ChargeSpeed = 0.0
+ChargeAcceleration = 0.0
+ChargeLength = 0.0
+
+[node name="ChargeRange" type="Area2D" parent="." index="4"]
+
+[node name="ChargeRangeShape" type="CollisionShape2D" parent="ChargeRange" index="0"]
+shape = SubResource( 1 )
+
+[node name="ChaseRange" type="Area2D" parent="." index="5"]
+
+[node name="ChaseRangeShape" type="CollisionShape2D" parent="ChaseRange" index="0"]
+shape = SubResource( 2 )

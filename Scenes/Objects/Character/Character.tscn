@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://Scripts/Character/Character.cs" type="Script" id=1]
 [ext_resource path="res://Scripts/Labels/CharacterDebugLabel.cs" type="Script" id=2]
 [ext_resource path="res://Scenes/Objects/InteracterComponent.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Scenes/Objects/Character/CharacterStateMachine.tscn" type="PackedScene" id=4]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 8, 8 )
@@ -45,6 +46,8 @@ one_shot = true
 pause_mode = 1
 process_mode = 0
 one_shot = true
+
+[node name="States" parent="." instance=ExtResource( 4 )]
 
 [connection signal="timeout" from="DashCooldownTimer" to="." method="set" binds= [ "DashInCooldown", false ]]
 [connection signal="timeout" from="InDashTimer" to="." method="set" binds= [ "InDash", false ]]

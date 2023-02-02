@@ -36,7 +36,7 @@ public static class Extentions
         Round(v.y, digits)
     );
 
-    public static bool IsZeroApprox(this Vector2 v) => Mathf.IsZeroApprox(v.x) && Mathf.IsZeroApprox(v.y);
+    public static bool IsZeroApprox(this Vector2 v) => v.IsEqualApprox(Vector2.Zero);
 
     public static float ZeroApproxNormalize(this float f) => Mathf.IsZeroApprox(f)?0f:f;
     public static Vector2 ZeroApproxNormalize(this Vector2 v) => new Vector2(v.x.ZeroApproxNormalize(), v.y.ZeroApproxNormalize());
@@ -67,13 +67,13 @@ public static class Extentions
     public static Vector2 WithLength(this Vector2 v1, Vector2 v2) => v1.WithLength(v2.Length());
 
     public static float RandfExclusive(this RandomNumberGenerator rng) => rng.RandfRange(0f, 1f-Mathf.Epsilon);
+    public static float RandfExclusiveRange(this RandomNumberGenerator rng, float from, float to) => rng.RandfRange(from, to-Mathf.Epsilon);
 
-    public static Vector2 GetRandomPointInCircle(this RandomNumberGenerator rng, float radius)
+    public static Vector2 GetRandomPointInCircle(this RandomNumberGenerator rng, float radius, float minRadius=0)
     {
-        var t = 2*Mathf.Pi*rng.RandfExclusive();
-        var u = rng.RandfExclusive() + rng.RandfExclusive();
-        var r = (u > 1)?(2f-u):u;
-        return new Vector2(Mathf.Cos(t), Mathf.Sin(t))*radius*r;
+        var t = Mathf.Tau*rng.RandfExclusive();
+        var r = Mathf.Sqrt(rng.RandfExclusiveRange(minRadius*minRadius,radius*radius));
+        return new Vector2(Mathf.Cos(t), Mathf.Sin(t))*r;
     }
 
     public static T Choice<T>(this RandomNumberGenerator rng, IEnumerable<T> e)
@@ -142,4 +142,11 @@ public static class Extentions
     ///<param name="position">The position to move, in originTileMap's map coordinates.</param>
     ///<returns>The given position in targetTileMap's map coordinates.</returns>
     public static Vector2 MapToMap(this TileMap originTileMap, TileMap targetTileMap, Vector2 position) => targetTileMap.WorldToMap(targetTileMap.ToLocal(originTileMap.ToGlobal(originTileMap.MapToWorld(position))));
+
+    public static bool TryEmitSignal(this Godot.Object god, string signal, params object[] args)
+    {
+        if(!god.HasSignal(signal)) return false;
+        god.EmitSignal(signal,args);
+        return true;
+    }
 }

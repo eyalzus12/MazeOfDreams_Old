@@ -6,8 +6,8 @@
 [ext_resource path="res://Scenes/Rooms/MainRoomTest2.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Scripts/d.png" type="Texture" id=5]
 [ext_resource path="res://Scenes/Rooms/SpawnRoomTest.tscn" type="PackedScene" id=6]
-[ext_resource path="res://Scenes/Objects/Character.tscn" type="PackedScene" id=7]
-[ext_resource path="res://Scenes/Objects/Enemy.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Scenes/Objects/Character/Character.tscn" type="PackedScene" id=7]
+[ext_resource path="res://Scenes/Objects/Enemies/BaseEnemy/Enemy.tscn" type="PackedScene" id=8]
 
 [sub_resource type="NavigationPolygon" id=9]
 vertices = PoolVector2Array( 28, 28, 4, 28, 4, 4, 28, 4 )

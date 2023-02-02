@@ -1,34 +1,33 @@
 using System;
 using Godot;
 
-public class DashState : State
+public class DashState : State<Character>
 {
 	public DashState() : base() {}
 
-	public override Action<Character> Loop(float delta) => c => 
+	public override void Loop(float delta)
 	{
 		//calculate desired acceleration
-		var dashAcceleration = c.DashSpeed/Mathf.Ceil(c.DashStartup);
+		var dashAcceleration = Entity.DashSpeed/Mathf.Ceil(Entity.DashStartup);
 		//apply acceleration
-		c.Velocity = c.Velocity.MoveToward(c.DashSpeed * c.VelocityVector, dashAcceleration);
+		Entity.Velocity = Entity.Velocity.MoveToward(Entity.DashSpeed * Entity.VelocityVector, dashAcceleration);
 		//apply movement
-		c.MoveAndSlide(c.Velocity, Vector2.Zero);
-	};
+		Entity.MoveAndSlide(Entity.Velocity, Vector2.Zero);
+	}
 	
 	//transition into Base if more than DashStartup (rounded up) frames passed
-	public override Func<Character,string> NextState() => c =>
-		(c.StateFrame > Mathf.Ceil(c.DashStartup))?"Base":"";
+	public override string NextState() => (Entity.StateFrame > Mathf.Ceil(Entity.DashStartup))?"Base":"";
 	
 	//set dash cooldown and dash bounce timers
-	public override Action<Character> OnChange(State s) => c =>
+	public override void OnChange(State<Character> s)
 	{
-		c.DashInCooldown = true;
-		c.DashCooldownTimer.Start();
+		Entity.DashInCooldown = true;
+		Entity.DashCooldownTimer.Start();
 
-		c.InDash = true;
-		c.InDashTimer.Start();
-	};
+		Entity.InDash = true;
+		Entity.InDashTimer.Start();
+	}
 
 	//can't interact during dash startup
-	public override Func<Character, InteractableComponent, bool> CanInteract() => (c, i) => false;
+	public override bool CanInteract(InteractableComponent ic) => false;
 }

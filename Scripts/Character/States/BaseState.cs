@@ -1,48 +1,48 @@
 using System;
 using Godot;
 
-public class BaseState : State
+public class BaseState : State<Character>
 {
 	public BaseState() : base() {}
 
-	public override Action<Character> Loop(float delta) => c =>
+	public override void Loop(float delta)
 	{
 		//apply movement
-		c.MoveAndSlide(c.Velocity, Vector2.Zero);
+		Entity.MoveAndSlide(Entity.Velocity, Vector2.Zero);
 		
 		//update inputs
-		c.SetInputs();
+		Entity.SetInputs();
 		
-		if(c.IsOnWall())
+		if(Entity.IsOnWall())
 		{
 			//get first collision
-			var col = c.GetSlideCollision(0);
+			var col = Entity.GetSlideCollision(0);
 
-			var grazing = Mathf.IsZeroApprox(col.Normal.Dot(c.Velocity));
+			var grazing = Mathf.IsZeroApprox(col.Normal.Dot(Entity.Velocity));
 			
 			//dashing and not moving along the wall. bounce.
-			if(c.InDash && !grazing)
+			if(Entity.InDash && !grazing)
 			{
 				//bounce along collision normal
-				c.Velocity = c.Velocity.Bounce(col.Normal);
+				Entity.Velocity = Entity.Velocity.Bounce(col.Normal);
 				//apply bounce deacceleration
-				c.Velocity *= c.DashBounceForceMultiplier;
+				Entity.Velocity *= Entity.DashBounceForceMultiplier;
 			}
 			//holding towards or alongside the wall. remove all velocity that is towards the wall.
-			else if(col.Normal.Dot(c.InputVector) >= 0 && !c.InputVector.IsZeroApprox())
+			else if(col.Normal.Dot(Entity.InputVector) >= 0 && !Entity.InputVector.IsZeroApprox())
 			{
-				c.Velocity = c.Velocity.Slide(col.Normal);
+				Entity.Velocity = Entity.Velocity.Slide(col.Normal);
 			}
 			//holding nothing and not moving alongside a wall. reset velocity.
-			else if(c.InputVector.IsZeroApprox() && !grazing)
+			else if(Entity.InputVector.IsZeroApprox() && !grazing)
 			{
-				c.Velocity = Vector2.Zero;
+				Entity.Velocity = Vector2.Zero;
 			}
 		}
 		
 		//update movement
-		c.Velocity = c.Velocity.MoveToward(c.Speed*c.VelocityVector, c.Acceleration);
-	};
+		Entity.Velocity = Entity.Velocity.MoveToward(Entity.Speed*Entity.VelocityVector, Entity.Acceleration);
+	}
 
-	public override Func<Character,string> NextState() => c => (!c.DashInCooldown && Input.IsActionJustPressed(Consts.DASH_INPUT))?"Dash":"";
+	public override string NextState() => (!Entity.DashInCooldown && Input.IsActionJustPressed(Consts.DASH_INPUT))?"Dash":"";
 }

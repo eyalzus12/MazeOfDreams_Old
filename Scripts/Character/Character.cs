@@ -2,14 +2,13 @@ using Godot;
 using System;
 public class Character : KinematicBody2D
 {
+    [Signal]
+	public delegate void StateChanged(Character who, State<Character> to);
+
+
 	const string DEBUG_LABEL_PATH = "UILayer/DebugLabel";
 
 	const string START_STATE = "Base";
-
-	[Signal]
-	public delegate void CharacterUpdate(Character c, float delta);
-	[Signal]
-	public delegate void StateChanged(Character who, State to);
 
 	[Export]
 	public float Speed = 300f;
@@ -36,8 +35,10 @@ public class Character : KinematicBody2D
 
 	public Vector2 Velocity{get; set;}
 
-	public State CurrentState{get; set;}
-	public long StateFrame{get; set;}
+	public CharacterStateMachine States{get; set;}
+
+	public State<Character> CurrentState => States.CurrentState;
+	public long StateFrame => States.StateFrame;
 
 	public bool DebugActive{get; set;} = false;
 	public CharacterDebugLabel DebugLabel{get; private set;}
@@ -50,12 +51,13 @@ public class Character : KinematicBody2D
 	public override void _Ready()
 	{
 		//setup state
-		var stateMachine = GetTree().Root.GetNodeOrNull<StateMachine>(nameof(StateMachine));
-		if(stateMachine != null)
+		States = GetNodeOrNull<CharacterStateMachine>(nameof(States));
+		if(States != null)
 		{
-			Connect(nameof(CharacterUpdate), stateMachine, nameof(stateMachine.StateUpdate));
-			CurrentState = stateMachine[START_STATE];
-			OnStateChanged(CurrentState);
+			States.StoreStates();
+			States.Entity = this;
+			States.UpdateStateEntities();
+			States.CurrentState = States.States[START_STATE];
 		}
 
 		//setup interacter component
@@ -63,8 +65,8 @@ public class Character : KinematicBody2D
 		if(Interacter != null)
 		{
 			//this is a hack to get the interacter to always get our current state, and not stay at the first one
-			State GetCurrentState() => CurrentState;
-			Interacter.InteractionValidator = (i) => GetCurrentState().CanInteract()(this, i);
+			State<Character> GetCurrentState() => CurrentState;
+			Interacter.InteractionValidator = (i) => GetCurrentState().CanInteract(i);
 		}
 
 		//setup debug label
@@ -79,8 +81,11 @@ public class Character : KinematicBody2D
 
 	public override void _PhysicsProcess(float delta)
 	{
-		//cause state update
-		EmitSignal(nameof(CharacterUpdate), this, delta);
+		//update states
+		if(States != null)
+		{
+			States.StateUpdate(delta);
+		}
 
 		//update debug label
 		if(DebugLabel != null)
@@ -94,14 +99,6 @@ public class Character : KinematicBody2D
 
 		//remove inconsequental movements
 		Velocity = Velocity.ZeroApproxNormalize();
-	}
-
-	public void OnStateChanged(State newState)
-	{
-		CurrentState.OnChange(newState)(this);
-        CurrentState = newState;
-        StateFrame = 0;
-		EmitSignal(nameof(StateChanged), this, newState);
 	}
 	
 	public Vector2 LeftInputVector => Left?Vector2.Left:Vector2.Zero;
