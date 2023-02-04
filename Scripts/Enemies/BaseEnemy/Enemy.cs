@@ -11,7 +11,7 @@ public class Enemy : KinematicBody2D
     [Export(hintString: "WARNING: this value is used differently from other acceleration")]
     public float ChaseAcceleration = 0.1f;
     [Export]
-    public float ChaseSpeed = 400f;
+    public float ChaseSpeed = 280f;
 
     [Export]
     public float MaximumWanderRadius{get; set;} = 60f;
@@ -32,7 +32,8 @@ public class Enemy : KinematicBody2D
     public EnemyPathfindingComponent Pathfinding{get; private set;}
     public Vector2 Velocity{get; set;} = Vector2.Zero;
     public Area2D ChaseRange{get; set;}
-    public Character ChaseTarget{get; set;}
+    public Node2D ChaseTarget{get; set;}
+    public Hitbox EnemyHitbox{get; set;}
 
     public Vector2 NextPosition => Pathfinding.NavAgent.GetNextLocation();
     public Vector2 TargetPosition{get => Pathfinding.NavAgent.GetTargetLocation(); set => Pathfinding.NavAgent.SetTargetLocation(value);}
@@ -61,6 +62,8 @@ public class Enemy : KinematicBody2D
 			States.UpdateStateEntities();
 			States.CurrentState = States.States[START_STATE];
 		}
+
+        EnemyHitbox = GetNodeOrNull<Hitbox>(nameof(EnemyHitbox));
     }
 
     public override void _PhysicsProcess(float delta)
@@ -79,11 +82,16 @@ public class Enemy : KinematicBody2D
 
     public virtual void OnChaseRangeEntered(Node body)
     {
-        if(body is Character c) ChaseTarget = c;
+        if(body is Node2D n) ChaseTarget = n;
     }
 
     public virtual void OnChaseRangeExited(Node body)
     {
         if(body == ChaseTarget) ChaseTarget = null;
+    }
+
+    public virtual void OnHit(Area2D area)
+    {
+        Velocity *= 0.5f;
     }
 }

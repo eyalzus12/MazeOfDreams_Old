@@ -36,19 +36,22 @@ public class StateMachine<T> : Node where T : Godot.Object
         CurrentState.Loop(delta);
         var next = CurrentState.NextState();
         StateFrame++;
-        if(next != "")
+        SetState(next);
+    }
+
+    public void SetState(string s)
+    {
+        if(s == "") return;
+        State<T> nextState;
+        if(!States.TryGetValue(s, out nextState))
         {
-            State<T> nextState;
-            if(!States.TryGetValue(next, out nextState))
-            {
-                GD.PushError($"[StateMachine.cs]: Attempt from node {Entity.ToString()} to change to unknown state {next}");
-                return;
-            }
-            
-            CurrentState.OnChange(nextState);
-            CurrentState = nextState;
-            StateFrame = 0;
-            Entity.TryEmitSignal("StateChanged", Entity, nextState);
+            GD.PushError($"[StateMachine.cs]: Attempt from node {Entity.ToString()} to change to unknown state {s}");
+            return;
         }
-    } 
+        
+        CurrentState.OnChange(nextState);
+        CurrentState = nextState;
+        StateFrame = 0;
+        Entity.TryEmitSignal("StateChanged", Entity, nextState);
+    }
 }

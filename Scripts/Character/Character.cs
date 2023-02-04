@@ -24,6 +24,14 @@ public class Character : KinematicBody2D
 	public float DashCooldown = 0.5f;//seconds
 	[Export]
 	public float DashTime = 0.2f;//seconds
+	[Export]
+	public float InitialHP = 100f;
+	[Export]
+	public float CurrentHP = 100f;
+	[Export]
+	public float InvincibilityPeriod = 3f;
+
+	public float StunTime{get; set;}
 
 	public bool Left{get; set;}
 	public bool Right{get; set;}
@@ -45,8 +53,13 @@ public class Character : KinematicBody2D
 
 	public InteracterComponent Interacter{get; private set;}
 
+	public Hurtbox CharacterHurtbox{get; set;}
+
 	public Timer DashCooldownTimer{get; private set;}
 	public Timer InDashTimer{get; private set;}
+	public Timer InvincibilityTimer{get; set;}
+
+	public AnimationPlayer CharacterAnimationPlayer{get; set;}
 
 	public override void _Ready()
 	{
@@ -77,6 +90,12 @@ public class Character : KinematicBody2D
 		DashCooldownTimer.WaitTime = DashCooldown;
 		InDashTimer = GetNodeOrNull<Timer>(nameof(InDashTimer));
 		InDashTimer.WaitTime = DashTime;
+		InvincibilityTimer = GetNodeOrNull<Timer>(nameof(InvincibilityTimer));
+
+		//get hurtbox
+		CharacterHurtbox = GetNodeOrNull<Hurtbox>(nameof(CharacterHurtbox));
+
+		CharacterAnimationPlayer = GetNode<AnimationPlayer>(nameof(CharacterAnimationPlayer));
 	}
 
 	public override void _PhysicsProcess(float delta)
@@ -134,5 +153,24 @@ public class Character : KinematicBody2D
 		if(!Input.IsActionPressed(Consts.DOWN_INPUT)) Down = false;
 		if(Input.IsActionPressed(Consts.UP_INPUT) && !Down) Up = true;
 		if(Input.IsActionPressed(Consts.DOWN_INPUT) && !Up) Down = true;
+	}
+
+	public virtual void OnGotHit(Area2D area)
+	{
+		if(area is Hitbox hitbox)
+		{
+			CurrentHP -= hitbox.Damage;
+			StunTime = hitbox.StunTime;
+			States.SetState("Hurt");
+			Velocity = (area.GlobalPosition.DirectionTo(GlobalPosition))*700f;
+		}
+	}
+
+	public virtual void OnInvincibilityEnd()
+	{
+		CharacterHurtbox.Enable();
+		CharacterAnimationPlayer.Play("RESET");
+        CharacterAnimationPlayer.Advance(0);
+		CharacterAnimationPlayer.Stop(true);
 	}
 }

@@ -16,6 +16,8 @@ public class CharacterDebugLabel : Label
 		Add("InputVector", character.InputVector);
 		Add("VelocityVector", character.VelocityVector.Round(2));
 		Newline();
+		Add("HP", character.CurrentHP);
+		Newline();
 		Add("State", character.CurrentState);
 		Add("StateFrame", character.StateFrame);
 		Newline();

@@ -3,15 +3,10 @@ using System;
 
 public class ChaseState : State<Enemy>
 {
-    //public const int FINISH_THRESHOLD = 1;
-
     public ChaseState():base() {}
-
-    //public int FinishCounter{get; set;}
 
     public override void OnStart()
     {
-        //FinishCounter = 0;
         Entity.PathfindingTimer.Start();
         SetTarget();
     }
@@ -23,7 +18,7 @@ public class ChaseState : State<Enemy>
 
     public override void Loop(float delta)
     {
-        var dir = Entity.GlobalPosition.IsEqualApprox(Entity.NextPosition)?Vector2.Zero:Entity.GlobalPosition.DirectionTo(Entity.NextPosition);
+        var dir = Entity.GlobalPosition.DirectionTo(Entity.NextPosition);
         Entity.Velocity += ((dir*Entity.ChaseSpeed)-Entity.Velocity)*Entity.ChaseAcceleration;
         Entity.MoveAndSlide(Entity.Velocity,Vector2.Zero);
     }

@@ -96,8 +96,12 @@ buffering/agile_event_flushing=true
 
 [layer_names]
 
-2d_physics/layer_1="objects"
-2d_physics/layer_2="agents"
+2d_physics/layer_1="map collision"
+2d_physics/layer_2="character collision"
+2d_physics/layer_3="hitboxes"
+2d_physics/layer_4="hurtboxes"
+2d_physics/layer_5="chase targets"
+2d_physics/layer_6="interaction range"
 
 [mono]
 
