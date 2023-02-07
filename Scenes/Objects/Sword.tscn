@@ -1,0 +1,92 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Scenes/Objects/Hitbox.tscn" type="PackedScene" id=1]
+[ext_resource path="res://icon.png" type="Texture" id=2]
+[ext_resource path="res://Scripts/Sword.cs" type="Script" id=3]
+
+[sub_resource type="CapsuleShape2D" id=1]
+
+[sub_resource type="Animation" id=3]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/1/type = "method"
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "DisableHitbox"
+} ]
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "SwordAttack"
+length = 0.7
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.3, 0.6 ),
+"transitions": PoolRealArray( 0.267943, 1, 3.13834, 1 ),
+"update": 0,
+"values": [ 0.0, 150.0, 150.0, 0.0 ]
+}
+tracks/1/type = "method"
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.3 ),
+"transitions": PoolRealArray( 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "EnableHitbox"
+}, {
+"args": [  ],
+"method": "DisableHitbox"
+} ]
+}
+
+[node name="Sword" type="Node2D"]
+script = ExtResource( 3 )
+
+[node name="SwordHitbox" parent="." instance=ExtResource( 1 )]
+collision_mask = 160
+
+[node name="HitboxShape" parent="SwordHitbox" index="0"]
+position = Vector2( 0, -16 )
+shape = SubResource( 1 )
+
+[node name="SwordSprite" type="Sprite" parent="."]
+position = Vector2( 0, -16 )
+scale = Vector2( 0.25, 0.5 )
+texture = ExtResource( 2 )
+
+[node name="SwordAnimationPlayer" type="AnimationPlayer" parent="."]
+anims/RESET = SubResource( 3 )
+anims/SwordAttack = SubResource( 2 )
+
+[connection signal="animation_finished" from="SwordAnimationPlayer" to="." method="OnAttackEnd"]
+
+[editable path="SwordHitbox"]

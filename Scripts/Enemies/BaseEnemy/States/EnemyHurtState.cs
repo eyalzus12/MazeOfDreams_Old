@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public class HurtState : State<Character>
+public class EnemyHurtState : State<Enemy>
 {
     public bool Stunned{get; set;}
     public Timer StunTimer{get; set;}
@@ -19,20 +19,20 @@ public class HurtState : State<Character>
 
     public override void OnStart()
     {
-        Entity.CharacterAnimationPlayer.Play("Hurt");
+        Entity.EnemyAnimationPlayer.Play("Hurt");
         Stunned = true;
-        Entity.CharacterHurtbox.Disable();
+        Entity.EnemyHurtbox.Disable();
         Entity.InvincibilityTimer.Start(Entity.InvincibilityPeriod);
         StunTimer.Start(Entity.StunTime);
     }
 
-    public override string NextState() => Stunned?"":"Base";
+    public override string NextState() => Stunned?"":"Wander";
 
     public virtual void OnStunEnd()
     {
         Stunned = false;
-        Entity.CharacterAnimationPlayer.Play("RESET");
-        Entity.CharacterAnimationPlayer.Advance(0);
-        Entity.CharacterAnimationPlayer.Play("Invincibility");
+        Entity.EnemyAnimationPlayer.Play("RESET");
+        Entity.EnemyAnimationPlayer.Advance(0);
+        Entity.EnemyAnimationPlayer.Stop(true);
     }
 }

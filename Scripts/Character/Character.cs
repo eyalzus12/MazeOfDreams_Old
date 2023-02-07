@@ -1,6 +1,7 @@
 using Godot;
+using GodotOnReady.Attributes;
 using System;
-public class Character : KinematicBody2D
+public partial class Character : KinematicBody2D
 {
     [Signal]
 	public delegate void StateChanged(Character who, State<Character> to);
@@ -24,12 +25,18 @@ public class Character : KinematicBody2D
 	public float DashCooldown = 0.5f;//seconds
 	[Export]
 	public float DashTime = 0.2f;//seconds
+
 	[Export]
 	public float InitialHP = 100f;
-	[Export]
-	public float CurrentHP = 100f;
+
+	public float CurrentHP{get; set;}
+
 	[Export]
 	public float InvincibilityPeriod = 3f;
+	[Export]
+	public float StunFriction = 10f;
+
+	public int Direction{get; set;}
 
 	public float StunTime{get; set;}
 
@@ -43,68 +50,65 @@ public class Character : KinematicBody2D
 
 	public Vector2 Velocity{get; set;}
 
+	[OnReadyGet(nameof(States))]
 	public CharacterStateMachine States{get; set;}
 
 	public State<Character> CurrentState => States.CurrentState;
 	public long StateFrame => States.StateFrame;
 
 	public bool DebugActive{get; set;} = false;
+	[OnReadyGet(DEBUG_LABEL_PATH, OrNull = true)]
 	public CharacterDebugLabel DebugLabel{get; private set;}
 
+	[OnReadyGet(nameof(InteracterComponent))]
 	public InteracterComponent Interacter{get; private set;}
 
+	[OnReadyGet(nameof(CharacterHurtbox))]
 	public Hurtbox CharacterHurtbox{get; set;}
 
+
+	[OnReadyGet(nameof(DashCooldownTimer))]
 	public Timer DashCooldownTimer{get; private set;}
+
+	[OnReadyGet(nameof(InDashTimer))]
 	public Timer InDashTimer{get; private set;}
+
+	[OnReadyGet(nameof(InvincibilityTimer))]
 	public Timer InvincibilityTimer{get; set;}
 
+	[OnReadyGet(nameof(CharacterAnimationPlayer))]
 	public AnimationPlayer CharacterAnimationPlayer{get; set;}
 
-	public override void _Ready()
+	[OnReadyGet(nameof(CharacterSwordBase))]
+	public Node2D CharacterSwordBase{get; set;}
+
+	[OnReadyGet("CharacterSwordBase/CharacterSword")]
+	public Sword CharacterSword{get; set;}
+	[OnReadyGet(nameof(CharacterSprite))]
+	public Sprite CharacterSprite{get; set;}
+
+	[OnReady]
+	public virtual void Setup()
 	{
-		//setup state
-		States = GetNodeOrNull<CharacterStateMachine>(nameof(States));
-		if(States != null)
-		{
-			States.StoreStates();
-			States.Entity = this;
-			States.UpdateStateEntities();
-			States.CurrentState = States.States[START_STATE];
-		}
+        CurrentHP = InitialHP;
 
-		//setup interacter component
-		Interacter = GetNodeOrNull<InteracterComponent>(nameof(InteracterComponent));
-		if(Interacter != null)
-		{
-			//this is a hack to get the interacter to always get our current state, and not stay at the first one
-			State<Character> GetCurrentState() => CurrentState;
-			Interacter.InteractionValidator = (i) => GetCurrentState().CanInteract(i);
-		}
+		States.StoreStates();
+		States.Entity = this;
+		States.UpdateStateEntities();
+		States.CurrentState = States.States[START_STATE];
+		
+		//this is a hack to get the interacter to always get our current state, and not stay at the first one
+		State<Character> GetCurrentState() => CurrentState;
+		Interacter.InteractionValidator = (i) => GetCurrentState().CanInteract(i);
 
-		//setup debug label
-		DebugLabel = GetNodeOrNull<CharacterDebugLabel>(DEBUG_LABEL_PATH);
-
-		//get timers
-		DashCooldownTimer = GetNodeOrNull<Timer>(nameof(DashCooldownTimer));
 		DashCooldownTimer.WaitTime = DashCooldown;
-		InDashTimer = GetNodeOrNull<Timer>(nameof(InDashTimer));
 		InDashTimer.WaitTime = DashTime;
-		InvincibilityTimer = GetNodeOrNull<Timer>(nameof(InvincibilityTimer));
-
-		//get hurtbox
-		CharacterHurtbox = GetNodeOrNull<Hurtbox>(nameof(CharacterHurtbox));
-
-		CharacterAnimationPlayer = GetNode<AnimationPlayer>(nameof(CharacterAnimationPlayer));
 	}
 
 	public override void _PhysicsProcess(float delta)
 	{
 		//update states
-		if(States != null)
-		{
-			States.StateUpdate(delta);
-		}
+		States?.StateUpdate(delta);
 
 		//update debug label
 		if(DebugLabel != null)
@@ -116,8 +120,18 @@ public class Character : KinematicBody2D
 			if(DebugActive) DebugLabel.UpdateText(this, delta);	
 		}
 
+		//TODO: check for state
+		if(Input.IsActionJustPressed(Consts.ATTACK_INPUT))
+			CharacterSword.Attack();
+
 		//remove inconsequental movements
 		Velocity = Velocity.ZeroApproxNormalize();
+
+		var newDirection = (GetGlobalMousePosition().x>=GlobalPosition.x)?1:-1;
+		CharacterSwordBase.Scale = new Vector2(newDirection,1);
+		CharacterHurtbox.Position = new Vector2(newDirection,1);
+		CharacterSprite.FlipH = newDirection==-1;
+		Direction = newDirection;
 	}
 	
 	public Vector2 LeftInputVector => Left?Vector2.Left:Vector2.Zero;
@@ -162,7 +176,7 @@ public class Character : KinematicBody2D
 			CurrentHP -= hitbox.Damage;
 			StunTime = hitbox.StunTime;
 			States.SetState("Hurt");
-			Velocity = (area.GlobalPosition.DirectionTo(GlobalPosition))*700f;
+			Velocity += (area.GlobalPosition.DirectionTo(GlobalPosition))*hitbox.Pushback;
 		}
 	}
 
