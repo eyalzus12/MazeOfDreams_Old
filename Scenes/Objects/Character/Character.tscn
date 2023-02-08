@@ -28,10 +28,10 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.2, 0.4 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
+"times": PoolRealArray( 0, 0.2 ),
+"transitions": PoolRealArray( 1, 1 ),
 "update": 0,
-"values": [ Color( 1, 0, 0, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 0, 0, 1 ) ]
+"values": [ Color( 1, 0, 0, 1 ), Color( 1, 1, 1, 1 ) ]
 }
 
 [sub_resource type="Animation" id=6]
@@ -39,7 +39,7 @@ resource_name = "Invincibility"
 length = 0.4
 loop = true
 tracks/0/type = "value"
-tracks/0/path = NodePath("CharacterSprite:visible")
+tracks/0/path = NodePath("CharacterSprite:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
@@ -47,8 +47,8 @@ tracks/0/enabled = true
 tracks/0/keys = {
 "times": PoolRealArray( 0, 0.2 ),
 "transitions": PoolRealArray( 1, 1 ),
-"update": 1,
-"values": [ true, false ]
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
 }
 
 [sub_resource type="Animation" id=7]
@@ -64,18 +64,6 @@ tracks/0/keys = {
 "transitions": PoolRealArray( 1 ),
 "update": 0,
 "values": [ Color( 1, 1, 1, 1 ) ]
-}
-tracks/1/type = "value"
-tracks/1/path = NodePath("CharacterSprite:visible")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ true ]
 }
 
 [node name="Character" type="KinematicBody2D" groups=["character"]]
@@ -99,6 +87,7 @@ texture = SubResource( 2 )
 [node name="UILayer" type="CanvasLayer" parent="."]
 
 [node name="DebugLabel" type="Label" parent="UILayer"]
+visible = false
 theme = ExtResource( 7 )
 script = ExtResource( 2 )
 

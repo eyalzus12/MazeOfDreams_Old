@@ -14,9 +14,10 @@ extents = Vector2( 3, 3 )
 radius = 1192.43
 
 [sub_resource type="CircleShape2D" id=3]
+radius = 24.0208
 
 [sub_resource type="CircleShape2D" id=4]
-radius = 8.0
+radius = 24.0208
 
 [sub_resource type="Animation" id=5]
 resource_name = "Hurt"
@@ -58,8 +59,8 @@ script = ExtResource( 3 )
 shape = SubResource( 1 )
 
 [node name="EnemySprite" type="Sprite" parent="."]
-position = Vector2( 0, 4.76837e-07 )
-scale = Vector2( 0.014245, 0.0168634 )
+position = Vector2( -9.53674e-07, 0.5 )
+scale = Vector2( 0.08, 0.0816667 )
 texture = ExtResource( 1 )
 
 [node name="EnemyPathfindingComponent" parent="." instance=ExtResource( 2 )]
