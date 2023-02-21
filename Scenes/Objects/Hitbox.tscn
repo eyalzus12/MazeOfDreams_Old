@@ -1,10 +1,11 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://Scripts/Hitbox.cs" type="Script" id=1]
+[ext_resource path="res://Scripts/Hitbox.gd" type="Script" id=1]
 
-[node name="Hitbox" type="Area2D"]
-collision_layer = 4
-collision_mask = 8
+[node name="Hitbox" type="Area2D" groups=["hitboxes"]]
+modulate = Color( 1, 0, 0, 1 )
+collision_layer = 2
+collision_mask = 0
 script = ExtResource( 1 )
 
 [node name="HitboxShape" type="CollisionShape2D" parent="."]

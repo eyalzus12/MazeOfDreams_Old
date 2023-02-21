@@ -15,9 +15,9 @@ public class GameFloor : Node2D
 
     public void OnDreamingFinished(GameRoom spawn)
     {
-        var character = GetNodeOrNull<Character>(nameof(Character));
-        character.GlobalPosition = spawn.GlobalPosition;
-        var enemy = GetNodeOrNull<Enemy>(nameof(Enemy));
-        enemy.GlobalPosition = spawn.GlobalPosition;
+        //var character = GetNodeOrNull<Character>(nameof(Character));
+        //character.GlobalPosition = spawn.GlobalPosition;
+        //var enemy = GetNodeOrNull<Enemy>(nameof(Enemy));
+        //enemy.GlobalPosition = spawn.GlobalPosition;
     }
 }

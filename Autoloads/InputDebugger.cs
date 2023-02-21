@@ -7,7 +7,7 @@ public class InputDebugger : Node
 
     public override void _Process(float delta)
     {
-        if(Input.IsActionJustPressed(Consts.INPUT_DEBUG_INPUT)) InputDebug = !InputDebug;
+        if(Input.IsActionJustPressed("toggle_input_debug")) InputDebug = !InputDebug;
     }
 
     public override void _UnhandledInput(InputEvent @event)

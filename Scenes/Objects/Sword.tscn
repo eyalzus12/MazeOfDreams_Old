@@ -2,7 +2,7 @@
 
 [ext_resource path="res://Scenes/Objects/Hitbox.tscn" type="PackedScene" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
-[ext_resource path="res://Scripts/Sword.cs" type="Script" id=3]
+[ext_resource path="res://Scripts/Sword.gd" type="Script" id=3]
 
 [sub_resource type="CapsuleShape2D" id=1]
 height = 92.0
@@ -21,8 +21,8 @@ tracks/0/keys = {
 "update": 0,
 "values": [ 0.0 ]
 }
-tracks/1/type = "method"
-tracks/1/path = NodePath(".")
+tracks/1/type = "value"
+tracks/1/path = NodePath("SwordHitbox:active")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
@@ -30,14 +30,12 @@ tracks/1/enabled = true
 tracks/1/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
-"values": [ {
-"args": [  ],
-"method": "DisableHitbox"
-} ]
+"update": 0,
+"values": [ false ]
 }
 
 [sub_resource type="Animation" id=2]
-resource_name = "SwordAttack"
+resource_name = "sword_attack"
 length = 0.3
 step = 0.01
 tracks/0/type = "value"
@@ -52,8 +50,8 @@ tracks/0/keys = {
 "update": 0,
 "values": [ 0.0, 150.0, 150.0, 0.0 ]
 }
-tracks/1/type = "method"
-tracks/1/path = NodePath(".")
+tracks/1/type = "value"
+tracks/1/path = NodePath("SwordHitbox:active")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
@@ -61,20 +59,23 @@ tracks/1/enabled = true
 tracks/1/keys = {
 "times": PoolRealArray( 0, 0.3 ),
 "transitions": PoolRealArray( 1, 1 ),
-"values": [ {
-"args": [  ],
-"method": "EnableHitbox"
-}, {
-"args": [  ],
-"method": "DisableHitbox"
-} ]
+"update": 1,
+"values": [ true, false ]
 }
 
 [node name="Sword" type="Node2D"]
 script = ExtResource( 3 )
 
-[node name="SwordHitbox" parent="." instance=ExtResource( 1 )]
-collision_mask = 160
+[node name="SwordHitbox" parent="." groups=["character hitboxes"] instance=ExtResource( 1 )]
+collision_layer = 130
+collision_mask = 2080
+__meta__ = {
+"_edit_pinned_properties_": [ "active" ]
+}
+damage = 5.0
+stun = 5.0
+pushback = 700.0
+active = false
 
 [node name="HitboxShape" parent="SwordHitbox" index="0"]
 position = Vector2( 0, -48 )
@@ -86,9 +87,10 @@ scale = Vector2( 0.25, 1.5 )
 texture = ExtResource( 2 )
 
 [node name="SwordAnimationPlayer" type="AnimationPlayer" parent="."]
+playback_process_mode = 0
 anims/RESET = SubResource( 3 )
-anims/SwordAttack = SubResource( 2 )
+anims/sword_attack = SubResource( 2 )
 
-[connection signal="animation_finished" from="SwordAnimationPlayer" to="." method="OnAttackEnd"]
+[connection signal="animation_finished" from="SwordAnimationPlayer" to="." method="_on_SwordAnimationPlayer_animation_finished"]
 
 [editable path="SwordHitbox"]

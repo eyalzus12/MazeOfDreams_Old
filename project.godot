@@ -8,6 +8,46 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "KinematicBody2D",
+"class": "Character",
+"language": "GDScript",
+"path": "res://Scripts/Character/Character.gd"
+}, {
+"base": "KinematicBody2D",
+"class": "Enemy",
+"language": "GDScript",
+"path": "res://Scripts/Enemies/Enemy.gd"
+}, {
+"base": "Area2D",
+"class": "Hitbox",
+"language": "GDScript",
+"path": "res://Scripts/Hitbox.gd"
+}, {
+"base": "Area2D",
+"class": "Hurtbox",
+"language": "GDScript",
+"path": "res://Scripts/Hurtbox.gd"
+}, {
+"base": "Node",
+"class": "StateMachine",
+"language": "GDScript",
+"path": "res://Scripts/States/StateMachine.gd"
+}, {
+"base": "Node2D",
+"class": "Sword",
+"language": "GDScript",
+"path": "res://Scripts/Sword.gd"
+} ]
+_global_script_class_icons={
+"Character": "",
+"Enemy": "",
+"Hitbox": "",
+"Hurtbox": "",
+"StateMachine": "",
+"Sword": ""
+}
+
 [application]
 
 config/name="Maze Of Dreams"
@@ -19,6 +59,10 @@ boot_splash/image="res://Scripts/d.png"
 UiLayer="*res://Autoloads/UILayer.tscn"
 InputDebugger="*res://Autoloads/InputDebugger.cs"
 Randomizer="*res://Autoloads/Randomizer.cs"
+
+[debug]
+
+shapes/collision/shape_color=Color( 1, 1, 1, 0.419608 )
 
 [display]
 
@@ -101,16 +145,20 @@ buffering/agile_event_flushing=true
 
 [layer_names]
 
-2d_physics/layer_1="map collision"
-2d_physics/layer_2="character collision"
-2d_physics/layer_3="character hitboxes"
-2d_physics/layer_4="character hurtboxes"
-2d_physics/layer_5="enemy hitboxes"
-2d_physics/layer_6="enemy hurtboxes"
-2d_physics/layer_7="map hitboxes"
-2d_physics/layer_8="map hurtboxes"
-2d_physics/layer_9="chase targets"
-2d_physics/layer_10="interaction range"
+2d_physics/layer_1="collision"
+2d_physics/layer_2="hitboxes"
+2d_physics/layer_3="hurtboxes"
+2d_physics/layer_4="map collision"
+2d_physics/layer_5="map hitboxes"
+2d_physics/layer_6="map hurtboxes"
+2d_physics/layer_7="character collision"
+2d_physics/layer_8="character hitboxes"
+2d_physics/layer_9="character hurtboxes"
+2d_physics/layer_10="enemy collision"
+2d_physics/layer_11="enemy hitboxes"
+2d_physics/layer_12="enemy hurtboxes"
+2d_physics/layer_13="chase targets"
+2d_physics/layer_14="interaction range"
 
 [mono]
 

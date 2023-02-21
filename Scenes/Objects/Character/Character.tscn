@@ -1,60 +1,21 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=17 format=2]
 
-[ext_resource path="res://Scripts/Character/Character.cs" type="Script" id=1]
-[ext_resource path="res://Scripts/Labels/CharacterDebugLabel.cs" type="Script" id=2]
+[ext_resource path="res://Scripts/Character/Character.gd" type="Script" id=1]
+[ext_resource path="res://Scripts/Labels/DebugLabel.gd" type="Script" id=2]
 [ext_resource path="res://Scenes/Objects/InteracterComponent.tscn" type="PackedScene" id=3]
-[ext_resource path="res://Scenes/Objects/Character/CharacterStateMachine.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Scripts/Character/CharacterStateMachine.gd" type="Script" id=4]
 [ext_resource path="res://Scenes/Objects/Hurtbox.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Scenes/Objects/Sword.tscn" type="PackedScene" id=6]
 [ext_resource path="res://LabelBackgroundTheme.tres" type="Theme" id=7]
+[ext_resource path="res://jessesans.jpg" type="Texture" id=8]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 8, 8 )
 
-[sub_resource type="StreamTexture" id=2]
-flags = 4
-load_path = "res://.import/icon.png-487276ed1e3a0c39cad0279d744ee560.stex"
-
-[sub_resource type="RectangleShape2D" id=3]
-
-[sub_resource type="Animation" id=4]
-resource_name = "Hurt"
-length = 0.4
-loop = true
-tracks/0/type = "value"
-tracks/0/path = NodePath("CharacterSprite:modulate")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/keys = {
-"times": PoolRealArray( 0, 0.2 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 0,
-"values": [ Color( 1, 0, 0, 1 ), Color( 1, 1, 1, 1 ) ]
-}
-
-[sub_resource type="Animation" id=6]
-resource_name = "Invincibility"
-length = 0.4
-loop = true
-tracks/0/type = "value"
-tracks/0/path = NodePath("CharacterSprite:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/keys = {
-"times": PoolRealArray( 0, 0.2 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 0,
-"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
-}
-
-[sub_resource type="Animation" id=7]
+[sub_resource type="Animation" id=11]
 length = 0.001
 tracks/0/type = "value"
-tracks/0/path = NodePath("CharacterSprite:modulate")
+tracks/0/path = NodePath(".:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
@@ -66,8 +27,92 @@ tracks/0/keys = {
 "values": [ Color( 1, 1, 1, 1 ) ]
 }
 
-[node name="Character" type="KinematicBody2D" groups=["character"]]
-collision_layer = 258
+[sub_resource type="Animation" id=9]
+resource_name = "death"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+
+[sub_resource type="Animation" id=10]
+resource_name = "hurt"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.3 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 0, 0, 1 ), Color( 1, 1, 1, 1 ) ]
+}
+
+[sub_resource type="RectangleShape2D" id=3]
+
+[sub_resource type="Animation" id=7]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("CharacterHurtbox:active")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ true ]
+}
+
+[sub_resource type="Animation" id=8]
+resource_name = "death"
+length = 0.2
+
+[sub_resource type="Animation" id=4]
+resource_name = "hurt"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/path = NodePath("CharacterHurtbox:active")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
+tracks/1/type = "method"
+tracks/1/path = NodePath("InvincibilityTimer")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [ -1 ],
+"method": "start"
+} ]
+}
+
+[node name="Character" type="KinematicBody2D" groups=["characters"]]
+collision_layer = 4161
+collision_mask = 8
 script = ExtResource( 1 )
 
 [node name="CharacterCamera" type="Camera2D" parent="."]
@@ -80,9 +125,14 @@ smoothing_speed = 8.0
 shape = SubResource( 1 )
 
 [node name="CharacterSprite" type="Sprite" parent="."]
-position = Vector2( 9.53674e-07, 9.53674e-07 )
-scale = Vector2( 0.3125, 0.3125 )
-texture = SubResource( 2 )
+position = Vector2( 2.38419e-07, -9.53674e-07 )
+scale = Vector2( 0.0257235, 0.0261866 )
+texture = ExtResource( 8 )
+
+[node name="SpriteEffectPlayer" type="AnimationPlayer" parent="CharacterSprite"]
+anims/RESET = SubResource( 11 )
+anims/death = SubResource( 9 )
+anims/hurt = SubResource( 10 )
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 
@@ -93,7 +143,7 @@ script = ExtResource( 2 )
 
 [node name="InteracterComponent" parent="." instance=ExtResource( 3 )]
 collision_layer = 0
-collision_mask = 512
+collision_mask = 8192
 
 [node name="DashCooldownTimer" type="Timer" parent="."]
 pause_mode = 1
@@ -105,38 +155,41 @@ pause_mode = 1
 process_mode = 0
 one_shot = true
 
-[node name="States" parent="." instance=ExtResource( 4 )]
+[node name="CharacterHurtbox" parent="." groups=["character hurtboxes"] instance=ExtResource( 5 )]
+collision_layer = 260
+collision_mask = 1040
+__meta__ = {
+"_edit_pinned_properties_": [ "active" ]
+}
+active = true
+
+[node name="HurtboxShape" parent="CharacterHurtbox" index="0"]
+shape = SubResource( 3 )
+
+[node name="CharacterAnimationPlayer" type="AnimationPlayer" parent="."]
+playback_process_mode = 0
+anims/RESET = SubResource( 7 )
+anims/death = SubResource( 8 )
+anims/hurt = SubResource( 4 )
+
+[node name="CharacterSwordBase" type="Node2D" parent="."]
+
+[node name="CharacterSword" parent="CharacterSwordBase" instance=ExtResource( 6 )]
+position = Vector2( 20, 0 )
+
+[node name="CharacterStateMachine" type="Node" parent="."]
+script = ExtResource( 4 )
 
 [node name="InvincibilityTimer" type="Timer" parent="."]
 pause_mode = 1
 process_mode = 0
 one_shot = true
 
-[node name="CharacterHurtbox" parent="." instance=ExtResource( 5 )]
-collision_mask = 80
-
-[node name="HurtboxShape" parent="CharacterHurtbox" index="0"]
-shape = SubResource( 3 )
-
-[node name="CharacterAnimationPlayer" type="AnimationPlayer" parent="."]
-anims/Hurt = SubResource( 4 )
-anims/Invincibility = SubResource( 6 )
-anims/RESET = SubResource( 7 )
-
-[node name="CharacterSwordBase" type="Node2D" parent="."]
-
-[node name="CharacterSword" parent="CharacterSwordBase" instance=ExtResource( 6 )]
-position = Vector2( 12, 0 )
-
-[node name="SwordHitbox" parent="CharacterSwordBase/CharacterSword" index="0"]
-Damage = 5.0
-StunTime = 0.5
-Pushback = 900.0
-
-[connection signal="timeout" from="DashCooldownTimer" to="." method="set" binds= [ "DashInCooldown", false ]]
-[connection signal="timeout" from="InDashTimer" to="." method="set" binds= [ "InDash", false ]]
-[connection signal="timeout" from="InvincibilityTimer" to="." method="OnInvincibilityEnd"]
-[connection signal="area_entered" from="CharacterHurtbox" to="." method="OnGotHit"]
+[connection signal="timeout" from="DashCooldownTimer" to="." method="set" binds= [ "dash_in_cooldown", false ]]
+[connection signal="timeout" from="InDashTimer" to="." method="set" binds= [ "in_dash", false ]]
+[connection signal="area_entered" from="CharacterHurtbox" to="CharacterStateMachine" method="_on_CharacterHurtbox_area_entered"]
+[connection signal="animation_finished" from="CharacterAnimationPlayer" to="CharacterStateMachine" method="_on_CharacterAnimationPlayer_animation_finished"]
+[connection signal="timeout" from="InvincibilityTimer" to="CharacterStateMachine" method="_on_InvincibilityTimer_timeout"]
 
 [editable path="CharacterHurtbox"]
 [editable path="CharacterSwordBase/CharacterSword"]

@@ -38,7 +38,7 @@ public class InteracterComponent : Area2D
 		if(!InteractionValidator(CurrentInteractable)) CurrentInteractable = null;
 
 		//if has an interactable and interact is pressed, do interaction action
-		if(CurrentInteractable != null && Input.IsActionJustPressed(Consts.INTERACT_INPUT))
+		if(CurrentInteractable != null && Input.IsActionJustPressed("player_interact"))
 			CurrentInteractable.OnInteract(this);
     }
 }
