@@ -1,8 +1,6 @@
 extends Area2D
 class_name Hurtbox
 
-onready var shape: CollisionShape2D = $HurtboxShape
-
 export var active: bool setget set_active
 
 func _ready() -> void:
@@ -10,4 +8,7 @@ func _ready() -> void:
 
 func set_active(b: bool) -> void:
 	active = b
-	if is_inside_tree(): shape.set_deferred("disabled", not b)
+	if is_inside_tree():
+		for node in get_children():
+			if node is CollisionShape2D:
+				node.set_deferred("disabled", not b)

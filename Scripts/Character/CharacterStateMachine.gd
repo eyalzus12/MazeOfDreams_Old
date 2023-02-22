@@ -1,10 +1,12 @@
 extends StateMachine
 
-onready var animation_player: AnimationPlayer = $"../CharacterAnimationPlayer"
-onready var sprite_effects_player: AnimationPlayer = $"../CharacterSprite/SpriteEffectPlayer"
-onready var sword: Sword = $"../CharacterSwordBase/CharacterSword"
+const DamagePopup := preload("res://Scenes/Objects/DamagePopup.tscn")
+
+onready var animation_player: AnimationPlayer = $"../AnimationPlayer"
+onready var sprite_effects_player: AnimationPlayer = $"../Sprite/SpriteEffectPlayer"
+onready var sword: Sword = $"../Sword"
 onready var character: Character = parent as Character
-onready var hurtbox: Hurtbox = $"../CharacterHurtbox"
+onready var hurtbox: Hurtbox = $"../Hurtbox"
 
 func _init() -> void:
 	_add_state("idle")
@@ -25,9 +27,10 @@ func _state_logic(_delta: float) -> void:
 		animation_player.play("death")
 		return
 	
-	#attack
-	if state in [states.move, states.idle, states.dash] and Input.is_action_just_pressed("player_attack"):
-		sword.attack()
+	if not state in [states.hurt] and not sword.is_attacking:
+		if Input.is_action_just_pressed("player_attack"): sword.attack()
+		character.set_direction()
+	
 	match state:
 		states.idle, states.move:
 			var _unused = character.move_and_slide(character.velocity)
@@ -97,6 +100,12 @@ func _on_CharacterHurtbox_area_entered(area: Area2D) -> void:
 		.direction_to(character.global_position) \
 		* hitbox.pushback
 	set_state(states.hurt)
+	
+	var popup := DamagePopup.instance()
+	popup.value = -hitbox.damage
+	get_tree().root.add_child(popup)
+	popup.global_position = character.global_position
+	popup.appear()
 
 #finished animation
 func _on_CharacterAnimationPlayer_animation_finished(anim_name: String) -> void:

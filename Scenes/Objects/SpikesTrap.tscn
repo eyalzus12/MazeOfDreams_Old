@@ -1,0 +1,30 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Scenes/Objects/Hitbox.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Scenes/Objects/Trap.tscn" type="PackedScene" id=2]
+[ext_resource path="res://stop doing rpg.jpg" type="Texture" id=3]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 64, 64 )
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 72, 72 )
+
+[node name="SpikesTrap" instance=ExtResource( 2 )]
+trap_groups = [ "TEST_ROOM_SINGLE_SPIKE_TRAP" ]
+
+[node name="Sprite" type="Sprite" parent="." index="0"]
+modulate = Color( 1, 1, 1, 0.501961 )
+scale = Vector2( 0.234146, 0.233387 )
+texture = ExtResource( 3 )
+
+[node name="DetectionShape" type="CollisionShape2D" parent="DetectionRange" index="0"]
+shape = SubResource( 1 )
+
+[node name="Hitbox" parent="." index="2" instance=ExtResource( 1 )]
+collision_layer = 18
+collision_mask = 4
+damage = 20.0
+
+[node name="HitboxShape" type="CollisionShape2D" parent="Hitbox" index="0"]
+shape = SubResource( 2 )

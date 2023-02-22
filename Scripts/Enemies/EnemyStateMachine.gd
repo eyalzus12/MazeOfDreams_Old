@@ -1,10 +1,13 @@
 extends StateMachine
 
+const DamagePopup := preload("res://Scenes/Objects/DamagePopup.tscn")
+
 onready var enemy: Enemy = parent as Enemy
-onready var animation_player: AnimationPlayer = $"../EnemyAnimationPlayer"
-onready var sprite_effects_player: AnimationPlayer = $"../EnemySprite/SpriteEffectPlayer"
+onready var animation_player: AnimationPlayer = $"../AnimationPlayer"
+onready var sprite_effects_player: AnimationPlayer = $"../Sprite/SpriteEffectPlayer"
 onready var navagent : NavigationAgent2D = $"../NavAgent"
-onready var hurtbox: Hurtbox = $"../EnemyHurtbox"
+onready var hurtbox: Hurtbox = $"../Hurtbox"
+onready var hitbox: Hitbox = $"../Hitbox"
 var chase_target: Node2D = null
 
 func _init():
@@ -48,6 +51,7 @@ func _get_transition() -> int:
 func _exit_state(_state_exited: int) -> void:
 	match _state_exited:
 		states.hurt:
+			hitbox.active = true
 			sprite_effects_player.play("RESET")
 			sprite_effects_player.advance(0)
 			sprite_effects_player.stop(true)
@@ -76,12 +80,17 @@ func _on_EnemyHitbox_area_entered(area: Area2D) -> void:
 #got hit
 func _on_EnemyHurtbox_area_entered(area: Area2D) -> void:
 	if not area is Hitbox: return
-	var hitbox = area as Hitbox
-	enemy.current_hp -= hitbox.damage
-	enemy.velocity = hitbox.global_position \
+	enemy.current_hp -= area.damage
+	enemy.velocity = area.global_position \
 		.direction_to(enemy.global_position) \
-		* hitbox.pushback
+		* area.pushback
 	set_state(states.hurt)
+	
+	var popup := DamagePopup.instance()
+	popup.value = -area.damage
+	get_tree().root.add_child(popup)
+	popup.global_position = enemy.global_position
+	popup.appear()
 
 func _on_InvincibilityTimer_timeout() -> void:
 	hurtbox.active = true

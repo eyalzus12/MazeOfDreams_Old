@@ -56,16 +56,16 @@ tracks/0/keys = {
 "values": [ Color( 1, 0, 0, 1 ), Color( 1, 1, 1, 1 ) ]
 }
 
-[sub_resource type="CircleShape2D" id=3]
-radius = 24.0208
+[sub_resource type="CircleShape2D" id=12]
+radius = 24.0
 
-[sub_resource type="CircleShape2D" id=4]
-radius = 24.0208
+[sub_resource type="CircleShape2D" id=13]
+radius = 32.0
 
 [sub_resource type="Animation" id=6]
 length = 0.001
 tracks/0/type = "value"
-tracks/0/path = NodePath("EnemySprite:modulate")
+tracks/0/path = NodePath("Sprite:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
@@ -77,7 +77,7 @@ tracks/0/keys = {
 "values": [ Color( 1, 1, 1, 1 ) ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("EnemyHurtbox:active")
+tracks/1/path = NodePath("Hurtbox:active")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
@@ -89,7 +89,7 @@ tracks/1/keys = {
 "values": [ true ]
 }
 tracks/2/type = "value"
-tracks/2/path = NodePath("EnemyHitbox:active")
+tracks/2/path = NodePath("Hitbox:active")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/imported = false
@@ -109,7 +109,7 @@ length = 0.2
 resource_name = "hurt"
 length = 0.2
 tracks/0/type = "value"
-tracks/0/path = NodePath("EnemyHurtbox:active")
+tracks/0/path = NodePath("Hurtbox:active")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
@@ -134,6 +134,18 @@ tracks/1/keys = {
 "method": "start"
 } ]
 }
+tracks/2/type = "value"
+tracks/2/path = NodePath("Hitbox:active")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ false ]
+}
 
 [sub_resource type="CircleShape2D" id=2]
 radius = 1192.43
@@ -144,34 +156,34 @@ collision_mask = 520
 script = ExtResource( 5 )
 i_frames = 0.3
 
-[node name="EnemyCollision" type="CollisionShape2D" parent="."]
+[node name="Collision" type="CollisionShape2D" parent="."]
 shape = SubResource( 7 )
 
-[node name="EnemySprite" type="Sprite" parent="."]
+[node name="Sprite" type="Sprite" parent="."]
 position = Vector2( -9.53674e-07, 0.5 )
 scale = Vector2( 0.08, 0.0816667 )
 texture = ExtResource( 2 )
 
-[node name="SpriteEffectPlayer" type="AnimationPlayer" parent="EnemySprite"]
+[node name="SpriteEffectPlayer" type="AnimationPlayer" parent="Sprite"]
 anims/RESET = SubResource( 11 )
 anims/death = SubResource( 9 )
 anims/hurt = SubResource( 10 )
 
-[node name="EnemyHitbox" parent="." groups=["enemy hitboxes"] instance=ExtResource( 4 )]
+[node name="Hitbox" parent="." groups=["enemy hitboxes"] instance=ExtResource( 4 )]
 collision_layer = 1026
 collision_mask = 288
 __meta__ = {
 "_edit_pinned_properties_": [ "active" ]
 }
-damage = 1.0
+damage = 10.0
 stun = 5.0
 pushback = 500.0
 active = true
 
-[node name="HitboxShape" parent="EnemyHitbox" index="0"]
-shape = SubResource( 3 )
+[node name="HitboxShape" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource( 12 )
 
-[node name="EnemyHurtbox" parent="." groups=["enemy hurtboxes"] instance=ExtResource( 3 )]
+[node name="Hurtbox" parent="." groups=["enemy hurtboxes"] instance=ExtResource( 3 )]
 collision_layer = 2052
 collision_mask = 144
 __meta__ = {
@@ -179,15 +191,15 @@ __meta__ = {
 }
 active = true
 
-[node name="HurtboxShape" parent="EnemyHurtbox" index="0"]
-shape = SubResource( 4 )
+[node name="HurtboxShape" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource( 13 )
 
 [node name="InvincibilityTimer" type="Timer" parent="."]
 pause_mode = 1
 process_mode = 0
 one_shot = true
 
-[node name="EnemyAnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 playback_process_mode = 0
 anims/RESET = SubResource( 6 )
 anims/death = SubResource( 8 )
@@ -211,16 +223,16 @@ process_mode = 0
 wait_time = 0.05
 autostart = true
 
-[node name="EnemyStateMachine" type="Node" parent="."]
+[node name="StateMachine" type="Node" parent="."]
 script = ExtResource( 1 )
 
-[connection signal="area_entered" from="EnemyHitbox" to="EnemyStateMachine" method="_on_EnemyHitbox_area_entered"]
-[connection signal="area_entered" from="EnemyHurtbox" to="EnemyStateMachine" method="_on_EnemyHurtbox_area_entered"]
-[connection signal="timeout" from="InvincibilityTimer" to="EnemyStateMachine" method="_on_InvincibilityTimer_timeout"]
-[connection signal="animation_finished" from="EnemyAnimationPlayer" to="EnemyStateMachine" method="_on_EnemyAnimationPlayer_animation_finished"]
-[connection signal="body_entered" from="ChaseRange" to="EnemyStateMachine" method="_on_ChaseRange_body_entered"]
-[connection signal="body_exited" from="ChaseRange" to="EnemyStateMachine" method="_on_ChaseRange_body_exited"]
-[connection signal="timeout" from="PathfindingTimer" to="EnemyStateMachine" method="_on_PathfindingTimer_timeout"]
+[connection signal="area_entered" from="Hitbox" to="StateMachine" method="_on_EnemyHitbox_area_entered"]
+[connection signal="area_entered" from="Hurtbox" to="StateMachine" method="_on_EnemyHurtbox_area_entered"]
+[connection signal="timeout" from="InvincibilityTimer" to="StateMachine" method="_on_InvincibilityTimer_timeout"]
+[connection signal="animation_finished" from="AnimationPlayer" to="StateMachine" method="_on_EnemyAnimationPlayer_animation_finished"]
+[connection signal="body_entered" from="ChaseRange" to="StateMachine" method="_on_ChaseRange_body_entered"]
+[connection signal="body_exited" from="ChaseRange" to="StateMachine" method="_on_ChaseRange_body_exited"]
+[connection signal="timeout" from="PathfindingTimer" to="StateMachine" method="_on_PathfindingTimer_timeout"]
 
-[editable path="EnemyHitbox"]
-[editable path="EnemyHurtbox"]
+[editable path="Hitbox"]
+[editable path="Hurtbox"]

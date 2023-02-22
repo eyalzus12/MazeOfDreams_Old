@@ -6,7 +6,6 @@
 modulate = Color( 0, 1, 0, 1 )
 collision_layer = 4
 collision_mask = 0
+input_pickable = false
 script = ExtResource( 1 )
 active = true
-
-[node name="HurtboxShape" type="CollisionShape2D" parent="."]

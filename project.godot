@@ -38,6 +38,11 @@ _global_script_classes=[ {
 "class": "Sword",
 "language": "GDScript",
 "path": "res://Scripts/Sword.gd"
+}, {
+"base": "Node2D",
+"class": "Trap",
+"language": "GDScript",
+"path": "res://Scripts/Trap.gd"
 } ]
 _global_script_class_icons={
 "Character": "",
@@ -45,7 +50,8 @@ _global_script_class_icons={
 "Hitbox": "",
 "Hurtbox": "",
 "StateMachine": "",
-"Sword": ""
+"Sword": "",
+"Trap": ""
 }
 
 [application]

@@ -5,11 +5,11 @@ onready var dash_cooldown_timer: Timer = $DashCooldownTimer
 onready var in_dash_timer: Timer = $InDashTimer
 onready var iframes_timer: Timer = $InvincibilityTimer
 
-onready var sword_base: Node2D = $CharacterSwordBase
-onready var sword: Sword = $CharacterSwordBase/CharacterSword
-onready var hurtbox: Hurtbox = $CharacterHurtbox
-onready var sprite: Sprite = $CharacterSprite
-onready var debug_label: Label = $UILayer/DebugLabel #can't get proper type hint cuz cyclic reference
+onready var sword: Sword = $Sword
+onready var hurtbox: Hurtbox = $Hurtbox
+onready var sprite: Sprite = $Sprite
+onready var debug_label: Label = $UILayer/DebugLabel
+onready var health_bar: TextureProgress = $UILayer/HealthBar
 
 var state_frame: int
 var current_state: String
@@ -22,7 +22,7 @@ export var dash_bounce_mult: float = 1.3
 export var dash_cooldown: float = 0.5 setget set_dash_cooldown
 export var dash_time: float = 0.2 setget set_dash_time
 export var initial_hp: float = 100
-export var current_hp: float = initial_hp
+export var current_hp: float = initial_hp setget set_current_hp
 export var stun_friction: float = 0.5
 export var i_frames: float = 0.5 setget set_i_frames
 
@@ -46,19 +46,29 @@ func _ready() -> void:
 	set_dash_cooldown(dash_cooldown)
 	set_dash_time(dash_time)
 	set_i_frames(i_frames)
+	set_current_hp(current_hp)
 
 func _physics_process(_delta: float) -> void:
 	if is_zero_approx(velocity.x): velocity.x = 0
 	if is_zero_approx(velocity.y): velocity.y = 0
-	direction = global_position.direction_to(get_global_mouse_position())
-	var direction_side = Vector2(abs(direction.x),direction.y)
-	sword_base.rotation = sign(direction.x)*direction_side.angle()
-	sword_base.scale.x = sign(direction.x)
-	sprite.flip_h = sign(direction.x)==-1
 	
 	if Input.is_action_just_pressed("toggle_debug"): debug_active = not debug_active
 	debug_label.visible = debug_active
 	if debug_active: debug_label.update_text(self)
+
+func set_direction() -> void:
+	direction = global_position.direction_to(get_global_mouse_position())
+	
+	if direction.x > 0 and sprite.flip_h:
+		sprite.flip_h = false
+	elif direction.x < 0 and not sprite.flip_h:
+		sprite.flip_h = true
+	
+	sword.rotation = direction.angle()
+	if sword.scale.y == 1 and direction.x < 0:
+		sword.scale.y = -1
+	elif sword.scale.y == -1 and direction.x > 0:
+		sword.scale.y = 1
 
 func set_inputs() -> void:
 	set_horizontal_inputs()
@@ -114,3 +124,7 @@ func set_dash_time(f: float) -> void:
 func set_dash_cooldown(f: float) -> void:
 	dash_cooldown = f
 	if is_inside_tree(): dash_cooldown_timer.wait_time = f
+
+func set_current_hp(hp: float) -> void:
+	current_hp = hp
+	if is_inside_tree(): health_bar.set_health(current_hp)

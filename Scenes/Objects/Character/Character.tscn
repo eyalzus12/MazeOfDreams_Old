@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://Scripts/Character/Character.gd" type="Script" id=1]
 [ext_resource path="res://Scripts/Labels/DebugLabel.gd" type="Script" id=2]
@@ -8,6 +8,7 @@
 [ext_resource path="res://Scenes/Objects/Sword.tscn" type="PackedScene" id=6]
 [ext_resource path="res://LabelBackgroundTheme.tres" type="Theme" id=7]
 [ext_resource path="res://jessesans.jpg" type="Texture" id=8]
+[ext_resource path="res://Scenes/Objects/HealthBar.tscn" type="PackedScene" id=9]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 8, 8 )
@@ -59,12 +60,12 @@ tracks/0/keys = {
 "values": [ Color( 1, 0, 0, 1 ), Color( 1, 1, 1, 1 ) ]
 }
 
-[sub_resource type="RectangleShape2D" id=3]
+[sub_resource type="RectangleShape2D" id=12]
 
 [sub_resource type="Animation" id=7]
 length = 0.001
 tracks/0/type = "value"
-tracks/0/path = NodePath("CharacterHurtbox:active")
+tracks/0/path = NodePath("Hurtbox:active")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
@@ -84,7 +85,7 @@ length = 0.2
 resource_name = "hurt"
 length = 0.3
 tracks/0/type = "value"
-tracks/0/path = NodePath("CharacterHurtbox:active")
+tracks/0/path = NodePath("Hurtbox:active")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
@@ -114,22 +115,23 @@ tracks/1/keys = {
 collision_layer = 4161
 collision_mask = 8
 script = ExtResource( 1 )
+i_frames = 1.0
 
-[node name="CharacterCamera" type="Camera2D" parent="."]
+[node name="Camera" type="Camera2D" parent="."]
 current = true
 process_mode = 0
 smoothing_enabled = true
 smoothing_speed = 8.0
 
-[node name="CharacterCollision" type="CollisionShape2D" parent="."]
+[node name="Collision" type="CollisionShape2D" parent="."]
 shape = SubResource( 1 )
 
-[node name="CharacterSprite" type="Sprite" parent="."]
-position = Vector2( 2.38419e-07, -9.53674e-07 )
-scale = Vector2( 0.0257235, 0.0261866 )
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( -9.53674e-07, -7.15256e-07 )
+scale = Vector2( 0.0514469, 0.0523732 )
 texture = ExtResource( 8 )
 
-[node name="SpriteEffectPlayer" type="AnimationPlayer" parent="CharacterSprite"]
+[node name="SpriteEffectPlayer" type="AnimationPlayer" parent="Sprite"]
 anims/RESET = SubResource( 11 )
 anims/death = SubResource( 9 )
 anims/hurt = SubResource( 10 )
@@ -140,6 +142,10 @@ anims/hurt = SubResource( 10 )
 visible = false
 theme = ExtResource( 7 )
 script = ExtResource( 2 )
+
+[node name="HealthBar" parent="UILayer" instance=ExtResource( 9 )]
+visible = false
+rect_scale = Vector2( 0.743549, 0.050791 )
 
 [node name="InteracterComponent" parent="." instance=ExtResource( 3 )]
 collision_layer = 0
@@ -155,7 +161,7 @@ pause_mode = 1
 process_mode = 0
 one_shot = true
 
-[node name="CharacterHurtbox" parent="." groups=["character hurtboxes"] instance=ExtResource( 5 )]
+[node name="Hurtbox" parent="." groups=["character hurtboxes"] instance=ExtResource( 5 )]
 collision_layer = 260
 collision_mask = 1040
 __meta__ = {
@@ -163,21 +169,19 @@ __meta__ = {
 }
 active = true
 
-[node name="HurtboxShape" parent="CharacterHurtbox" index="0"]
-shape = SubResource( 3 )
+[node name="HurtboxShape" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource( 12 )
 
-[node name="CharacterAnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 playback_process_mode = 0
 anims/RESET = SubResource( 7 )
 anims/death = SubResource( 8 )
 anims/hurt = SubResource( 4 )
 
-[node name="CharacterSwordBase" type="Node2D" parent="."]
+[node name="Sword" parent="." instance=ExtResource( 6 )]
+position = Vector2( 8, 0 )
 
-[node name="CharacterSword" parent="CharacterSwordBase" instance=ExtResource( 6 )]
-position = Vector2( 20, 0 )
-
-[node name="CharacterStateMachine" type="Node" parent="."]
+[node name="StateMachine" type="Node" parent="."]
 script = ExtResource( 4 )
 
 [node name="InvincibilityTimer" type="Timer" parent="."]
@@ -187,10 +191,8 @@ one_shot = true
 
 [connection signal="timeout" from="DashCooldownTimer" to="." method="set" binds= [ "dash_in_cooldown", false ]]
 [connection signal="timeout" from="InDashTimer" to="." method="set" binds= [ "in_dash", false ]]
-[connection signal="area_entered" from="CharacterHurtbox" to="CharacterStateMachine" method="_on_CharacterHurtbox_area_entered"]
-[connection signal="animation_finished" from="CharacterAnimationPlayer" to="CharacterStateMachine" method="_on_CharacterAnimationPlayer_animation_finished"]
-[connection signal="timeout" from="InvincibilityTimer" to="CharacterStateMachine" method="_on_InvincibilityTimer_timeout"]
+[connection signal="area_entered" from="Hurtbox" to="StateMachine" method="_on_CharacterHurtbox_area_entered"]
+[connection signal="animation_finished" from="AnimationPlayer" to="StateMachine" method="_on_CharacterAnimationPlayer_animation_finished"]
+[connection signal="timeout" from="InvincibilityTimer" to="StateMachine" method="_on_InvincibilityTimer_timeout"]
 
-[editable path="CharacterHurtbox"]
-[editable path="CharacterSwordBase/CharacterSword"]
-[editable path="CharacterSwordBase/CharacterSword/SwordHitbox"]
+[editable path="Hurtbox"]
