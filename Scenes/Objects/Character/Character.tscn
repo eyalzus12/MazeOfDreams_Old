@@ -138,14 +138,14 @@ anims/hurt = SubResource( 10 )
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 
+[node name="HealthBar" parent="UILayer" instance=ExtResource( 9 )]
+visible = false
+rect_scale = Vector2( 0.743549, 0.050791 )
+
 [node name="DebugLabel" type="Label" parent="UILayer"]
 visible = false
 theme = ExtResource( 7 )
 script = ExtResource( 2 )
-
-[node name="HealthBar" parent="UILayer" instance=ExtResource( 9 )]
-visible = false
-rect_scale = Vector2( 0.743549, 0.050791 )
 
 [node name="InteracterComponent" parent="." instance=ExtResource( 3 )]
 collision_layer = 0
