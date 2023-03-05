@@ -1,7 +1,7 @@
 using System;
 using Godot;
 
-public class Randomizer : Node
+public partial class Randomizer : Node
 {
     public Randomizer() {}
 

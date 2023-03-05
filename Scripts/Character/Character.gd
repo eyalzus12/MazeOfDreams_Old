@@ -1,36 +1,35 @@
-extends KinematicBody2D
+extends CharacterBody2D
 class_name Character
 
-onready var dash_cooldown_timer: Timer = $DashCooldownTimer
-onready var in_dash_timer: Timer = $InDashTimer
-onready var iframes_timer: Timer = $InvincibilityTimer
+@onready var dash_cooldown_timer: Timer = $DashCooldownTimer
+@onready var in_dash_timer: Timer = $InDashTimer
+@onready var iframes_timer: Timer = $InvincibilityTimer
 
-onready var sword: Sword = $Sword
-onready var hurtbox: Hurtbox = $Hurtbox
-onready var sprite: Sprite = $Sprite
-onready var debug_label: Label = $UILayer/DebugLabel
-onready var health_bar: TextureProgress = $UILayer/HealthBar
+@onready var sword: Sword = $Sword
+@onready var hurtbox: Hurtbox = $Hurtbox
+@onready var sprite: Sprite2D = $Sprite2D
+@onready var debug_label: Label = $UILayer/DebugLabel
+@onready var health_bar: TextureProgressBar = $UILayer/HealthBar
 
 var state_frame: int
 var current_state: String
 
-export var speed: float = 300
-export var acceleration: float = 50
-export var dash_startup: float = 2
-export var dash_speed: float = 1000
-export var dash_bounce_mult: float = 1.3
-export var dash_cooldown: float = 0.5 setget set_dash_cooldown
-export var dash_time: float = 0.2 setget set_dash_time
-export var initial_hp: float = 100
-export var current_hp: float = initial_hp setget set_current_hp
-export var stun_friction: float = 0.5
-export var i_frames: float = 0.5 setget set_i_frames
+@export var speed: float = 300
+@export var acceleration: float = 50
+@export var dash_startup: float = 2
+@export var dash_speed: float = 1000
+@export var dash_bounce_mult: float = 1.3
+@export var dash_cooldown: float = 0.5 : set = set_dash_cooldown
+@export var dash_time: float = 0.2 : set = set_dash_time
+@export var initial_hp: float = 100
+@export var current_hp: float = initial_hp : set = set_current_hp
+@export var stun_friction: float = 0.5
+@export var i_frames: float = 0.5 : set = set_i_frames
 
 var dash_in_cooldown: bool = false
 var in_dash: bool = false
 
 var direction: Vector2
-var velocity: Vector2 = Vector2.ZERO
 
 var input_vector: Vector2
 var velocity_vector: Vector2

@@ -1,11 +1,11 @@
 using Godot;
 using System;
 
-public class InputDebugger : Node
+public partial class InputDebugger : Node
 {
     public bool InputDebug{get; set;} = false;
 
-    public override void _Process(float delta)
+    public override void _Process(double delta)
     {
         if(Input.IsActionJustPressed("toggle_input_debug")) InputDebug = !InputDebug;
     }

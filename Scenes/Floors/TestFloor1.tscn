@@ -4,18 +4,18 @@
 [ext_resource path="res://Scenes/Rooms/MainRoomTest.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Scenes/Rooms/MainRoomTest3.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Scenes/Rooms/MainRoomTest2.tscn" type="PackedScene" id=4]
-[ext_resource path="res://Scripts/d.png" type="Texture" id=5]
+[ext_resource path="res://Scripts/d.png" type="Texture2D" id=5]
 [ext_resource path="res://Scenes/Rooms/SpawnRoomTest.tscn" type="PackedScene" id=6]
 [ext_resource path="res://Scenes/Objects/Character/Character.tscn" type="PackedScene" id=7]
 [ext_resource path="res://Scenes/Objects/Enemies/Enemy.tscn" type="PackedScene" id=8]
 
 [sub_resource type="NavigationPolygon" id=9]
-vertices = PoolVector2Array( 28, 28, 4, 28, 4, 4, 28, 4 )
-polygons = [ PoolIntArray( 0, 1, 2, 3 ) ]
-outlines = [ PoolVector2Array( 28, 28, 4, 28, 4, 4, 28, 4 ) ]
+vertices = PackedVector2Array( 28, 28, 4, 28, 4, 4, 28, 4 )
+polygons = [ PackedInt32Array( 0, 1, 2, 3 ) ]
+outlines = [ PackedVector2Array( 28, 28, 4, 28, 4, 4, 28, 4 ) ]
 
 [sub_resource type="ConvexPolygonShape2D" id=5]
-points = PoolVector2Array( 32, 32, 0, 32, 0, 0, 32, 0 )
+points = PackedVector2Array( 32, 32, 0, 32, 0, 0, 32, 0 )
 
 [sub_resource type="TileSet" id=7]
 3/name = "bridge"
@@ -56,7 +56,7 @@ points = PoolVector2Array( 32, 32, 0, 32, 0, 0, 32, 0 )
 4/z_index = 0
 
 [sub_resource type="RectangleShape2D" id=8]
-extents = Vector2( 20, 20 )
+size = Vector2( 20, 20 )
 
 [node name="BaseFloor" instance=ExtResource( 1 )]
 

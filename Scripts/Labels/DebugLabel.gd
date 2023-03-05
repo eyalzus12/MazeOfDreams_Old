@@ -22,7 +22,7 @@ func update_text(ch: Character) -> void:
 		" position: ", ch.position,\
 		"\n",\
 		"on wall: ", ch.is_on_wall(),\
-		" collision normal: ", Vector2.ZERO if ch.get_slide_count() <= 0 else ch.get_slide_collision(0).normal,\
+		" collision normal: ", Vector2.ZERO if ch.get_slide_collision_count() <= 0 else ch.get_slide_collision(0).get_normal(),\
 		"\n",\
 		"FPS: ", Engine.get_frames_per_second(),\
 		"\n"\

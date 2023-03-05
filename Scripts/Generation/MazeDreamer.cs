@@ -3,8 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public class MazeDreamer : Node2D
+public partial class MazeDreamer : Node2D
 {
+    /*
     [Signal]
     public delegate void DreamingFinished(GameRoom spawn);
 
@@ -105,7 +106,7 @@ public class MazeDreamer : Node2D
         //create the room spreader with the shape list
         _spreader = new RoomSpreader(Tiles.CellSize, SpawnRadius, shapes);
         //run OnSpreadFinished when the spreading is finished
-        _spreader.Connect(nameof(RoomSpreader.SpreadingFinished), this, nameof(OnSpreadFinished));
+        _spreader.Connect(nameof(RoomSpreader.SpreadingFinished),new Callable(this,nameof(OnSpreadFinished)));
         //add to the scene
         AddChild(_spreader);
     }
@@ -224,14 +225,6 @@ public class MazeDreamer : Node2D
         }
 
         GD.Print("Finished dreaming");
-
-        /*var timer = new Timer();
-        timer.OneShot = true;
-        timer.Autostart = true;
-        timer.WaitTime = 5f;
-        timer.Connect("timeout", Tiles, "set_bake_navigation", new Godot.Collections.Array{true});
-        timer.Connect("timeout", timer, "queue_free");
-        AddChild(timer);*/
 
         //emit ended
         EmitSignal(nameof(DreamingFinished), _spawnRoom);
@@ -521,5 +514,5 @@ public class MazeDreamer : Node2D
         path.Add((iter,BridgeType.Start));
 
         return path;
-    }
+    }*/
 }

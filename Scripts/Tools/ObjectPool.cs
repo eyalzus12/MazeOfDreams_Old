@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-public class ObjectPool<T> : Node where T : Godot.Object
+public partial class ObjectPool<T> : Node where T : GodotObject
 {
     [Export]
     public int ExtraLoadAmount{get; set;} = 5;
@@ -78,7 +78,7 @@ public class ObjectPool<T> : Node where T : Godot.Object
         var queue = PoolDictionary[identifier];
 
         for(int i = 0; i < amount; ++i)
-            queue.Enqueue(loader.Instance<T>());
+            queue.Enqueue(loader.Instantiate<T>());
 
         return true;
     }

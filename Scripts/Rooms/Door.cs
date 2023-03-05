@@ -1,10 +1,10 @@
 using System;
 using Godot;
 
-public class Door : StaticBody2D
+public partial class Door : StaticBody2D
 {
     [Signal]
-    public delegate void Interacted(Door door, InteracterComponent interacter);
+    public delegate void InteractedEventHandler(Door door, InteracterComponent interacter);
 
     [Export(PropertyHint.Enum)]
     public DoorDirection Direction{get; set;}
@@ -14,8 +14,8 @@ public class Door : StaticBody2D
 
     public InteractableComponent Interactable{get; set;}
     public CollisionShape2D DoorCollision{get; set;}
-    public Sprite DoorOpenSprite{get; set;}
-    public Sprite DoorClosedSprite{get; set;}
+    public Sprite2D DoorOpenSprite{get; set;}
+    public Sprite2D DoorClosedSprite{get; set;}
 
     private bool _open;
     public bool Open
@@ -35,8 +35,8 @@ public class Door : StaticBody2D
     {
         Interactable = GetNodeOrNull<InteractableComponent>(nameof(InteractableComponent));
         DoorCollision = GetNodeOrNull<CollisionShape2D>(nameof(DoorCollision));
-        DoorOpenSprite = GetNodeOrNull<Sprite>(nameof(DoorOpenSprite));
-        DoorClosedSprite = GetNodeOrNull<Sprite>(nameof(DoorClosedSprite));
+        DoorOpenSprite = GetNodeOrNull<Sprite2D>(nameof(DoorOpenSprite));
+        DoorClosedSprite = GetNodeOrNull<Sprite2D>(nameof(DoorClosedSprite));
         Open = InitiallyOpen;
     }
 

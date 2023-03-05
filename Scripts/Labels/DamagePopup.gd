@@ -1,9 +1,9 @@
 extends Node2D
 
-onready var label: Label = $LabelBase/DamageLabel
-onready var player: AnimationPlayer = $LabelBase/DamageLabel/DamageLabelPlayer
+@onready var label: Label = $LabelBase/DamageLabel
+@onready var player: AnimationPlayer = $LabelBase/DamageLabel/DamageLabelPlayer
 
-var value: float setget set_value
+var value: float : set = set_value
 
 func appear() -> void:
 	player.play("appear")
@@ -17,8 +17,8 @@ func set_value(f: float) -> void:
 	label.text = str(round(f))
 	match int(sign(f)):
 		1: #positive
-			modulate = Color.green
+			modulate = Color.GREEN
 		-1: #negative
-			modulate = Color.red
+			modulate = Color.RED
 		0: #none
-			modulate = Color.white
+			modulate = Color.WHITE

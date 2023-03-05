@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-public class DisjointSetUnion
+public partial class DisjointSetUnion
 {
     public Dictionary<int,int> Parent{get; private set;} = new Dictionary<int, int>();
 

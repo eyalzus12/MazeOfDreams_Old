@@ -4,10 +4,10 @@ class_name StateMachine
 var states: Dictionary = {}
 var state_names: Dictionary = {}
 var prev_state: int = -1
-var state: int = -1 setget set_state
+var state: int = -1 : set = set_state
 var state_frame: int = 0
 
-onready var parent: Node2D = get_parent()
+@onready var parent: Node2D = get_parent()
 
 func _physics_process(delta: float) -> void:
 	if state != -1:

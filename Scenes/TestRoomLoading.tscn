@@ -1,33 +1,33 @@
 [gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://Scripts/Rooms/GameRoom.cs" type="Script" id=1]
-[ext_resource path="res://icon.png" type="Texture" id=2]
+[ext_resource path="res://icon.png" type="Texture2D" id=2]
 [ext_resource path="res://Scenes/Objects/Door.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Scenes/Objects/Character/Character.tscn" type="PackedScene" id=4]
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 10, 310 )
+size = Vector2( 10, 310 )
 
 [sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 10, 310 )
+size = Vector2( 10, 310 )
 
 [sub_resource type="RectangleShape2D" id=3]
-extents = Vector2( 243, 10 )
+size = Vector2( 243, 10 )
 
 [sub_resource type="RectangleShape2D" id=5]
-extents = Vector2( 243, 10 )
+size = Vector2( 243, 10 )
 
 [sub_resource type="RectangleShape2D" id=4]
-extents = Vector2( 522, 10 )
+size = Vector2( 522, 10 )
 
 [sub_resource type="RectangleShape2D" id=6]
-extents = Vector2( 36, 10 )
+size = Vector2( 36, 10 )
 
 [sub_resource type="RectangleShape2D" id=8]
-extents = Vector2( 40, 20 )
+size = Vector2( 40, 20 )
 
 [sub_resource type="RectangleShape2D" id=7]
-extents = Vector2( 20, 20 )
+size = Vector2( 20, 20 )
 
 [node name="RoomBase" type="Node2D"]
 position = Vector2( 512, 300 )
@@ -42,10 +42,10 @@ position = Vector2( -512, 0 )
 shape = SubResource( 1 )
 
 [node name="LeftWallColorRect" type="ColorRect" parent="RoomBounds/LeftWall"]
-margin_left = -10.0
-margin_top = -310.0
-margin_right = 10.0
-margin_bottom = 310.0
+offset_left = -10.0
+offset_top = -310.0
+offset_right = 10.0
+offset_bottom = 310.0
 
 [node name="RightWall" type="StaticBody2D" parent="RoomBounds"]
 position = Vector2( 512, 0 )
@@ -54,10 +54,10 @@ position = Vector2( 512, 0 )
 shape = SubResource( 2 )
 
 [node name="RightWallColorRect" type="ColorRect" parent="RoomBounds/RightWall"]
-margin_left = -10.0
-margin_top = -310.0
-margin_right = 10.0
-margin_bottom = 310.0
+offset_left = -10.0
+offset_top = -310.0
+offset_right = 10.0
+offset_bottom = 310.0
 
 [node name="TopWall" type="StaticBody2D" parent="RoomBounds"]
 position = Vector2( 0, -300 )
@@ -71,10 +71,10 @@ position = Vector2( 279, 0 )
 shape = SubResource( 5 )
 
 [node name="TopWallColorRect" type="ColorRect" parent="RoomBounds/TopWall"]
-margin_left = -522.0
-margin_top = -10.0
-margin_right = 522.0
-margin_bottom = 10.0
+offset_left = -522.0
+offset_top = -10.0
+offset_right = 522.0
+offset_bottom = 10.0
 
 [node name="BottomWall" type="StaticBody2D" parent="RoomBounds"]
 position = Vector2( 0, 300 )
@@ -83,10 +83,10 @@ position = Vector2( 0, 300 )
 shape = SubResource( 4 )
 
 [node name="BottomWallColorRect" type="ColorRect" parent="RoomBounds/BottomWall"]
-margin_left = -522.0
-margin_top = -10.0
-margin_right = 522.0
-margin_bottom = 10.0
+offset_left = -522.0
+offset_top = -10.0
+offset_right = 522.0
+offset_bottom = 10.0
 
 [node name="NorthDoor" parent="." instance=ExtResource( 3 )]
 position = Vector2( 0, -300 )

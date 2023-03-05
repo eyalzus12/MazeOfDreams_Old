@@ -2,10 +2,10 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-public class InteractableComponent : Area2D
+public partial class InteractableComponent : Area2D
 {
     [Signal]
-    public delegate void Interacted(InteractableComponent interactable, InteracterComponent interacter);
+    public delegate void InteractedEventHandler(InteractableComponent interactable, InteracterComponent interacter);
 
     public HashSet<InteracterComponent> interacters{get; set;} = new HashSet<InteracterComponent>();
 
@@ -14,7 +14,7 @@ public class InteractableComponent : Area2D
     [Export]
     public int InteractionPriority{get; set;} = 0;
 
-    public override void _PhysicsProcess(float delta)
+    public override void _PhysicsProcess(double delta)
     {
         foreach(var i in interacters)
         {

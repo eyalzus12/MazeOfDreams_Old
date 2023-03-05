@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public class InteracterComponent : Area2D
+public partial class InteracterComponent : Area2D
 {
 	public Func<InteractableComponent, bool> InteractionValidator{get; set;} = (i) => true;
 
@@ -32,7 +32,7 @@ public class InteracterComponent : Area2D
 			_currentInteractable = value;
 	}}
 
-    public override void _PhysicsProcess(float delta)
+    public override void _PhysicsProcess(double delta)
     {
         //if can't interact with current, leave it
 		if(!InteractionValidator(CurrentInteractable)) CurrentInteractable = null;

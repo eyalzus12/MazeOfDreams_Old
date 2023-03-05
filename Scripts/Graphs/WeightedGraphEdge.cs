@@ -1,6 +1,6 @@
 using System;
 
-public class WeightedGraphEdge : IComparable<WeightedGraphEdge>
+public partial class WeightedGraphEdge : IComparable<WeightedGraphEdge>
 {
     public int First{get; set;}
     public int Second{get; set;}

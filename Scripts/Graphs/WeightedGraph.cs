@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Godot;
 
-public class WeightedGraph
+public partial class WeightedGraph
 {
     public int NodeCount{get; set;} = 0;
     public List<WeightedGraphEdge> Edges{get; set;} = new List<WeightedGraphEdge>();
@@ -24,7 +24,7 @@ public class WeightedGraph
 
     public static WeightedGraph GenerateFromPointList(List<Vector2> points, HashSet<(int,int)> illegals)
     {
-        var triangulation = Geometry.TriangulateDelaunay2d(points.ToArray());
+        var triangulation = Geometry2D.TriangulateDelaunay(points.ToArray());
         if(triangulation.Length == 0) GD.PushError("Room triangluation failed. Please report this rng seed.");
         var result = new WeightedGraph(points.Count);
         var edgeSet = new HashSet<(int,int)>();

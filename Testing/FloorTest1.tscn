@@ -8,15 +8,15 @@
 [ext_resource path="res://Scenes/Objects/Character/Character.tscn" type="PackedScene" id=6]
 [ext_resource path="res://Scripts/Generation/GameFloor.cs" type="Script" id=7]
 [ext_resource path="res://Scenes/Rooms/SpawnRoomTest.tscn" type="PackedScene" id=8]
-[ext_resource path="res://Scripts/d.png" type="Texture" id=9]
+[ext_resource path="res://Scripts/d.png" type="Texture2D" id=9]
 
 [sub_resource type="NavigationPolygon" id=6]
-vertices = PoolVector2Array( 32, 32, 0, 32, 0, 0, 32, 0 )
-polygons = [ PoolIntArray( 0, 1, 2, 3 ) ]
-outlines = [ PoolVector2Array( 32, 32, 0, 32, 0, 0, 32, 0 ) ]
+vertices = PackedVector2Array( 32, 32, 0, 32, 0, 0, 32, 0 )
+polygons = [ PackedInt32Array( 0, 1, 2, 3 ) ]
+outlines = [ PackedVector2Array( 32, 32, 0, 32, 0, 0, 32, 0 ) ]
 
 [sub_resource type="ConvexPolygonShape2D" id=5]
-points = PoolVector2Array( 32, 32, 0, 32, 0, 0, 32, 0 )
+points = PackedVector2Array( 32, 32, 0, 32, 0, 0, 32, 0 )
 
 [sub_resource type="TileSet" id=3]
 3/name = "bridge"
@@ -57,7 +57,7 @@ points = PoolVector2Array( 32, 32, 0, 32, 0, 0, 32, 0 )
 4/z_index = 0
 
 [sub_resource type="RectangleShape2D" id=4]
-extents = Vector2( 24, 24 )
+size = Vector2( 24, 24 )
 
 [node name="FloorTest1" type="Node2D"]
 script = ExtResource( 7 )

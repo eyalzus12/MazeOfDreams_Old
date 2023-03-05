@@ -1,16 +1,16 @@
 extends Node2D
 class_name Trap
 
-onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
 
-export var trap_groups: Array = []
+@export var trap_groups: Array = []
 
 var body_count: int = 0
 
 func _on_DetectionRange_body_entered(_body: Node) -> void:
-	get_tree().call_group("traps", "body_enter_for", trap_groups)
+	get_tree().call_group(&"traps", &"body_enter_for", trap_groups)
 func _on_DetectionRange_body_exited(_body: Node) -> void:
-	get_tree().call_group("traps", "body_leave_for", trap_groups)
+	get_tree().call_group(&"traps", &"body_leave_for", trap_groups)
 
 func group_with(groups: Array) -> bool:
 	for group in groups:
@@ -31,7 +31,7 @@ func body_leave_for(groups: Array) -> void:
 	if body_count == 0: deactivate()
 
 func activate() -> void:
-	animation_player.play("activate")
+	animation_player.play(&"activate")
 
 func deactivate() -> void:
-	animation_player.play("deactivate")
+	animation_player.queue(&"deactivate")

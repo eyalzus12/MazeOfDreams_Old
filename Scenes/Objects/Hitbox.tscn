@@ -1,10 +1,10 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://gbshk8g5eb61"]
 
-[ext_resource path="res://Scripts/Hitbox.gd" type="Script" id=1]
+[ext_resource type="Script" path="res://Scripts/Hitbox.gd" id="1"]
 
 [node name="Hitbox" type="Area2D" groups=["hitboxes"]]
-modulate = Color( 1, 0, 0, 1 )
+modulate = Color(1, 0, 0, 1)
 collision_layer = 2
 collision_mask = 0
 input_pickable = false
-script = ExtResource( 1 )
+script = ExtResource("1")

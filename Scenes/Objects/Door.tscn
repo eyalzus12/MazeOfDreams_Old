@@ -8,10 +8,10 @@ script = ExtResource( 1 )
 
 [node name="DoorCollision" type="CollisionShape2D" parent="."]
 
-[node name="DoorOpenSprite" type="Sprite" parent="."]
+[node name="DoorOpenSprite" type="Sprite2D" parent="."]
 visible = false
 
-[node name="DoorClosedSprite" type="Sprite" parent="."]
+[node name="DoorClosedSprite" type="Sprite2D" parent="."]
 
 [node name="InteractableComponent" parent="." groups=["interactable_component"] instance=ExtResource( 2 )]
 

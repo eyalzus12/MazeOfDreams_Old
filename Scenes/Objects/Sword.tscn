@@ -1,125 +1,130 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=3 uid="uid://cm0ny5oc4i7oh"]
 
-[ext_resource path="res://Scenes/Objects/Hitbox.tscn" type="PackedScene" id=1]
-[ext_resource path="res://icon.png" type="Texture" id=2]
-[ext_resource path="res://Scripts/Sword.gd" type="Script" id=3]
+[ext_resource type="PackedScene" uid="uid://gbshk8g5eb61" path="res://Scenes/Objects/Hitbox.tscn" id="1"]
+[ext_resource type="Texture2D" uid="uid://c1agvd7wnmrgw" path="res://icon.png" id="2"]
+[ext_resource type="Script" path="res://Scripts/Sword.gd" id="3"]
 
-[sub_resource type="Animation" id=3]
+[sub_resource type="Animation" id="3"]
 length = 0.001
 tracks/0/type = "value"
-tracks/0/path = NodePath("Base/Sprite/Hitbox:active")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
+tracks/0/path = NodePath("Base/Sprite2D/Hitbox:active")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ false ]
+"values": [false]
 }
 tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
 tracks/1/path = NodePath("Base:rotation_degrees")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ -90.0 ]
+"values": [-90.0]
 }
 tracks/2/type = "value"
-tracks/2/path = NodePath("Base/Sprite:rotation_degrees")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/enabled = true
+tracks/2/path = NodePath("Base/Sprite2D:rotation_degrees")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ 0.0 ]
+"values": [0.0]
 }
 
-[sub_resource type="Animation" id=2]
+[sub_resource type="Animation" id="2"]
 resource_name = "sword_attack"
 length = 1.25
 step = 0.05
 tracks/0/type = "value"
-tracks/0/path = NodePath("Base/Sprite/Hitbox:active")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
+tracks/0/path = NodePath("Base/Sprite2D/Hitbox:active")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.15, 0.8, 1.25 ),
-"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"times": PackedFloat32Array(0, 0.15, 0.8, 1.25),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
-"values": [ true, false, true, false ]
+"values": [true, false, true, false]
 }
 tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
 tracks/1/path = NodePath("Base:rotation_degrees")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0, 0.15, 0.8, 1.25 ),
-"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"times": PackedFloat32Array(0, 0.15, 0.8, 1.25),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
-"values": [ -90.0, 120.0, 120.0, -90.0 ]
+"values": [-90.0, 120.0, 120.0, -90.0]
 }
 tracks/2/type = "value"
-tracks/2/path = NodePath("Base/Sprite:rotation_degrees")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/enabled = true
+tracks/2/path = NodePath("Base/Sprite2D:rotation_degrees")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PoolRealArray( 0, 0.05, 0.15, 0.8, 1.25 ),
-"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"times": PackedFloat32Array(0, 0.05, 0.15, 0.8, 1.25),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
-"values": [ 0.0, 95.0, 100.0, 100.0, 0.0 ]
+"values": [0.0, 95.0, 100.0, 100.0, 0.0]
 }
 
-[sub_resource type="CapsuleShape2D" id=4]
-height = 92.0
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_jteeb"]
+_data = {
+"RESET": SubResource("3"),
+"sword_attack": SubResource("2")
+}
+
+[sub_resource type="CapsuleShape2D" id="4"]
+height = 112.721
 
 [node name="Sword" type="Node2D"]
-script = ExtResource( 3 )
+script = ExtResource("3")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 playback_process_mode = 0
-anims/RESET = SubResource( 3 )
-anims/sword_attack = SubResource( 2 )
+libraries = {
+"": SubResource("AnimationLibrary_jteeb")
+}
 
 [node name="Base" type="Node2D" parent="."]
 rotation = -1.5708
 
-[node name="Sprite" type="Sprite" parent="Base"]
-position = Vector2( 38.1641, -0.402428 )
-scale = Vector2( 0.25, 0.999553 )
-texture = ExtResource( 2 )
-offset = Vector2( 0, -30 )
+[node name="Sprite2D" type="Sprite2D" parent="Base"]
+position = Vector2(38.1641, -0.402428)
+scale = Vector2(0.25, 0.999553)
+texture = ExtResource("2")
+offset = Vector2(0, -30)
 
-[node name="Hitbox" parent="Base/Sprite" groups=["character hitboxes"] instance=ExtResource( 1 )]
-scale = Vector2( 4, 0.646463 )
+[node name="Hitbox" parent="Base/Sprite2D" groups=["character hitboxes"] instance=ExtResource("1")]
+modulate = Color(1, 1, 1, 1)
+scale = Vector2(4, 0.646463)
 collision_layer = 130
 collision_mask = 2080
-__meta__ = {
-"_edit_pinned_properties_": [ "active" ]
-}
 damage = 5.0
 stun = 5.0
 pushback = 700.0
-active = false
 
-[node name="HitboxShape" type="CollisionShape2D" parent="Base/Sprite/Hitbox"]
-position = Vector2( 3.8147e-06, -48 )
-shape = SubResource( 4 )
+[node name="HitboxShape" type="CollisionShape2D" parent="Base/Sprite2D/Hitbox"]
+position = Vector2(3.8147e-06, -48)
+shape = SubResource("4")
+debug_color = Color(1, 0, 0, 0.419608)
 
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_SwordAnimationPlayer_animation_finished"]
 
-[editable path="Base/Sprite/Hitbox"]
+[editable path="Base/Sprite2D/Hitbox"]

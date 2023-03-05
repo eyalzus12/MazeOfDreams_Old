@@ -1,12 +1,8 @@
-extends TextureProgress
-
-onready var health_bar_tween: Tween = $HealthBarTween
+extends TextureProgressBar
 
 func _ready() -> void:
 	visible = true
 
 func set_health(hp: float) -> void:
-	var _unused = health_bar_tween.interpolate_property(self,
-		"value", value, hp, 0.5,
-		Tween.TRANS_QUINT, Tween.EASE_OUT)
-	_unused = health_bar_tween.start()
+	var health_bar_tween := create_tween()
+	health_bar_tween.tween_property(self,"value",hp,0.5).from_current()

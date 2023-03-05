@@ -1,196 +1,214 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=20 format=3 uid="uid://o1mk8wiqkinx"]
 
-[ext_resource path="res://Scripts/Character/Character.gd" type="Script" id=1]
-[ext_resource path="res://Scripts/Labels/DebugLabel.gd" type="Script" id=2]
-[ext_resource path="res://Scenes/Objects/InteracterComponent.tscn" type="PackedScene" id=3]
-[ext_resource path="res://Scripts/Character/CharacterStateMachine.gd" type="Script" id=4]
-[ext_resource path="res://Scenes/Objects/Hurtbox.tscn" type="PackedScene" id=5]
-[ext_resource path="res://Scenes/Objects/Sword.tscn" type="PackedScene" id=6]
-[ext_resource path="res://LabelBackgroundTheme.tres" type="Theme" id=7]
-[ext_resource path="res://jessesans.jpg" type="Texture" id=8]
-[ext_resource path="res://Scenes/Objects/HealthBar.tscn" type="PackedScene" id=9]
+[ext_resource type="Script" path="res://Scripts/Character/Character.gd" id="1"]
+[ext_resource type="Script" path="res://Scripts/Labels/DebugLabel.gd" id="2"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/InteracterComponent.tscn" id="3"]
+[ext_resource type="Script" path="res://Scripts/Character/CharacterStateMachine.gd" id="4"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/Hurtbox.tscn" id="5"]
+[ext_resource type="PackedScene" uid="uid://cm0ny5oc4i7oh" path="res://Scenes/Objects/Sword.tscn" id="6"]
+[ext_resource type="Theme" uid="uid://beyjrh481pkj4" path="res://LabelBackgroundTheme.tres" id="7"]
+[ext_resource type="Texture2D" uid="uid://co1xdjjcr7nwm" path="res://jessesans.jpg" id="8"]
+[ext_resource type="PackedScene" uid="uid://bnspfu2mwsqkc" path="res://Scenes/Objects/HealthBar.tscn" id="9"]
 
-[sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 8, 8 )
+[sub_resource type="RectangleShape2D" id="1"]
+size = Vector2(16, 16)
 
-[sub_resource type="Animation" id=11]
+[sub_resource type="Animation" id="11"]
 length = 0.001
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath(".:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ Color( 1, 1, 1, 1 ) ]
+"values": [Color(1, 1, 1, 1)]
 }
 
-[sub_resource type="Animation" id=9]
+[sub_resource type="Animation" id="9"]
 resource_name = "death"
 length = 0.2
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath(".:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.2 ),
-"transitions": PoolRealArray( 1, 1 ),
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
 }
 
-[sub_resource type="Animation" id=10]
+[sub_resource type="Animation" id="10"]
 resource_name = "hurt"
 length = 0.3
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath(".:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.3 ),
-"transitions": PoolRealArray( 1, 1 ),
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [ Color( 1, 0, 0, 1 ), Color( 1, 1, 1, 1 ) ]
+"values": [Color(1, 0, 0, 1), Color(1, 1, 1, 1)]
 }
 
-[sub_resource type="RectangleShape2D" id=12]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_d1gul"]
+_data = {
+"RESET": SubResource("11"),
+"death": SubResource("9"),
+"hurt": SubResource("10")
+}
 
-[sub_resource type="Animation" id=7]
+[sub_resource type="RectangleShape2D" id="12"]
+size = Vector2(32, 32)
+
+[sub_resource type="Animation" id="7"]
 length = 0.001
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath("Hurtbox:active")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [ true ]
+"values": [true]
 }
 
-[sub_resource type="Animation" id=8]
+[sub_resource type="Animation" id="8"]
 resource_name = "death"
 length = 0.2
-
-[sub_resource type="Animation" id=4]
-resource_name = "hurt"
-length = 0.3
 tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
 tracks/0/path = NodePath("Hurtbox:active")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [ false ]
+"values": [false]
+}
+
+[sub_resource type="Animation" id="4"]
+resource_name = "hurt"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hurtbox:active")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
 }
 tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
 tracks/1/path = NodePath("InvincibilityTimer")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"values": [ {
-"args": [ -1 ],
-"method": "start"
-} ]
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [-1],
+"method": &"start"
+}]
 }
 
-[node name="Character" type="KinematicBody2D" groups=["characters"]]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_4wc6y"]
+_data = {
+"RESET": SubResource("7"),
+"death": SubResource("8"),
+"hurt": SubResource("4")
+}
+
+[node name="Character" type="CharacterBody2D" groups=["characters"]]
 collision_layer = 4161
 collision_mask = 8
-script = ExtResource( 1 )
+motion_mode = 1
+script = ExtResource("1")
 i_frames = 1.0
 
 [node name="Camera" type="Camera2D" parent="."]
-current = true
-process_mode = 0
-smoothing_enabled = true
-smoothing_speed = 8.0
+position_smoothing_speed = 8.0
 
 [node name="Collision" type="CollisionShape2D" parent="."]
-shape = SubResource( 1 )
+shape = SubResource("1")
+debug_color = Color(0, 1, 1, 0.419608)
 
-[node name="Sprite" type="Sprite" parent="."]
-position = Vector2( -9.53674e-07, -7.15256e-07 )
-scale = Vector2( 0.0514469, 0.0523732 )
-texture = ExtResource( 8 )
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(5.68434e-14, 0)
+scale = Vector2(0.0514469, 0.0523732)
+texture = ExtResource("8")
 
-[node name="SpriteEffectPlayer" type="AnimationPlayer" parent="Sprite"]
-anims/RESET = SubResource( 11 )
-anims/death = SubResource( 9 )
-anims/hurt = SubResource( 10 )
+[node name="SpriteEffectPlayer" type="AnimationPlayer" parent="Sprite2D"]
+libraries = {
+"": SubResource("AnimationLibrary_d1gul")
+}
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 
-[node name="HealthBar" parent="UILayer" instance=ExtResource( 9 )]
+[node name="HealthBar" parent="UILayer" instance=ExtResource("9")]
 visible = false
-rect_scale = Vector2( 0.743549, 0.050791 )
+scale = Vector2(0.743549, 0.050791)
 
 [node name="DebugLabel" type="Label" parent="UILayer"]
 visible = false
-theme = ExtResource( 7 )
-script = ExtResource( 2 )
+theme = ExtResource("7")
+script = ExtResource("2")
 
-[node name="InteracterComponent" parent="." instance=ExtResource( 3 )]
+[node name="InteracterComponent" parent="." instance=ExtResource("3")]
 collision_layer = 0
 collision_mask = 8192
 
 [node name="DashCooldownTimer" type="Timer" parent="."]
-pause_mode = 1
-process_mode = 0
 one_shot = true
 
 [node name="InDashTimer" type="Timer" parent="."]
-pause_mode = 1
-process_mode = 0
 one_shot = true
 
-[node name="Hurtbox" parent="." groups=["character hurtboxes"] instance=ExtResource( 5 )]
+[node name="Hurtbox" parent="." groups=["character hurtboxes"] instance=ExtResource("5")]
+modulate = Color(1, 1, 1, 1)
 collision_layer = 260
 collision_mask = 1040
-__meta__ = {
-"_edit_pinned_properties_": [ "active" ]
-}
-active = true
 
 [node name="HurtboxShape" type="CollisionShape2D" parent="Hurtbox"]
-shape = SubResource( 12 )
+shape = SubResource("12")
+debug_color = Color(0, 1, 0, 0.419608)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 playback_process_mode = 0
-anims/RESET = SubResource( 7 )
-anims/death = SubResource( 8 )
-anims/hurt = SubResource( 4 )
+libraries = {
+"": SubResource("AnimationLibrary_4wc6y")
+}
 
-[node name="Sword" parent="." instance=ExtResource( 6 )]
-position = Vector2( 8, 0 )
+[node name="Sword" parent="." instance=ExtResource("6")]
+position = Vector2(8, 0)
 
 [node name="StateMachine" type="Node" parent="."]
-script = ExtResource( 4 )
+script = ExtResource("4")
 
 [node name="InvincibilityTimer" type="Timer" parent="."]
-pause_mode = 1
-process_mode = 0
 one_shot = true
 
-[connection signal="timeout" from="DashCooldownTimer" to="." method="set" binds= [ "dash_in_cooldown", false ]]
-[connection signal="timeout" from="InDashTimer" to="." method="set" binds= [ "in_dash", false ]]
+[connection signal="timeout" from="DashCooldownTimer" to="." method="set" binds= ["dash_in_cooldown", false]]
+[connection signal="timeout" from="InDashTimer" to="." method="set" binds= ["in_dash", false]]
 [connection signal="area_entered" from="Hurtbox" to="StateMachine" method="_on_CharacterHurtbox_area_entered"]
 [connection signal="animation_finished" from="AnimationPlayer" to="StateMachine" method="_on_CharacterAnimationPlayer_animation_finished"]
 [connection signal="timeout" from="InvincibilityTimer" to="StateMachine" method="_on_InvincibilityTimer_timeout"]
