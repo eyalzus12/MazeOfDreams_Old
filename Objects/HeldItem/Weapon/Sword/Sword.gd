@@ -15,4 +15,4 @@ func _on_SwordAnimationPlayer_animation_finished(anim_name: StringName) -> void:
 			is_attacking = false
 			animation_player.play(&"RESET")
 			animation_player.advance(0)
-			animation_player.stop(true)
+			animation_player.stop()

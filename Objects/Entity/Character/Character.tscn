@@ -1,14 +1,14 @@
-[gd_scene load_steps=20 format=3 uid="uid://o1mk8wiqkinx"]
+[gd_scene load_steps=20 format=3 uid="uid://ced6li08ssu8o"]
 
-[ext_resource type="Script" path="res://Scripts/Character/Character.gd" id="1"]
-[ext_resource type="Script" path="res://Scripts/Labels/DebugLabel.gd" id="2"]
-[ext_resource type="PackedScene" path="res://Scenes/Objects/InteracterComponent.tscn" id="3"]
-[ext_resource type="Script" path="res://Scripts/Character/CharacterStateMachine.gd" id="4"]
-[ext_resource type="PackedScene" path="res://Scenes/Objects/Hurtbox.tscn" id="5"]
-[ext_resource type="PackedScene" uid="uid://cm0ny5oc4i7oh" path="res://Scenes/Objects/Sword.tscn" id="6"]
-[ext_resource type="Theme" uid="uid://beyjrh481pkj4" path="res://LabelBackgroundTheme.tres" id="7"]
-[ext_resource type="Texture2D" uid="uid://co1xdjjcr7nwm" path="res://jessesans.jpg" id="8"]
-[ext_resource type="PackedScene" uid="uid://bnspfu2mwsqkc" path="res://Scenes/Objects/HealthBar.tscn" id="9"]
+[ext_resource type="Script" path="res://Objects/Entity/Character/Character.gd" id="1_70khu"]
+[ext_resource type="Texture2D" uid="uid://co1xdjjcr7nwm" path="res://Assets/jessesans.jpg" id="2_ufpbp"]
+[ext_resource type="PackedScene" uid="uid://bwsp4odghqbcv" path="res://Objects/UI/HealthBar/HealthBar.tscn" id="3_ji2kw"]
+[ext_resource type="Theme" uid="uid://beyjrh481pkj4" path="res://LabelBackgroundTheme.tres" id="4_r3t6d"]
+[ext_resource type="Script" path="res://Objects/Entity/Character/DebugLabel.gd" id="5_djjja"]
+[ext_resource type="PackedScene" path="res://Scenes/Objects/InteracterComponent.tscn" id="6_1yjco"]
+[ext_resource type="PackedScene" uid="uid://bku7s3gdgpwmb" path="res://Objects/Hurtbox/Hurtbox.tscn" id="7_yp4o6"]
+[ext_resource type="PackedScene" path="res://Objects/HeldItem/Weapon/Sword/Sword.tscn" id="8_48bid"]
+[ext_resource type="Script" path="res://Objects/Entity/Character/CharacterStateMachine.gd" id="9_4emhb"]
 
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(16, 16)
@@ -142,7 +142,7 @@ _data = {
 collision_layer = 4161
 collision_mask = 8
 motion_mode = 1
-script = ExtResource("1")
+script = ExtResource("1_70khu")
 i_frames = 1.0
 
 [node name="Camera" type="Camera2D" parent="."]
@@ -155,7 +155,7 @@ debug_color = Color(0, 1, 1, 0.419608)
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(5.68434e-14, 0)
 scale = Vector2(0.0514469, 0.0523732)
-texture = ExtResource("8")
+texture = ExtResource("2_ufpbp")
 
 [node name="SpriteEffectPlayer" type="AnimationPlayer" parent="Sprite2D"]
 libraries = {
@@ -164,16 +164,16 @@ libraries = {
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 
-[node name="HealthBar" parent="UILayer" instance=ExtResource("9")]
+[node name="HealthBar" parent="UILayer" instance=ExtResource("3_ji2kw")]
 visible = false
 scale = Vector2(0.743549, 0.050791)
 
 [node name="DebugLabel" type="Label" parent="UILayer"]
 visible = false
-theme = ExtResource("7")
-script = ExtResource("2")
+theme = ExtResource("4_r3t6d")
+script = ExtResource("5_djjja")
 
-[node name="InteracterComponent" parent="." instance=ExtResource("3")]
+[node name="InteracterComponent" parent="." instance=ExtResource("6_1yjco")]
 collision_layer = 0
 collision_mask = 8192
 
@@ -183,7 +183,7 @@ one_shot = true
 [node name="InDashTimer" type="Timer" parent="."]
 one_shot = true
 
-[node name="Hurtbox" parent="." groups=["character hurtboxes"] instance=ExtResource("5")]
+[node name="Hurtbox" parent="." groups=["character hurtboxes"] instance=ExtResource("7_yp4o6")]
 modulate = Color(1, 1, 1, 1)
 collision_layer = 260
 collision_mask = 1040
@@ -198,11 +198,11 @@ libraries = {
 "": SubResource("AnimationLibrary_4wc6y")
 }
 
-[node name="Sword" parent="." instance=ExtResource("6")]
+[node name="Sword" parent="." instance=ExtResource("8_48bid")]
 position = Vector2(8, 0)
 
 [node name="StateMachine" type="Node" parent="."]
-script = ExtResource("4")
+script = ExtResource("9_4emhb")
 
 [node name="InvincibilityTimer" type="Timer" parent="."]
 one_shot = true

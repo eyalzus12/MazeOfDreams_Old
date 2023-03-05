@@ -13,7 +13,7 @@ config_version=5
 config/name="Maze Of Dreams"
 run/main_scene="res://Scenes/Testing/EnemyTests.tscn"
 config/features=PackedStringArray("4.0", "C#")
-boot_splash/image="res://Scripts/d.png"
+boot_splash/image="res://Assets/d.png"
 
 [autoload]
 

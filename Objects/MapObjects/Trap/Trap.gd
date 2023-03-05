@@ -31,7 +31,10 @@ func body_leave_for(groups: Array) -> void:
 	if body_count == 0: deactivate()
 
 func activate() -> void:
-	animation_player.play(&"activate")
+	animation_player.clear_queue()
+	animation_player.queue(&"activate")
+	animation_player.queue(&"deactivate")
 
 func deactivate() -> void:
+	animation_player.clear_queue()
 	animation_player.queue(&"deactivate")

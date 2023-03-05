@@ -1,10 +1,10 @@
-[gd_scene load_steps=18 format=3 uid="uid://cpiripw0ihdw1"]
+[gd_scene load_steps=18 format=3 uid="uid://lcitiwkqtt70"]
 
-[ext_resource type="Script" path="res://Scripts/Enemies/EnemyStateMachine.gd" id="1"]
-[ext_resource type="Texture2D" uid="uid://dtd0taqqw30b2" path="res://Scripts/d.png" id="2"]
-[ext_resource type="PackedScene" path="res://Scenes/Objects/Hurtbox.tscn" id="3"]
-[ext_resource type="PackedScene" uid="uid://gbshk8g5eb61" path="res://Scenes/Objects/Hitbox.tscn" id="4"]
-[ext_resource type="Script" path="res://Scripts/Enemies/Enemy.gd" id="5"]
+[ext_resource type="Script" path="res://Objects/Entity/Enemy/Enemy.gd" id="1_nk5ew"]
+[ext_resource type="Texture2D" uid="uid://dtd0taqqw30b2" path="res://Assets/d.png" id="2_nsuba"]
+[ext_resource type="PackedScene" path="res://Objects/Hitbox/Hitbox.tscn" id="3_qsy7v"]
+[ext_resource type="PackedScene" uid="uid://bku7s3gdgpwmb" path="res://Objects/Hurtbox/Hurtbox.tscn" id="4_po48q"]
+[ext_resource type="Script" path="res://Objects/Entity/Enemy/EnemyStateMachine.gd" id="5_jqrv3"]
 
 [sub_resource type="CircleShape2D" id="7"]
 radius = 8.0
@@ -180,7 +180,7 @@ radius = 1192.43
 collision_layer = 513
 collision_mask = 520
 motion_mode = 1
-script = ExtResource("5")
+script = ExtResource("1_nk5ew")
 i_frames = 0.3
 
 [node name="Collision" type="CollisionShape2D" parent="."]
@@ -190,14 +190,14 @@ debug_color = Color(0, 1, 1, 0.419608)
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(-9.53674e-07, 0.5)
 scale = Vector2(0.08, 0.0816667)
-texture = ExtResource("2")
+texture = ExtResource("2_nsuba")
 
 [node name="SpriteEffectPlayer" type="AnimationPlayer" parent="Sprite2D"]
 libraries = {
 "": SubResource("AnimationLibrary_wnnmc")
 }
 
-[node name="Hitbox" parent="." groups=["enemy hitboxes"] instance=ExtResource("4")]
+[node name="Hitbox" parent="." groups=["enemy hitboxes"] instance=ExtResource("3_qsy7v")]
 modulate = Color(1, 1, 1, 1)
 collision_layer = 1026
 collision_mask = 288
@@ -210,7 +210,7 @@ active = true
 shape = SubResource("12")
 debug_color = Color(1, 0, 0, 0.419608)
 
-[node name="Hurtbox" parent="." groups=["enemy hurtboxes"] instance=ExtResource("3")]
+[node name="Hurtbox" parent="." groups=["enemy hurtboxes"] instance=ExtResource("4_po48q")]
 modulate = Color(1, 1, 1, 1)
 collision_layer = 2052
 collision_mask = 144
@@ -245,7 +245,7 @@ wait_time = 0.05
 autostart = true
 
 [node name="StateMachine" type="Node" parent="."]
-script = ExtResource("1")
+script = ExtResource("5_jqrv3")
 
 [connection signal="area_entered" from="Hitbox" to="StateMachine" method="_on_EnemyHitbox_area_entered"]
 [connection signal="area_entered" from="Hurtbox" to="StateMachine" method="_on_EnemyHurtbox_area_entered"]

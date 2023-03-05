@@ -1,8 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://depem6mv347b3"]
+[gd_scene load_steps=10 format=3 uid="uid://b2o4lr7cqhhxm"]
 
-[ext_resource type="PackedScene" uid="uid://gbshk8g5eb61" path="res://Scenes/Objects/Hitbox.tscn" id="1"]
-[ext_resource type="PackedScene" path="res://Scenes/Objects/Trap.tscn" id="2"]
-[ext_resource type="Texture2D" uid="uid://20moa0xynjiq" path="res://stop doing rpg.jpg" id="3"]
+[ext_resource type="PackedScene" path="res://Objects/Hitbox/Hitbox.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://Objects/MapObjects/Trap/Trap.tscn" id="2"]
+[ext_resource type="Texture2D" uid="uid://20moa0xynjiq" path="res://Assets/stop doing rpg.jpg" id="3"]
 
 [sub_resource type="RectangleShape2D" id="2"]
 size = Vector2(144, 144)
@@ -67,7 +67,7 @@ tracks/1/keys = {
 
 [sub_resource type="Animation" id="3"]
 resource_name = "deactivate"
-length = 0.2
+length = 3.0
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true

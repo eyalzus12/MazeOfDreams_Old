@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c6dh2kvvgpad4"
-path="res://.godot/imported/cum.png-261d5e80641ee6193bafa7f3e2d5d980.ctex"
+uid="uid://20moa0xynjiq"
+path="res://.godot/imported/stop doing rpg.jpg-7e10ff8affba0a03fc12f56c80711333.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://cum.png"
-dest_files=["res://.godot/imported/cum.png-261d5e80641ee6193bafa7f3e2d5d980.ctex"]
+source_file="res://Assets/stop doing rpg.jpg"
+dest_files=["res://.godot/imported/stop doing rpg.jpg-7e10ff8affba0a03fc12f56c80711333.ctex"]
 
 [params]
 

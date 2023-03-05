@@ -1,6 +1,6 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=5 format=3]
 
-[ext_resource path="res://Scripts/Trap.gd" type="Script" id=1]
+[ext_resource type="Script" path="res://Objects/MapObjects/Trap/Trap.gd" id="1"]
 
 [sub_resource type="Animation" id=1]
 resource_name = "RESET"

@@ -1,8 +1,8 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=14 format=3]
 
-[ext_resource path="res://Scenes/Rooms/BaseRoom.tscn" type="PackedScene" id=1]
-[ext_resource path="res://cum.png" type="Texture2D" id=2]
-[ext_resource path="res://Scenes/Rooms/MainRoomDoorTest.tscn" type="PackedScene" id=3]
+[ext_resource type="PackedScene" path="res://Scenes/Rooms/BaseRoom.tscn" id="1"]
+[ext_resource type="Texture2D" uid="uid://c6dh2kvvgpad4" path="res://Assets/cum.png" id="2"]
+[ext_resource type="PackedScene" path="res://Scenes/Rooms/MainRoomDoorTest.tscn" id="3"]
 
 [sub_resource type="NavigationPolygon" id=17]
 vertices = PackedVector2Array( 28, 28, 4, 28, 4, 4, 28, 4 )

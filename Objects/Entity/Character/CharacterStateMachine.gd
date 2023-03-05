@@ -1,6 +1,6 @@
 extends StateMachine
 
-const DamagePopup := preload("res://Scenes/Objects/DamagePopup.tscn")
+const DamagePopup := preload("res://Objects/UI/DamagePopup/DamagePopup.tscn")
 
 @onready var animation_player: AnimationPlayer = $"../AnimationPlayer"
 @onready var sprite_effects_player: AnimationPlayer = $"../Sprite2D/SpriteEffectPlayer"
