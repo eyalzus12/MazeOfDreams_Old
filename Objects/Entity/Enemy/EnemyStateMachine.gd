@@ -4,7 +4,7 @@ const DamagePopup := preload("res://Objects/UI/DamagePopup/DamagePopup.tscn")
 
 var enemy: Enemy
 @onready var animation_player: AnimationPlayer = $"../AnimationPlayer"
-@onready var sprite_effects_player: AnimationPlayer = $"../Sprite2D/SpriteEffectPlayer"
+@onready var sprite_effects_player: AnimationPlayer = $"../Sprite/SpriteEffectPlayer"
 @onready var navagent : NavigationAgent2D = $"../NavAgent"
 @onready var hurtbox: Hurtbox = $"../Hurtbox"
 @onready var hitbox: Hitbox = $"../Hitbox"

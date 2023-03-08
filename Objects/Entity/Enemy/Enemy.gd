@@ -9,13 +9,13 @@ class_name Enemy
 @export var current_hp: float
 @export var stun_friction: float = 0.3
 @export var on_hit_velocity_mult: float = 0.5
-@export var i_frames: float = 0.5 : set = set_i_frames
+
+@export var i_frames: float:
+	set(value):
+		i_frames = value
+		if not is_inside_tree():
+			await ready
+		iframes_timer.wait_time = i_frames
 
 func _ready() -> void:
 	current_hp = initial_hp
-	set_i_frames(i_frames)
-
-func set_i_frames(f: float) -> void:
-	i_frames = f
-	if is_inside_tree(): iframes_timer.wait_time = f
-	

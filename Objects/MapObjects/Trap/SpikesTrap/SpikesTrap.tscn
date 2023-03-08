@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://b2o4lr7cqhhxm"]
 
-[ext_resource type="PackedScene" path="res://Objects/Hitbox/Hitbox.tscn" id="1"]
+[ext_resource type="PackedScene" uid="uid://rk40mo0i46sm" path="res://Objects/Hitbox/Hitbox.tscn" id="1"]
 [ext_resource type="PackedScene" path="res://Objects/MapObjects/Trap/Trap.tscn" id="2"]
 [ext_resource type="Texture2D" uid="uid://20moa0xynjiq" path="res://Assets/stop doing rpg.jpg" id="3"]
 
@@ -113,6 +113,8 @@ modulate = Color(1, 1, 1, 1)
 collision_layer = 18
 collision_mask = 4
 damage = 20.0
+active = false
+metadata/_edit_pinned_properties_ = [&"active"]
 
 [node name="HitboxShape" type="CollisionShape2D" parent="Hitbox" index="0"]
 shape = SubResource("2")

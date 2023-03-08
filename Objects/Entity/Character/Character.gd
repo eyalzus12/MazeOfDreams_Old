@@ -7,7 +7,7 @@ class_name Character
 
 @onready var sword: Sword = $Sword
 @onready var hurtbox: Hurtbox = $Hurtbox
-@onready var sprite: Sprite2D = $Sprite2D
+@onready var sprite: Sprite2D = $Sprite
 @onready var debug_label: Label = $UILayer/DebugLabel
 @onready var health_bar: TextureProgressBar = $UILayer/HealthBar
 
@@ -19,12 +19,38 @@ var current_state: String
 @export var dash_startup: float = 2
 @export var dash_speed: float = 1000
 @export var dash_bounce_mult: float = 1.3
-@export var dash_cooldown: float = 0.5 : set = set_dash_cooldown
-@export var dash_time: float = 0.2 : set = set_dash_time
+
+@export var dash_cooldown: float:
+	set(value):
+		dash_cooldown = value
+		if not is_inside_tree():
+			await ready
+		dash_cooldown_timer.wait_time = dash_cooldown
+
+@export var dash_time: float:
+	set(value):
+		dash_time = value
+		if not is_inside_tree():
+			await ready
+		in_dash_timer.wait_time = dash_time
+
 @export var initial_hp: float = 100
-@export var current_hp: float = initial_hp : set = set_current_hp
+
+@export var current_hp: float = initial_hp :
+	set(value):
+		current_hp = value
+		if not is_inside_tree():
+			await ready
+		health_bar.set_health(current_hp)
+
 @export var stun_friction: float = 0.5
-@export var i_frames: float = 0.5 : set = set_i_frames
+
+@export var i_frames: float:
+	set(value):
+		i_frames = value
+		if not is_inside_tree():
+			await ready
+		iframes_timer.wait_time = i_frames
 
 var dash_in_cooldown: bool = false
 var in_dash: bool = false
@@ -42,10 +68,7 @@ var down: bool
 var debug_active: bool = false
 
 func _ready() -> void:
-	set_dash_cooldown(dash_cooldown)
-	set_dash_time(dash_time)
-	set_i_frames(i_frames)
-	set_current_hp(current_hp)
+	pass
 
 func _physics_process(_delta: float) -> void:
 	if is_zero_approx(velocity.x): velocity.x = 0
@@ -112,18 +135,3 @@ func set_vertical_inputs() -> void:
 	if Input.is_action_pressed("player_down") and not up:
 		down = true
 
-func set_i_frames(f: float) -> void:
-	i_frames = f
-	if is_inside_tree(): iframes_timer.wait_time = f
-
-func set_dash_time(f: float) -> void:
-	dash_time = f
-	if is_inside_tree(): in_dash_timer.wait_time = f
-
-func set_dash_cooldown(f: float) -> void:
-	dash_cooldown = f
-	if is_inside_tree(): dash_cooldown_timer.wait_time = f
-
-func set_current_hp(hp: float) -> void:
-	current_hp = hp
-	if is_inside_tree(): health_bar.set_health(current_hp)

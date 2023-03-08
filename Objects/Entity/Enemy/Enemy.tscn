@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Objects/Entity/Enemy/Enemy.gd" id="1_nk5ew"]
 [ext_resource type="Texture2D" uid="uid://dtd0taqqw30b2" path="res://Assets/d.png" id="2_nsuba"]
-[ext_resource type="PackedScene" path="res://Objects/Hitbox/Hitbox.tscn" id="3_qsy7v"]
+[ext_resource type="PackedScene" uid="uid://rk40mo0i46sm" path="res://Objects/Hitbox/Hitbox.tscn" id="3_qsy7v"]
 [ext_resource type="PackedScene" uid="uid://bku7s3gdgpwmb" path="res://Objects/Hurtbox/Hurtbox.tscn" id="4_po48q"]
 [ext_resource type="Script" path="res://Objects/Entity/Enemy/EnemyStateMachine.gd" id="5_jqrv3"]
 
@@ -74,7 +74,7 @@ length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:modulate")
+tracks/0/path = NodePath("Sprite:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -187,12 +187,12 @@ i_frames = 0.3
 shape = SubResource("7")
 debug_color = Color(0, 1, 1, 0.419608)
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite" type="Sprite2D" parent="."]
 position = Vector2(-9.53674e-07, 0.5)
 scale = Vector2(0.08, 0.0816667)
 texture = ExtResource("2_nsuba")
 
-[node name="SpriteEffectPlayer" type="AnimationPlayer" parent="Sprite2D"]
+[node name="SpriteEffectPlayer" type="AnimationPlayer" parent="Sprite"]
 libraries = {
 "": SubResource("AnimationLibrary_wnnmc")
 }
@@ -220,6 +220,7 @@ shape = SubResource("13")
 debug_color = Color(0, 1, 0, 0.419608)
 
 [node name="InvincibilityTimer" type="Timer" parent="."]
+process_callback = 0
 one_shot = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
@@ -241,6 +242,7 @@ shape = SubResource("2")
 [node name="NavAgent" type="NavigationAgent2D" parent="."]
 
 [node name="PathfindingTimer" type="Timer" parent="."]
+process_callback = 0
 wait_time = 0.05
 autostart = true
 

@@ -1,6 +1,6 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=8 format=3 uid="uid://c1d4fhl6a0ktl"]
 
-[ext_resource type="PackedScene" path="res://Objects/Hitbox/Hitbox.tscn" id="1"]
+[ext_resource type="PackedScene" uid="uid://rk40mo0i46sm" path="res://Objects/Hitbox/Hitbox.tscn" id="1"]
 [ext_resource type="Texture2D" uid="uid://c1agvd7wnmrgw" path="res://icon.png" id="2"]
 [ext_resource type="Script" path="res://Objects/HeldItem/Weapon/Sword/Sword.gd" id="3"]
 
@@ -119,6 +119,8 @@ collision_mask = 2080
 damage = 5.0
 stun = 5.0
 pushback = 700.0
+active = false
+metadata/_edit_pinned_properties_ = [&"active"]
 
 [node name="HitboxShape" type="CollisionShape2D" parent="Base/Sprite2D/Hitbox"]
 position = Vector2(3.8147e-06, -48)

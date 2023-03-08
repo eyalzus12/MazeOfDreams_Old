@@ -103,6 +103,11 @@ player_attack={
 "events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":0,"position":Vector2(0, 0),"global_position":Vector2(0, 0),"factor":1.0,"button_index":1,"pressed":false,"double_click":false,"script":null)
 ]
 }
+player_pickup={
+"deadzone": 0.5,
+"events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":0,"position":Vector2(0, 0),"global_position":Vector2(0, 0),"factor":1.0,"button_index":2,"pressed":false,"double_click":false,"script":null)
+]
+}
 
 [input_devices]
 
@@ -123,7 +128,7 @@ buffering/agile_event_flushing=true
 2d_physics/layer_11="enemy hitboxes"
 2d_physics/layer_12="enemy hurtboxes"
 2d_physics/layer_13="chase targets"
-2d_physics/layer_14="interaction range"
+2d_physics/layer_14="item collision"
 
 [mono]
 
