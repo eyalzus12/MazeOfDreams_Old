@@ -67,7 +67,7 @@ tracks/1/keys = {
 
 [sub_resource type="Animation" id="3"]
 resource_name = "deactivate"
-length = 3.0
+length = 2.0
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true

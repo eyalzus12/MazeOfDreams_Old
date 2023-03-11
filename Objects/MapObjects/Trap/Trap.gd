@@ -20,19 +20,21 @@ func group_with(groups: Array) -> bool:
 
 func body_enter_for(groups: Array) -> void:
 	if not group_with(groups): return
-	
+
 	body_count += 1
-	if body_count == 1: activate()
-	
+	if body_count == 1: await activate()
+
 func body_leave_for(groups: Array) -> void:
 	if not group_with(groups): return
-	
+
 	body_count -= 1
 	if body_count == 0: deactivate()
 
 func activate() -> void:
+	animation_player.advance(1)
+	await animation_player.animation_finished
 	animation_player.clear_queue()
-	animation_player.queue(&"activate")
+	animation_player.play(&"activate")
 	animation_player.queue(&"deactivate")
 
 func deactivate() -> void:

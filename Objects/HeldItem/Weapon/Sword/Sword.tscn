@@ -1,10 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://c1d4fhl6a0ktl"]
+[gd_scene load_steps=7 format=3 uid="uid://dk8tierjbr0k8"]
 
-[ext_resource type="PackedScene" uid="uid://rk40mo0i46sm" path="res://Objects/Hitbox/Hitbox.tscn" id="1"]
+[ext_resource type="PackedScene" uid="uid://dbndc8y60ac6e" path="res://Objects/HeldItem/Weapon/BaseWeapon/Weapon.tscn" id="1_pgx0p"]
 [ext_resource type="Texture2D" uid="uid://c1agvd7wnmrgw" path="res://icon.png" id="2"]
-[ext_resource type="Script" path="res://Objects/HeldItem/Weapon/Sword/Sword.gd" id="3"]
+[ext_resource type="Animation" uid="uid://p0u5kkyv6j4i" path="res://Animations/Weapon/sword attack.res" id="3_s1jt2"]
 
-[sub_resource type="Animation" id="3"]
+[sub_resource type="Animation" id="Animation_e2cqi"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -43,90 +43,41 @@ tracks/2/keys = {
 "values": [0.0]
 }
 
-[sub_resource type="Animation" id="2"]
-resource_name = "sword_attack"
-length = 1.25
-step = 0.05
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Base/Sprite2D/Hitbox:active")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.4, 0.8, 1.25),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 0,
-"values": [true, false, true, false]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Base:rotation_degrees")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.15, 0.8, 1.25),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 0,
-"values": [-90.0, 120.0, 120.0, -90.0]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Base/Sprite2D:rotation_degrees")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.05, 0.15, 0.8, 1.25),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 0,
-"values": [0.0, 95.0, 100.0, 100.0, 0.0]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_jteeb"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_g7tuc"]
 _data = {
-"RESET": SubResource("3"),
-"sword_attack": SubResource("2")
+"RESET": SubResource("Animation_e2cqi"),
+"attack": ExtResource("3_s1jt2")
 }
 
-[sub_resource type="CapsuleShape2D" id="4"]
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_58eiq"]
 height = 134.388
 
-[node name="Sword" type="Node2D"]
-script = ExtResource("3")
+[node name="Sword" instance=ExtResource("1_pgx0p")]
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="0"]
 playback_process_mode = 0
 libraries = {
-"": SubResource("AnimationLibrary_jteeb")
+"": SubResource("AnimationLibrary_g7tuc")
 }
 
-[node name="Base" type="Node2D" parent="."]
+[node name="Base" parent="." index="1"]
 rotation = -1.5708
 
-[node name="Sprite2D" type="Sprite2D" parent="Base"]
+[node name="Sprite2D" parent="Base" index="0"]
 position = Vector2(38.1641, -0.402428)
 scale = Vector2(0.25, 0.999553)
 texture = ExtResource("2")
 offset = Vector2(0, -30)
 
-[node name="Hitbox" parent="Base/Sprite2D" groups=["character hitboxes"] instance=ExtResource("1")]
-modulate = Color(1, 1, 1, 1)
+[node name="Hitbox" parent="Base/Sprite2D" index="0"]
 scale = Vector2(4, 0.646463)
-collision_layer = 130
-collision_mask = 2080
-damage = 5.0
+damage = 10.0
 stun = 5.0
 pushback = 700.0
 active = false
 metadata/_edit_pinned_properties_ = [&"active"]
 
-[node name="HitboxShape" type="CollisionShape2D" parent="Base/Sprite2D/Hitbox"]
-position = Vector2(3.8147e-06, -48)
-shape = SubResource("4")
+[node name="HitboxShape" parent="Base/Sprite2D/Hitbox" index="0"]
+position = Vector2(0, -48)
+shape = SubResource("CapsuleShape2D_58eiq")
 debug_color = Color(1, 0, 0, 0.419608)
-
-[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_SwordAnimationPlayer_animation_finished"]
-
-[editable path="Base/Sprite2D/Hitbox"]

@@ -13,8 +13,7 @@ class_name Enemy
 @export var i_frames: float:
 	set(value):
 		i_frames = value
-		if not is_inside_tree():
-			await ready
+		if not is_inside_tree(): await ready
 		iframes_timer.wait_time = i_frames
 
 func _ready() -> void:

@@ -4,7 +4,7 @@ const DamagePopup := preload("res://Objects/UI/DamagePopup/DamagePopup.tscn")
 
 @onready var animation_player: AnimationPlayer = $"../AnimationPlayer"
 @onready var sprite_effects_player: AnimationPlayer = $"../Sprite/SpriteEffectPlayer"
-@onready var sword: Sword = $"../Sword"
+@onready var weapon: Weapon = $"../Weapon"
 var character: Character
 @onready var hurtbox: Hurtbox = $"../Hurtbox"
 
@@ -22,16 +22,16 @@ func _state_logic(_delta: float) -> void:
 	character.state_frame = state_frame
 	character.current_state = state_names[state]
 	character.set_inputs()
-	
+
 	if character.current_hp < 0 and not animation_player.assigned_animation == &"death":
 		sprite_effects_player.play(&"death")
 		animation_player.play(&"death")
 		return
-	
-	if not state in [states.hurt] and not sword.is_attacking:
-		if Input.is_action_just_pressed("player_attack"): sword.attack()
+
+	if not state in [states.hurt] and not weapon.is_attacking:
+		if Input.is_action_just_pressed("player_attack"): weapon.attack()
 		character.set_direction()
-	
+
 	if state in [states.idle, states.move]:
 		character.move_and_slide()
 		if character.is_on_wall():
@@ -40,7 +40,7 @@ func _state_logic(_delta: float) -> void:
 			if character.in_dash and not grazing:
 				character.velocity = character.velocity.bounce(col.get_normal())
 				character.velocity *= character.dash_bounce_mult
-	
+
 	match state:
 		states.idle:
 			character.velocity = character.velocity.move_toward( \
@@ -100,7 +100,7 @@ func _on_CharacterHurtbox_area_entered(area: Area2D) -> void:
 	character.velocity = hitbox.global_position.direction_to(character.global_position) \
 		* hitbox.pushback
 	set_state(states.hurt)
-	
+
 	var popup := DamagePopup.instantiate()
 	popup.value = -hitbox.damage
 	get_tree().root.add_child(popup)

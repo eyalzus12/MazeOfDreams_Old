@@ -5,7 +5,7 @@ class_name Character
 @onready var in_dash_timer: Timer = $InDashTimer
 @onready var iframes_timer: Timer = $InvincibilityTimer
 
-@onready var sword: Sword = $Sword
+@onready var weapon: Weapon = $Weapon
 @onready var hurtbox: Hurtbox = $Hurtbox
 @onready var sprite: Sprite2D = $Sprite
 @onready var debug_label: Label = $UILayer/DebugLabel
@@ -73,65 +73,65 @@ func _ready() -> void:
 func _physics_process(_delta: float) -> void:
 	if is_zero_approx(velocity.x): velocity.x = 0
 	if is_zero_approx(velocity.y): velocity.y = 0
-	
-	if Input.is_action_just_pressed("toggle_debug"): debug_active = not debug_active
+
+	if Input.is_action_just_pressed(&"toggle_debug"): debug_active = not debug_active
 	debug_label.visible = debug_active
 	if debug_active: debug_label.update_text(self)
 
 func set_direction() -> void:
 	direction = global_position.direction_to(get_global_mouse_position())
-	
+
 	if direction.x > 0 and sprite.flip_h:
 		sprite.flip_h = false
 	elif direction.x < 0 and not sprite.flip_h:
 		sprite.flip_h = true
-	
-	sword.rotation = direction.angle()
-	if sword.scale.y == 1 and direction.x < 0:
-		sword.scale.y = -1
-	elif sword.scale.y == -1 and direction.x > 0:
-		sword.scale.y = 1
+
+	weapon.rotation = direction.angle()
+	if weapon.scale.y == 1 and direction.x < 0:
+		weapon.scale.y = -1
+	elif weapon.scale.y == -1 and direction.x > 0:
+		weapon.scale.y = 1
 
 func set_inputs() -> void:
 	set_horizontal_inputs()
 	set_vertical_inputs()
 	input_vector = \
-		(Vector2.LEFT if left else Vector2.ZERO) + \
-		(Vector2.RIGHT if right else Vector2.ZERO) + \
-		(Vector2.UP if up else Vector2.ZERO) + \
-		(Vector2.DOWN if down else Vector2.ZERO)
-	velocity_vector = Vector2.ZERO if input_vector == Vector2.ZERO else input_vector.normalized()
-	
+		int(left)*Vector2.LEFT + \
+		int(right)*Vector2.RIGHT + \
+		int(down)*Vector2.DOWN + \
+		int(up)*Vector2.UP
+	velocity_vector = input_vector.normalized()
+
 
 func set_horizontal_inputs() -> void:
-	if Input.is_action_just_pressed("player_left"):
+	if Input.is_action_just_pressed(&"player_left"):
 		left = true
 		right = false
-	if Input.is_action_just_pressed("player_right"):
+	if Input.is_action_just_pressed(&"player_right"):
 		left = false
 		right = true
-	if not Input.is_action_pressed("player_left"):
+	if not Input.is_action_pressed(&"player_left"):
 		left = false
-	if not Input.is_action_pressed("player_right"):
+	if not Input.is_action_pressed(&"player_right"):
 		right = false
-	if Input.is_action_pressed("player_left") and not right:
+	if Input.is_action_pressed(&"player_left") and not right:
 		left = true
-	if Input.is_action_pressed("player_right") and not left:
+	if Input.is_action_pressed(&"player_right") and not left:
 		right = true
 
 func set_vertical_inputs() -> void:
-	if Input.is_action_just_pressed("player_up"):
+	if Input.is_action_just_pressed(&"player_up"):
 		up = true
 		down = false
-	if Input.is_action_just_pressed("player_down"):
+	if Input.is_action_just_pressed(&"player_down"):
 		up = false
 		down = true
-	if not Input.is_action_pressed("player_up"):
+	if not Input.is_action_pressed(&"player_up"):
 		up = false
-	if not Input.is_action_pressed("player_down"):
+	if not Input.is_action_pressed(&"player_down"):
 		down = false
-	if Input.is_action_pressed("player_up") and not down:
+	if Input.is_action_pressed(&"player_up") and not down:
 		up = true
-	if Input.is_action_pressed("player_down") and not up:
+	if Input.is_action_pressed(&"player_down") and not up:
 		down = true
 

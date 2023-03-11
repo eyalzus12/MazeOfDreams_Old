@@ -24,7 +24,7 @@ func _state_logic(_delta: float) -> void:
 		sprite_effects_player.play(&"death")
 		animation_player.play(&"death")
 		return
-	
+
 	match state:
 		states.idle:
 			pass
@@ -52,7 +52,6 @@ func _get_transition() -> int:
 func _exit_state(_state_exited: int) -> void:
 	match _state_exited:
 		states.hurt:
-			hitbox.active = true
 			sprite_effects_player.play(&"RESET")
 			sprite_effects_player.advance(0)
 			sprite_effects_player.stop()
@@ -85,7 +84,7 @@ func _on_EnemyHurtbox_area_entered(area: Area2D) -> void:
 	enemy.velocity = area.global_position.direction_to(enemy.global_position) \
 		* area.pushback
 	set_state(states.hurt)
-	
+
 	var popup := DamagePopup.instantiate()
 	popup.value = -area.damage
 	get_tree().root.add_child(popup)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://ced6li08ssu8o"]
+[gd_scene load_steps=20 format=3 uid="uid://ced6li08ssu8o"]
 
 [ext_resource type="Script" path="res://Objects/Entity/Character/Character.gd" id="1_70khu"]
 [ext_resource type="Texture2D" uid="uid://co1xdjjcr7nwm" path="res://Assets/jessesans.jpg" id="2_ufpbp"]
@@ -6,11 +6,9 @@
 [ext_resource type="Theme" uid="uid://beyjrh481pkj4" path="res://LabelBackgroundTheme.tres" id="4_r3t6d"]
 [ext_resource type="Script" path="res://Objects/Entity/Character/DebugLabel.gd" id="5_djjja"]
 [ext_resource type="PackedScene" uid="uid://bku7s3gdgpwmb" path="res://Objects/Hurtbox/Hurtbox.tscn" id="7_yp4o6"]
-[ext_resource type="PackedScene" uid="uid://c1d4fhl6a0ktl" path="res://Objects/HeldItem/Weapon/Sword/Sword.tscn" id="8_48bid"]
+[ext_resource type="PackedScene" uid="uid://dk8tierjbr0k8" path="res://Objects/HeldItem/Weapon/Sword/Sword.tscn" id="8_48bid"]
+[ext_resource type="PackedScene" uid="uid://b5fn6kgg5x0jp" path="res://Objects/HeldItem/Weapon/Hammer/Hammer.tscn" id="9_1rsqb"]
 [ext_resource type="Script" path="res://Objects/Entity/Character/CharacterStateMachine.gd" id="9_4emhb"]
-
-[sub_resource type="RectangleShape2D" id="1"]
-size = Vector2(16, 16)
 
 [sub_resource type="Animation" id="11"]
 length = 0.001
@@ -65,6 +63,9 @@ _data = {
 "death": SubResource("9"),
 "hurt": SubResource("10")
 }
+
+[sub_resource type="RectangleShape2D" id="1"]
+size = Vector2(16, 16)
 
 [sub_resource type="RectangleShape2D" id="12"]
 size = Vector2(32, 32)
@@ -147,11 +148,8 @@ dash_time = 0.2
 i_frames = 0.5
 
 [node name="Camera" type="Camera2D" parent="."]
-position_smoothing_speed = 8.0
-
-[node name="Collision" type="CollisionShape2D" parent="."]
-shape = SubResource("1")
-debug_color = Color(0, 1, 1, 0.419608)
+position_smoothing_enabled = true
+position_smoothing_speed = 10.0
 
 [node name="Sprite" type="Sprite2D" parent="."]
 position = Vector2(5.68434e-14, 0)
@@ -162,6 +160,10 @@ texture = ExtResource("2_ufpbp")
 libraries = {
 "": SubResource("AnimationLibrary_d1gul")
 }
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("1")
+debug_color = Color(0, 1, 1, 0.419608)
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 
@@ -197,15 +199,24 @@ libraries = {
 "": SubResource("AnimationLibrary_4wc6y")
 }
 
-[node name="Sword" parent="." instance=ExtResource("8_48bid")]
-position = Vector2(8, 0)
-
 [node name="StateMachine" type="Node" parent="."]
 script = ExtResource("9_4emhb")
 
 [node name="InvincibilityTimer" type="Timer" parent="."]
 process_callback = 0
 one_shot = true
+
+[node name="Weapon2" parent="." instance=ExtResource("8_48bid")]
+process_mode = 4
+visible = false
+position = Vector2(8, 0)
+weapon_layers = 130
+weapon_masks = 2080
+
+[node name="Weapon" parent="." instance=ExtResource("9_1rsqb")]
+position = Vector2(16, 0)
+weapon_layers = 130
+weapon_masks = 2080
 
 [connection signal="timeout" from="DashCooldownTimer" to="." method="set" binds= ["dash_in_cooldown", false]]
 [connection signal="timeout" from="InDashTimer" to="." method="set" binds= ["in_dash", false]]

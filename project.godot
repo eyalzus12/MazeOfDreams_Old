@@ -129,6 +129,7 @@ buffering/agile_event_flushing=true
 2d_physics/layer_12="enemy hurtboxes"
 2d_physics/layer_13="chase targets"
 2d_physics/layer_14="item collision"
+2d_physics/layer_15="item pickup"
 
 [mono]
 
