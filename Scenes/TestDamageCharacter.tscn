@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" uid="uid://o1mk8wiqkinx" path="res://Objects/Character/Character.tscn" id="1"]
+[ext_resource type="Script" path="res://Scripts/Character/DamageableCharacter.cs" id="2"]
+
+[node name="Character" instance=ExtResource( 1 )]
+script = ExtResource( 2 )
+
+[node name="DamageLabel" type="Label" parent="UILayer" index="1"]

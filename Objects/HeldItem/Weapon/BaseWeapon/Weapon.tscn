@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://dbndc8y60ac6e"]
+
+[ext_resource type="Script" path="res://Objects/HeldItem/Weapon/BaseWeapon/Weapon.gd" id="1_6vu51"]
+[ext_resource type="PackedScene" uid="uid://rk40mo0i46sm" path="res://Objects/Hitbox/Hitbox.tscn" id="1_n6c5r"]
+
+[node name="Weapon" type="Node2D"]
+script = ExtResource("1_6vu51")
+weapon_layers = 2
+
+[node name="Base" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Base"]
+
+[node name="Hitbox" parent="Base/Sprite2D" instance=ExtResource("1_n6c5r")]
+
+[node name="HitboxShape" type="CollisionShape2D" parent="Base/Sprite2D/Hitbox"]

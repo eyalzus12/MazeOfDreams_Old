@@ -1,0 +1,37 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://Objects/Character/Character.tscn" id="1"]
+[ext_resource type="Texture2D" uid="uid://dtd0taqqw30b2" path="res://Assets/d.png" id="2"]
+
+[sub_resource type="RectangleShape2D" id=1]
+size = Vector2( 300, 30 )
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 102.005
+
+[node name="MovementTestBase" type="Node2D"]
+
+[node name="MovementTestBody" type="StaticBody2D" parent="."]
+
+[node name="MovementTestCollision" type="CollisionShape2D" parent="MovementTestBody"]
+shape = SubResource( 1 )
+
+[node name="ColorRect" type="ColorRect" parent="MovementTestBody"]
+offset_left = -300.0
+offset_top = -30.0
+offset_right = 300.0
+offset_bottom = 30.0
+
+[node name="TestCharacter" parent="." instance=ExtResource( 1 )]
+position = Vector2( 5, -65 )
+
+[node name="LeftBlock" type="StaticBody2D" parent="."]
+position = Vector2( -355, -157 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftBlock"]
+shape = SubResource( 2 )
+
+[node name="Sprite2D" type="Sprite2D" parent="LeftBlock"]
+position = Vector2( 0, -0.499993 )
+scale = Vector2( 0.34, 0.345 )
+texture = ExtResource( 2 )

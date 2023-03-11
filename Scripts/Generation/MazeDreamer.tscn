@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Scripts/Generation/MazeDreamer.cs" type="Script" id=2]
+
+[sub_resource type="NavigationPolygon" id=1]
+
+[node name="MazeDreamer" type="Node2D"]
+script = ExtResource( 2 )
+
+[node name="NavRegion" type="NavigationRegion2D" parent="."]
+navpoly = SubResource( 1 )
+
+[node name="Tiles" type="TileMap" parent="NavRegion"]
+cell_size = Vector2( 32, 32 )
+format = 1

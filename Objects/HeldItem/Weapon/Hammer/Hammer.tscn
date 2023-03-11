@@ -1,0 +1,135 @@
+[gd_scene load_steps=9 format=3 uid="uid://b5fn6kgg5x0jp"]
+
+[ext_resource type="PackedScene" uid="uid://dbndc8y60ac6e" path="res://Objects/HeldItem/Weapon/BaseWeapon/Weapon.tscn" id="1_605te"]
+[ext_resource type="Texture2D" uid="uid://20moa0xynjiq" path="res://Assets/stop doing rpg.jpg" id="2_qwuw0"]
+[ext_resource type="Texture2D" uid="uid://c1agvd7wnmrgw" path="res://icon.png" id="3_ixjp2"]
+
+[sub_resource type="Animation" id="Animation_aw4a5"]
+resource_name = "attack"
+length = 1.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Base/Sprite2D/Hitbox:active")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.7, 0.9, 1.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [true, false, true, false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Base:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.7, 1, 1.3, 1.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [-1.5708, -1.95128, 0.242601, 3.47844, 3.14159, 0.0, -1.5708]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Base/Sprite2D:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.7, 1, 1.3, 1.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.167552, 0.357792, 0.738274, 0.523599, -0.280998, 0.0]
+}
+
+[sub_resource type="Animation" id="Animation_5j25g"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Base:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-1.5708]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Base/Sprite2D:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Base/Sprite2D/Hitbox:active")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_fllpr"]
+_data = {
+"RESET": SubResource("Animation_5j25g"),
+"attack": SubResource("Animation_aw4a5")
+}
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2wmie"]
+size = Vector2(618.585, 612.048)
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_o5px1"]
+radius = 85.4732
+height = 2193.72
+
+[node name="Hammer" instance=ExtResource("1_605te")]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="0"]
+playback_process_mode = 0
+speed_scale = 0.6
+libraries = {
+"": SubResource("AnimationLibrary_fllpr")
+}
+
+[node name="Base" parent="." index="1"]
+rotation = -1.5708
+
+[node name="Sprite2D" parent="Base" index="0"]
+position = Vector2(61.3282, -93.4871)
+scale = Vector2(0.04, 0.3)
+texture = ExtResource("2_qwuw0")
+
+[node name="Sprite2D" type="Sprite2D" parent="Base/Sprite2D" index="0"]
+position = Vector2(55.2503, -385.257)
+scale = Vector2(32.947, 2.59202)
+texture = ExtResource("3_ixjp2")
+
+[node name="Hitbox" parent="Base/Sprite2D" index="1"]
+damage = 15.0
+pushback = 900.0
+active = false
+metadata/_edit_pinned_properties_ = [&"active"]
+
+[node name="HitboxShape" parent="Base/Sprite2D/Hitbox" index="0"]
+position = Vector2(1.85596, 2.51877)
+scale = Vector2(1, 1)
+shape = SubResource("RectangleShape2D_2wmie")
+
+[node name="HitboxShape2" type="CollisionShape2D" parent="Base/Sprite2D/Hitbox" index="1"]
+position = Vector2(44.8285, -387.451)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_o5px1")

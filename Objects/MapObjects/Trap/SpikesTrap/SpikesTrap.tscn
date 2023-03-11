@@ -1,0 +1,129 @@
+[gd_scene load_steps=10 format=3 uid="uid://b2o4lr7cqhhxm"]
+
+[ext_resource type="PackedScene" uid="uid://rk40mo0i46sm" path="res://Objects/Hitbox/Hitbox.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://Objects/MapObjects/Trap/Trap.tscn" id="2"]
+[ext_resource type="Texture2D" uid="uid://20moa0xynjiq" path="res://Assets/stop doing rpg.jpg" id="3"]
+
+[sub_resource type="RectangleShape2D" id="2"]
+size = Vector2(144, 144)
+
+[sub_resource type="RectangleShape2D" id="1"]
+size = Vector2(128, 128)
+
+[sub_resource type="Animation" id="Animation_kopvq"]
+resource_name = "RESET"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hitbox:active")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0.501961)]
+}
+
+[sub_resource type="Animation" id="Animation_ojiq0"]
+resource_name = "activate"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hitbox:active")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [Color(1, 1, 1, 0.501961), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="3"]
+resource_name = "deactivate"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hitbox:active")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.501961)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_c5vmk"]
+_data = {
+"RESET": SubResource("Animation_kopvq"),
+"activate": SubResource("Animation_ojiq0"),
+"deactivate": SubResource("3")
+}
+
+[node name="SpikesTrap" instance=ExtResource("2")]
+trap_groups = ["TEST_ROOM_SINGLE_SPIKE_TRAP"]
+
+[node name="Sprite2D" type="Sprite2D" parent="." index="0"]
+modulate = Color(1, 1, 1, 0.501961)
+scale = Vector2(0.234146, 0.233387)
+texture = ExtResource("3")
+
+[node name="Hitbox" parent="." index="1" instance=ExtResource("1")]
+modulate = Color(1, 1, 1, 1)
+collision_layer = 18
+collision_mask = 4
+damage = 20.0
+active = false
+metadata/_edit_pinned_properties_ = [&"active"]
+
+[node name="HitboxShape" type="CollisionShape2D" parent="Hitbox" index="0"]
+shape = SubResource("2")
+debug_color = Color(1, 0, 0, 0.419608)
+
+[node name="DetectionShape" type="CollisionShape2D" parent="DetectionRange" index="0"]
+shape = SubResource("1")
+
+[node name="AnimationPlayer" parent="." index="3"]
+libraries = {
+"": SubResource("AnimationLibrary_c5vmk")
+}

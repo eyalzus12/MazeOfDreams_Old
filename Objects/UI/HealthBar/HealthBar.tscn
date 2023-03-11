@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://bwsp4odghqbcv"]
+
+[ext_resource type="Texture2D" uid="uid://20moa0xynjiq" path="res://Assets/stop doing rpg.jpg" id="1_7wkde"]
+[ext_resource type="Script" path="res://Objects/UI/HealthBar/HealthBar.gd" id="2_ggh38"]
+
+[node name="HealthBar" type="TextureProgressBar"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -409.0
+offset_bottom = 17.0
+scale = Vector2(1.66502, 0.103721)
+value = 100.0
+allow_greater = true
+texture_progress = ExtResource("1_7wkde")
+tint_progress = Color(1, 0, 0, 1)
+script = ExtResource("2_ggh38")

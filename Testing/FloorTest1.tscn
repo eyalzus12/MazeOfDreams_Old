@@ -1,0 +1,84 @@
+[gd_scene load_steps=14 format=3]
+
+[ext_resource type="PackedScene" path="res://Scenes/Rooms/MainRoomTest.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://Scripts/Generation/MazeDreamer.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://Scenes/Rooms/MainRoomTest3.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://Scenes/Rooms/MainRoomTest2.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://Objects/Enemy/BaseEnemy/Enemy.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://Objects/Character/Character.tscn" id="6"]
+[ext_resource type="Script" path="res://Scripts/Generation/GameFloor.cs" id="7"]
+[ext_resource type="PackedScene" path="res://Scenes/Rooms/SpawnRoomTest.tscn" id="8"]
+[ext_resource type="Texture2D" uid="uid://dtd0taqqw30b2" path="res://Assets/d.png" id="9"]
+
+[sub_resource type="NavigationPolygon" id=6]
+vertices = PackedVector2Array( 32, 32, 0, 32, 0, 0, 32, 0 )
+polygons = [ PackedInt32Array( 0, 1, 2, 3 ) ]
+outlines = [ PackedVector2Array( 32, 32, 0, 32, 0, 0, 32, 0 ) ]
+
+[sub_resource type="ConvexPolygonShape2D" id=5]
+points = PackedVector2Array( 32, 32, 0, 32, 0, 0, 32, 0 )
+
+[sub_resource type="TileSet" id=3]
+3/name = "bridge"
+3/texture = ExtResource( 9 )
+3/tex_offset = Vector2( 0, 0 )
+3/modulate = Color( 1, 1, 1, 1 )
+3/region = Rect2( 256, 64, 32, 32 )
+3/tile_mode = 0
+3/occluder_offset = Vector2( 0, 0 )
+3/navigation_offset = Vector2( 0, 0 )
+3/navigation = SubResource( 6 )
+3/shape_offset = Vector2( 0, 0 )
+3/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+3/shape_one_way = false
+3/shape_one_way_margin = 0.0
+3/shapes = [  ]
+3/z_index = 0
+4/name = "bridge edge"
+4/texture = ExtResource( 9 )
+4/tex_offset = Vector2( 0, 0 )
+4/modulate = Color( 1, 1, 1, 1 )
+4/region = Rect2( 32, 0, 32, 32 )
+4/tile_mode = 0
+4/occluder_offset = Vector2( 0, 0 )
+4/navigation_offset = Vector2( 0, 0 )
+4/shape_offset = Vector2( 0, 0 )
+4/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+4/shape = SubResource( 5 )
+4/shape_one_way = false
+4/shape_one_way_margin = 1.0
+4/shapes = [ {
+"autotile_coord": Vector2( 0, 0 ),
+"one_way": false,
+"one_way_margin": 1.0,
+"shape": SubResource( 5 ),
+"shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
+} ]
+4/z_index = 0
+
+[sub_resource type="RectangleShape2D" id=4]
+size = Vector2( 24, 24 )
+
+[node name="FloorTest1" type="Node2D"]
+script = ExtResource( 7 )
+
+[node name="MazeDreamer" parent="." instance=ExtResource( 2 )]
+RoomAmount = 100
+SpawnRadius = 50
+Rooms = [ ExtResource( 1 ), ExtResource( 4 ), ExtResource( 3 ) ]
+SpawnRoom = ExtResource( 8 )
+BridgeTileSet = SubResource( 3 )
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2( 10, 10 )
+
+[node name="Character" parent="." instance=ExtResource( 6 )]
+
+[node name="InteractionArea" parent="Character/InteracterComponent" index="0"]
+shape = SubResource( 4 )
+
+[node name="Enemy" parent="." instance=ExtResource( 5 )]
+position = Vector2( 32, 32 )
+
+[editable path="Character"]
+[editable path="Character/InteracterComponent"]

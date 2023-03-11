@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Scripts/Rooms/GameRoom.cs" type="Script" id=2]
+
+[node name="BaseRoom" type="Node2D" groups=["room"]]
+script = ExtResource( 2 )
+
+[node name="Tiles" type="TileMap" parent="."]
+cell_size = Vector2( 32, 32 )
+format = 1
+
+[node name="BoundShapes" type="Node2D" parent="."]
+
+[node name="RoomObjects" type="Node2D" parent="."]

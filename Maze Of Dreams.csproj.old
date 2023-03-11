@@ -1,6 +1,7 @@
-<Project Sdk="Godot.NET.Sdk/4.0.0">
+<Project Sdk="Godot.NET.Sdk/3.3.0">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
+        <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>MazeOfDreams</RootNamespace>
     <AssemblyName>Maze Of Dreams</AssemblyName>
   </PropertyGroup>

@@ -1,0 +1,297 @@
+[gd_scene load_steps=18 format=3 uid="uid://lcitiwkqtt70"]
+
+[ext_resource type="Script" path="res://Objects/Entity/Enemy/Enemy.gd" id="1_nk5ew"]
+[ext_resource type="Texture2D" uid="uid://dtd0taqqw30b2" path="res://Assets/d.png" id="2_nsuba"]
+[ext_resource type="PackedScene" uid="uid://rk40mo0i46sm" path="res://Objects/Hitbox/Hitbox.tscn" id="3_qsy7v"]
+[ext_resource type="PackedScene" uid="uid://bku7s3gdgpwmb" path="res://Objects/Hurtbox/Hurtbox.tscn" id="4_po48q"]
+[ext_resource type="Script" path="res://Objects/Entity/Enemy/EnemyStateMachine.gd" id="5_jqrv3"]
+
+[sub_resource type="Animation" id="11"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="9"]
+resource_name = "death"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="10"]
+resource_name = "hurt"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 0, 0, 1), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_wnnmc"]
+_data = {
+"RESET": SubResource("11"),
+"death": SubResource("9"),
+"hurt": SubResource("10")
+}
+
+[sub_resource type="CircleShape2D" id="7"]
+radius = 8.0
+
+[sub_resource type="CircleShape2D" id="12"]
+radius = 24.0
+
+[sub_resource type="CircleShape2D" id="13"]
+radius = 32.0
+
+[sub_resource type="Animation" id="6"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hurtbox:active")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Hitbox:active")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:collision_layer")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [513]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".:collision_mask")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [520]
+}
+
+[sub_resource type="Animation" id="8"]
+resource_name = "death"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hurtbox:active")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="5"]
+resource_name = "hurt"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Hurtbox:active")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("InvincibilityTimer")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [-1],
+"method": &"start"
+}]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Hitbox:active")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".:collision_layer")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [0, 513]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath(".:collision_mask")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [8, 520]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_8u8tf"]
+_data = {
+"RESET": SubResource("6"),
+"death": SubResource("8"),
+"hurt": SubResource("5")
+}
+
+[sub_resource type="CircleShape2D" id="2"]
+radius = 1192.43
+
+[node name="Enemy" type="CharacterBody2D" groups=["enemies"]]
+collision_layer = 513
+collision_mask = 520
+motion_mode = 1
+script = ExtResource("1_nk5ew")
+i_frames = 0.3
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(-9.53674e-07, 0.5)
+scale = Vector2(0.08, 0.0816667)
+texture = ExtResource("2_nsuba")
+
+[node name="SpriteEffectPlayer" type="AnimationPlayer" parent="Sprite"]
+libraries = {
+"": SubResource("AnimationLibrary_wnnmc")
+}
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("7")
+debug_color = Color(0, 1, 1, 0.419608)
+
+[node name="Hitbox" parent="." groups=["enemy hitboxes"] instance=ExtResource("3_qsy7v")]
+modulate = Color(1, 1, 1, 1)
+collision_layer = 1026
+collision_mask = 288
+damage = 5.0
+stun = 5.0
+pushback = 500.0
+active = true
+
+[node name="HitboxShape" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource("12")
+debug_color = Color(1, 0, 0, 0.419608)
+
+[node name="Hurtbox" parent="." groups=["enemy hurtboxes"] instance=ExtResource("4_po48q")]
+modulate = Color(1, 1, 1, 1)
+collision_layer = 2052
+collision_mask = 144
+
+[node name="HurtboxShape" type="CollisionShape2D" parent="Hurtbox"]
+shape = SubResource("13")
+debug_color = Color(0, 1, 0, 0.419608)
+
+[node name="InvincibilityTimer" type="Timer" parent="."]
+process_callback = 0
+one_shot = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+playback_process_mode = 0
+libraries = {
+"": SubResource("AnimationLibrary_8u8tf")
+}
+
+[node name="ChaseRange" type="Area2D" parent="."]
+visible = false
+collision_layer = 0
+collision_mask = 4096
+input_pickable = false
+monitorable = false
+
+[node name="ChaseRangeShape" type="CollisionShape2D" parent="ChaseRange"]
+shape = SubResource("2")
+
+[node name="NavAgent" type="NavigationAgent2D" parent="."]
+
+[node name="PathfindingTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.05
+autostart = true
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource("5_jqrv3")
+
+[connection signal="area_entered" from="Hitbox" to="StateMachine" method="_on_EnemyHitbox_area_entered"]
+[connection signal="area_entered" from="Hurtbox" to="StateMachine" method="_on_EnemyHurtbox_area_entered"]
+[connection signal="timeout" from="InvincibilityTimer" to="StateMachine" method="_on_InvincibilityTimer_timeout"]
+[connection signal="animation_finished" from="AnimationPlayer" to="StateMachine" method="_on_EnemyAnimationPlayer_animation_finished"]
+[connection signal="body_entered" from="ChaseRange" to="StateMachine" method="_on_ChaseRange_body_entered"]
+[connection signal="body_exited" from="ChaseRange" to="StateMachine" method="_on_ChaseRange_body_exited"]
+[connection signal="timeout" from="PathfindingTimer" to="StateMachine" method="_on_PathfindingTimer_timeout"]
+
+[editable path="Hitbox"]
+[editable path="Hurtbox"]

@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://rk40mo0i46sm"]
+
+[ext_resource type="Script" path="res://Objects/Hitbox/Hitbox.gd" id="1"]
+
+[node name="Hitbox" type="Area2D" groups=["hitboxes"]]
+modulate = Color(1, 0, 0, 1)
+collision_layer = 2
+collision_mask = 0
+input_pickable = false
+script = ExtResource("1")

@@ -1,0 +1,56 @@
+[gd_scene load_steps=6 format=3 uid="uid://c63t8e3i2anym"]
+
+[ext_resource type="Texture2D" uid="uid://c1agvd7wnmrgw" path="res://icon.png" id="1_042a4"]
+[ext_resource type="Script" path="res://Objects/DroppedItem/DroppedItem.gd" id="1_p8t7t"]
+[ext_resource type="Theme" uid="uid://beyjrh481pkj4" path="res://LabelBackgroundTheme.tres" id="3_6gjxu"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_83nup"]
+size = Vector2(32, 32)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_yov8q"]
+radius = 24.0
+
+[node name="DroppedItem" type="RigidBody2D"]
+collision_layer = 8192
+collision_mask = 8193
+gravity_scale = 0.0
+lock_rotation = true
+linear_damp = 10.0
+script = ExtResource("1_p8t7t")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(-4.76837e-07, 0)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("1_042a4")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_83nup")
+debug_color = Color(0, 1, 1, 0.419608)
+
+[node name="PickupArea" type="Area2D" parent="."]
+collision_layer = 16384
+collision_mask = 0
+
+[node name="PickupShape" type="CollisionShape2D" parent="PickupArea"]
+shape = SubResource("CircleShape2D_yov8q")
+debug_color = Color(1, 0.568627, 1, 0.419608)
+
+[node name="InfoLabelBase" type="Control" parent="."]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+metadata/_edit_group_ = true
+metadata/_edit_lock_ = true
+
+[node name="InfoLabel" type="Label" parent="InfoLabelBase"]
+layout_mode = 0
+offset_left = -40.0
+offset_top = -24.0
+offset_right = 43.0
+offset_bottom = 22.0
+theme = ExtResource("3_6gjxu")
+text = "Amogus"

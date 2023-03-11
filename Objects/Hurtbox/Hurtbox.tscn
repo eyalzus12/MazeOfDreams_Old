@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://bku7s3gdgpwmb"]
+
+[ext_resource type="Script" path="res://Objects/Hurtbox/Hurtbox.gd" id="1"]
+
+[node name="Hurtbox" type="Area2D" groups=["hurtboxes"]]
+modulate = Color(0, 1, 0, 1)
+collision_layer = 4
+collision_mask = 0
+input_pickable = false
+script = ExtResource("1")
+active = true
