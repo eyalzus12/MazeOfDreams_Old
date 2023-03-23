@@ -1,10 +1,11 @@
-[gd_scene load_steps=13 format=3 uid="uid://5cm3l1wuau55"]
+[gd_scene load_steps=14 format=3 uid="uid://5cm3l1wuau55"]
 
 [ext_resource type="Texture2D" uid="uid://dtd0taqqw30b2" path="res://Assets/d.png" id="1_47gxp"]
 [ext_resource type="Texture2D" uid="uid://c6dh2kvvgpad4" path="res://Assets/cum.png" id="2_aeoiw"]
 [ext_resource type="PackedScene" uid="uid://ced6li08ssu8o" path="res://Objects/Entity/Character/Character.tscn" id="3_b8g87"]
 [ext_resource type="PackedScene" uid="uid://lcitiwkqtt70" path="res://Objects/Entity/Enemy/Enemy.tscn" id="4_8becr"]
 [ext_resource type="PackedScene" uid="uid://b2o4lr7cqhhxm" path="res://Objects/MapObjects/Trap/SpikesTrap/SpikesTrap.tscn" id="5_foj6x"]
+[ext_resource type="Script" path="res://Scenes/Testing/TestAIStateMachine.gd" id="5_lws6b"]
 [ext_resource type="PackedScene" uid="uid://c63t8e3i2anym" path="res://Objects/DroppedItem/DroppedItem.tscn" id="6_q0m2u"]
 
 [sub_resource type="CircleShape2D" id="3"]
@@ -4845,7 +4846,11 @@ layer_0/tile_data = PackedInt32Array(-1376289, 0, 0, -1376288, 0, 0, -1376287, 0
 position = Vector2(544.736, 152.708)
 
 [node name="Enemy" parent="." instance=ExtResource("4_8becr")]
+modulate = Color(1, 0.141176, 1, 1)
 position = Vector2(-88, 472)
+
+[node name="StateMachine" parent="Enemy" index="9"]
+script = ExtResource("5_lws6b")
 
 [node name="Enemy2" parent="." instance=ExtResource("4_8becr")]
 position = Vector2(-120, -560)
@@ -4869,6 +4874,7 @@ position = Vector2(-454.831, 892.818)
 position = Vector2(712, -584)
 
 [node name="Trap" type="NavigationRegion2D" parent="."]
+visible = false
 position = Vector2(682.46, -596.437)
 navigation_polygon = SubResource("NavigationPolygon_7uke1")
 enter_cost = 700.0
@@ -4876,6 +4882,7 @@ travel_cost = 10.0
 metadata/_edit_lock_ = true
 
 [node name="Main" type="NavigationRegion2D" parent="."]
+visible = false
 position = Vector2(499.883, -464.932)
 navigation_polygon = SubResource("NavigationPolygon_fu5hy")
 metadata/_edit_lock_ = true
@@ -4906,3 +4913,9 @@ position = Vector2(794.658, 287.2)
 
 [node name="DroppedItem9" parent="." instance=ExtResource("6_q0m2u")]
 position = Vector2(794.658, 287.2)
+
+[node name="Avoid" type="Node2D" parent="."]
+
+[editable path="Enemy"]
+[editable path="Enemy/Hitbox"]
+[editable path="Enemy/Hurtbox"]

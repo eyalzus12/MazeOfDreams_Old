@@ -6,6 +6,7 @@ class_name Character
 @onready var iframes_timer: Timer = $InvincibilityTimer
 
 @onready var weapon: Weapon = $Weapon
+@onready var item_modifier: ItemModifier = $ItemModifier
 @onready var hurtbox: Hurtbox = $Hurtbox
 @onready var sprite: Sprite2D = $Sprite
 @onready var debug_label: Label = $UILayer/DebugLabel
@@ -68,7 +69,8 @@ var down: bool
 var debug_active: bool = false
 
 func _ready() -> void:
-	pass
+	item_modifier.weapon = weapon
+	item_modifier.entity = self
 
 func _physics_process(_delta: float) -> void:
 	if is_zero_approx(velocity.x): velocity.x = 0

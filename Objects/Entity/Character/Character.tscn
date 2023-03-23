@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://ced6li08ssu8o"]
+[gd_scene load_steps=21 format=3 uid="uid://ced6li08ssu8o"]
 
 [ext_resource type="Script" path="res://Objects/Entity/Character/Character.gd" id="1_70khu"]
 [ext_resource type="Texture2D" uid="uid://co1xdjjcr7nwm" path="res://Assets/jessesans.jpg" id="2_ufpbp"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://dk8tierjbr0k8" path="res://Objects/HeldItem/Weapon/Sword/Sword.tscn" id="8_48bid"]
 [ext_resource type="PackedScene" uid="uid://b5fn6kgg5x0jp" path="res://Objects/HeldItem/Weapon/Hammer/Hammer.tscn" id="9_1rsqb"]
 [ext_resource type="Script" path="res://Objects/Entity/Character/CharacterStateMachine.gd" id="9_4emhb"]
+[ext_resource type="Script" path="res://Objects/Modifier/ItemModifier/LaserModifier/LaserModifier.gd" id="10_25uv6"]
 
 [sub_resource type="Animation" id="11"]
 length = 0.001
@@ -206,17 +207,20 @@ script = ExtResource("9_4emhb")
 process_callback = 0
 one_shot = true
 
-[node name="Weapon2" parent="." instance=ExtResource("8_48bid")]
-process_mode = 4
-visible = false
+[node name="Weapon" parent="." instance=ExtResource("8_48bid")]
 position = Vector2(8, 0)
 weapon_layers = 130
 weapon_masks = 2080
 
-[node name="Weapon" parent="." instance=ExtResource("9_1rsqb")]
+[node name="WeaponHammer" parent="." instance=ExtResource("9_1rsqb")]
+process_mode = 4
+visible = false
 position = Vector2(16, 0)
 weapon_layers = 130
 weapon_masks = 2080
+
+[node name="ItemModifier" type="Node2D" parent="."]
+script = ExtResource("10_25uv6")
 
 [connection signal="timeout" from="DashCooldownTimer" to="." method="set" binds= ["dash_in_cooldown", false]]
 [connection signal="timeout" from="InDashTimer" to="." method="set" binds= ["in_dash", false]]
