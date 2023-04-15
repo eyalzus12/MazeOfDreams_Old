@@ -17,9 +17,9 @@ boot_splash/image="res://Assets/d.png"
 
 [autoload]
 
+UiLayer="*res://Autoloads/UILayer.tscn"
 InputDebugger="*res://Autoloads/InputDebugger.cs"
 Randomizer="*res://Autoloads/Randomizer.cs"
-UiLayer="*res://Autoloads/UILayer.tscn"
 
 [debug]
 
@@ -149,6 +149,7 @@ common/enable_pause_aware_picking=true
 
 [rendering]
 
+renderer/rendering_method="gl_compatibility"
 environment/defaults/default_clear_color=Color(0, 0, 0, 1)
 environment/defaults/default_environment="res://default_env.tres"
 quality/dynamic_fonts/use_oversampling=false

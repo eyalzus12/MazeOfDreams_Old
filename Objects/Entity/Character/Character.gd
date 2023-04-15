@@ -5,12 +5,10 @@ class_name Character
 @onready var in_dash_timer: Timer = $InDashTimer
 @onready var iframes_timer: Timer = $InvincibilityTimer
 
-@onready var weapon: Weapon = $Weapon
-@onready var item_modifier: ItemModifier = $ItemModifier
 @onready var hurtbox: Hurtbox = $Hurtbox
 @onready var sprite: Sprite2D = $Sprite
-@onready var debug_label: Label = $Camera/UILayer/DebugLabel
-@onready var health_bar: TextureProgressBar = $Camera/UILayer/HealthBar
+@onready var debug_label: Label = $UILayer/DebugLabel
+@onready var health_bar: TextureProgressBar = $UILayer/HealthBar
 
 var state_frame: int
 var current_state: String
@@ -20,7 +18,34 @@ var current_state: String
 @export var dash_startup: float = 2
 @export var dash_speed: float = 1000
 @export var dash_bounce_mult: float = 1.3
-
+@export var weapon: Weapon:
+	set(value):
+		if not is_inside_tree():
+			await ready
+		if is_instance_valid(weapon):
+			weapon.process_mode = Node.PROCESS_MODE_DISABLED
+			weapon.visible = false
+		weapon = value
+		if is_instance_valid(weapon):
+			weapon.process_mode = Node.PROCESS_MODE_INHERIT
+			weapon.visible = true
+			weapon._ready()
+		for item_modifier in item_modifiers:
+			if is_instance_valid(item_modifier):
+				item_modifier.weapon = weapon
+			
+@export var item_modifiernp: Array[NodePath]
+@onready var item_modifiers: Array[Node2D]:
+	set(value):
+		if not is_inside_tree():
+			await ready
+		
+		item_modifiers = value
+		for item_modifier in item_modifiers:
+			if is_instance_valid(item_modifier):
+				item_modifier.weapon = weapon
+				item_modifier.entity = self
+		
 @export var dash_cooldown: float:
 	set(value):
 		dash_cooldown = value
@@ -69,9 +94,10 @@ var down: bool
 var debug_active: bool = false
 
 func _ready() -> void:
-	item_modifier.weapon = weapon
-	item_modifier.entity = self
-
+	item_modifiers.assign(item_modifiernp.map(get_node))
+	#hack to get the setter to function
+	item_modifiers = item_modifiers
+	
 func _physics_process(_delta: float) -> void:
 	if is_zero_approx(velocity.x): velocity.x = 0
 	if is_zero_approx(velocity.y): velocity.y = 0

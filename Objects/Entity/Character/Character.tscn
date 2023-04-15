@@ -139,32 +139,36 @@ _data = {
 "hurt": SubResource("4")
 }
 
-[node name="Character" type="CharacterBody2D" groups=["characters"]]
+[node name="Character" type="CharacterBody2D" node_paths=PackedStringArray("weapon") groups=["characters"]]
 collision_layer = 4161
 collision_mask = 8
 motion_mode = 1
 script = ExtResource("1_70khu")
+weapon = NodePath("WeaponHammer")
+item_modifiernp = Array[NodePath]([NodePath("LaserModifier")])
 dash_cooldown = 0.5
 dash_time = 0.2
 i_frames = 0.5
 
-[node name="Camera" type="Camera2D" parent="."]
-position_smoothing_enabled = true
-position_smoothing_speed = 10.0
+[node name="UILayer" type="CanvasLayer" parent="."]
 
-[node name="UILayer" type="CanvasLayer" parent="Camera"]
-
-[node name="HealthBar" parent="Camera/UILayer" instance=ExtResource("3_ji2kw")]
+[node name="HealthBar" parent="UILayer" instance=ExtResource("3_ji2kw")]
 visible = false
+z_index = -1
+offset_right = 615.0
+offset_bottom = 617.0
 scale = Vector2(0.743549, 0.050791)
 
-[node name="DebugLabel" type="Label" parent="Camera/UILayer"]
+[node name="DebugLabel" type="Label" parent="UILayer"]
 visible = false
-z_index = 1
 offset_right = 21.0
 offset_bottom = 43.0
 theme = ExtResource("4_r3t6d")
 script = ExtResource("5_djjja")
+
+[node name="Camera" type="Camera2D" parent="."]
+position_smoothing_enabled = true
+position_smoothing_speed = 10.0
 
 [node name="Sprite" type="Sprite2D" parent="."]
 position = Vector2(5.68434e-14, 0)
@@ -211,6 +215,8 @@ process_callback = 0
 one_shot = true
 
 [node name="Weapon" parent="." instance=ExtResource("8_48bid")]
+process_mode = 4
+visible = false
 position = Vector2(8, 0)
 weapon_layers = 130
 weapon_masks = 2080
@@ -222,7 +228,7 @@ position = Vector2(16, 0)
 weapon_layers = 130
 weapon_masks = 2080
 
-[node name="ItemModifier" type="Node2D" parent="."]
+[node name="LaserModifier" type="Node2D" parent="."]
 script = ExtResource("10_25uv6")
 
 [connection signal="timeout" from="DashCooldownTimer" to="." method="set" binds= ["dash_in_cooldown", false]]

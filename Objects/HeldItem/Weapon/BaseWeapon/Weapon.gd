@@ -8,6 +8,8 @@ signal attack_hit(who: Area2D)
 @onready var hitbox := $Base/Sprite2D/Hitbox
 @onready var animation_player: AnimationPlayer = get_node_or_null(^"AnimationPlayer")
 
+var connected_signals := false
+
 @export_flags_2d_physics var weapon_layers: int:
 	set(value):
 		weapon_layers = value
@@ -23,10 +25,12 @@ signal attack_hit(who: Area2D)
 var is_attacking: bool = false
 
 func _ready() -> void:
-	if animation_player:
-		animation_player.animation_finished.connect(on_animation_finished)
-	if hitbox:
-		hitbox.area_entered.connect(on_hit)
+	if not connected_signals:
+		if animation_player:
+			animation_player.animation_finished.connect(on_animation_finished)
+		if hitbox:
+			hitbox.area_entered.connect(on_hit)
+		connected_signals = true
 
 func on_hit(area: Area2D) -> void:
 	emit_signal(&"attack_hit", area)
@@ -34,7 +38,6 @@ func on_hit(area: Area2D) -> void:
 func attack() -> void:
 	if not animation_player: return
 	if not animation_player.has_animation(&"attack"): return
-
 	animation_player.play(&"attack")
 	emit_signal(&"attack_started")
 	is_attacking = true

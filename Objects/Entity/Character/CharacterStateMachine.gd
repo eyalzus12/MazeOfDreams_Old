@@ -4,7 +4,6 @@ const DAMAGE_POPUP := preload("res://Objects/UI/DamagePopup/DamagePopup.tscn")
 
 @onready var animation_player: AnimationPlayer = $"../AnimationPlayer"
 @onready var sprite_effects_player: AnimationPlayer = $"../Sprite/SpriteEffectPlayer"
-@onready var weapon: Weapon = $"../Weapon"
 var character: Character
 @onready var hurtbox: Hurtbox = $"../Hurtbox"
 
@@ -28,8 +27,9 @@ func _state_logic(_delta: float) -> void:
 		animation_player.play(&"death")
 		return
 
-	if not state in [states.hurt] and not weapon.is_attacking:
-		if Input.is_action_just_pressed("player_attack"): weapon.attack()
+	if not state in [states.hurt] and is_instance_valid(character.weapon) and not character.weapon.is_attacking:
+		if Input.is_action_just_pressed("player_attack"):
+			character.weapon.attack()
 		character.set_direction()
 
 	if state in [states.idle, states.move]:
