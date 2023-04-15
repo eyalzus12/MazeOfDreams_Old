@@ -9,8 +9,8 @@ class_name Character
 @onready var item_modifier: ItemModifier = $ItemModifier
 @onready var hurtbox: Hurtbox = $Hurtbox
 @onready var sprite: Sprite2D = $Sprite
-@onready var debug_label: Label = $UILayer/DebugLabel
-@onready var health_bar: TextureProgressBar = $UILayer/HealthBar
+@onready var debug_label: Label = $Camera/UILayer/DebugLabel
+@onready var health_bar: TextureProgressBar = $Camera/UILayer/HealthBar
 
 var state_frame: int
 var current_state: String

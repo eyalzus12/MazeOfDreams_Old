@@ -8,6 +8,8 @@ class_name DroppedItem
 @onready var info_label_base := $InfoLabelBase
 @onready var pickup_area := $PickupArea
 
+var label_offset: Vector2 = Vector2(NAN,NAN)
+
 var appear_tween: Tween = null
 var disappear_tween: Tween = null
 
@@ -22,6 +24,10 @@ func _ready() -> void:
 	pickup_area.mouse_exited.connect(mouse_exit)
 	pickup_area.input_event.connect(on_input)
 
+func _process(_delta: float) -> void:
+	if is_nan(label_offset.x): label_offset = info_label.position
+	info_label_base.global_position = global_position + label_offset
+
 func mouse_enter() -> void:
 	#kill current tweens if exist
 	if disappear_tween and disappear_tween.is_valid():
@@ -33,7 +39,7 @@ func mouse_enter() -> void:
 	appear_tween = create_tween().set_parallel(true)
 	#tween the position and modulate
 	appear_tween\
-		.tween_property(info_label_base, ^"position", APPEAR_MOVEMENT, APPEAR_TIME)\
+		.tween_property(info_label, ^"position", APPEAR_MOVEMENT, APPEAR_TIME)\
 		.from_current().set_trans(Tween.TRANS_QUINT)
 	appear_tween\
 		.tween_property(info_label_base, ^"modulate", APPEAR_COLOR, APPEAR_TIME)\
@@ -47,7 +53,7 @@ func mouse_exit() -> void:
 	disappear_tween = create_tween().set_parallel(true)
 	#tween the position and modulate
 	disappear_tween\
-		.tween_property(info_label_base, ^"position", Vector2.ZERO, DISAPPEAR_TIME)\
+		.tween_property(info_label, ^"position", Vector2.ZERO, DISAPPEAR_TIME)\
 		.from_current().set_delay(DISAPPEAR_DELAY).set_trans(Tween.TRANS_QUAD)
 	disappear_tween\
 		.tween_property(info_label_base, ^"modulate", Color(1,1,1,0), DISAPPEAR_TIME)\

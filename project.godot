@@ -17,9 +17,9 @@ boot_splash/image="res://Assets/d.png"
 
 [autoload]
 
-UiLayer="*res://Autoloads/UILayer.tscn"
 InputDebugger="*res://Autoloads/InputDebugger.cs"
 Randomizer="*res://Autoloads/Randomizer.cs"
+UiLayer="*res://Autoloads/UILayer.tscn"
 
 [debug]
 

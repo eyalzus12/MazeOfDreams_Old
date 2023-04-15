@@ -152,6 +152,20 @@ i_frames = 0.5
 position_smoothing_enabled = true
 position_smoothing_speed = 10.0
 
+[node name="UILayer" type="CanvasLayer" parent="Camera"]
+
+[node name="HealthBar" parent="Camera/UILayer" instance=ExtResource("3_ji2kw")]
+visible = false
+scale = Vector2(0.743549, 0.050791)
+
+[node name="DebugLabel" type="Label" parent="Camera/UILayer"]
+visible = false
+z_index = 1
+offset_right = 21.0
+offset_bottom = 43.0
+theme = ExtResource("4_r3t6d")
+script = ExtResource("5_djjja")
+
 [node name="Sprite" type="Sprite2D" parent="."]
 position = Vector2(5.68434e-14, 0)
 scale = Vector2(0.0514469, 0.0523732)
@@ -165,17 +179,6 @@ libraries = {
 [node name="Collision" type="CollisionShape2D" parent="."]
 shape = SubResource("1")
 debug_color = Color(0, 1, 1, 0.419608)
-
-[node name="UILayer" type="CanvasLayer" parent="."]
-
-[node name="HealthBar" parent="UILayer" instance=ExtResource("3_ji2kw")]
-visible = false
-scale = Vector2(0.743549, 0.050791)
-
-[node name="DebugLabel" type="Label" parent="UILayer"]
-visible = false
-theme = ExtResource("4_r3t6d")
-script = ExtResource("5_djjja")
 
 [node name="DashCooldownTimer" type="Timer" parent="."]
 process_callback = 0
