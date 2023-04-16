@@ -116,8 +116,10 @@ func _physics_process(_delta: float) -> void:
 	if debug_active: debug_label.update_text(self)
 	
 	if Input.is_action_just_pressed(&"inventory_open"):
+		#toggle inventory visibility.
+		inventory.visible = not inventory.visible
 		#closing inventory. handle putting item back in slot.
-		if inventory.visible and Globals.dragged_item:
+		if not inventory.visible and Globals.dragged_item:
 			#original slot has an item. find available slot.
 			if Globals.dragged_item_slot.contained_item:
 				var found_slot := false
@@ -137,9 +139,6 @@ func _physics_process(_delta: float) -> void:
 				Globals.dragged_item_slot.contained_item = Globals.dragged_item
 			Globals.dragged_item = null
 			Globals.dragged_item_slot = null
-		#toggle inventory visibility.
-		inventory.visible = not inventory.visible
-		
 
 func set_direction() -> void:
 	direction = global_position.direction_to(get_global_mouse_position())
