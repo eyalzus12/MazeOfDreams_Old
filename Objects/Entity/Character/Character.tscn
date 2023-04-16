@@ -1,9 +1,10 @@
-[gd_scene load_steps=21 format=3 uid="uid://ced6li08ssu8o"]
+[gd_scene load_steps=22 format=3 uid="uid://ced6li08ssu8o"]
 
 [ext_resource type="Script" path="res://Objects/Entity/Character/Character.gd" id="1_70khu"]
 [ext_resource type="Texture2D" uid="uid://co1xdjjcr7nwm" path="res://Assets/jessesans.jpg" id="2_ufpbp"]
 [ext_resource type="PackedScene" uid="uid://bwsp4odghqbcv" path="res://Objects/UI/HealthBar/HealthBar.tscn" id="3_ji2kw"]
 [ext_resource type="Theme" uid="uid://beyjrh481pkj4" path="res://LabelBackgroundTheme.tres" id="4_r3t6d"]
+[ext_resource type="PackedScene" uid="uid://b0vxsub54aedm" path="res://Objects/UI/InventoryGrid/InventoryGrid.tscn" id="5_62rkv"]
 [ext_resource type="Script" path="res://Objects/Entity/Character/DebugLabel.gd" id="5_djjja"]
 [ext_resource type="PackedScene" uid="uid://bku7s3gdgpwmb" path="res://Objects/Hurtbox/Hurtbox.tscn" id="7_yp4o6"]
 [ext_resource type="PackedScene" uid="uid://dk8tierjbr0k8" path="res://Objects/HeldItem/Weapon/Sword/Sword.tscn" id="8_48bid"]
@@ -166,6 +167,13 @@ offset_bottom = 43.0
 theme = ExtResource("4_r3t6d")
 script = ExtResource("5_djjja")
 
+[node name="InventoryGrid" parent="UILayer" instance=ExtResource("5_62rkv")]
+visible = false
+offset_left = 600.0
+offset_top = 208.0
+offset_right = -16.0
+offset_bottom = -88.0
+
 [node name="Camera" type="Camera2D" parent="."]
 position_smoothing_enabled = true
 position_smoothing_speed = 10.0
@@ -228,7 +236,7 @@ position = Vector2(16, 0)
 weapon_layers = 130
 weapon_masks = 2080
 
-[node name="LaserModifier" type="Node2D" parent="."]
+[node name="LaserModifier" type="Node2D" parent="." groups=["modifiers"]]
 script = ExtResource("10_25uv6")
 
 [connection signal="timeout" from="DashCooldownTimer" to="." method="set" binds= ["dash_in_cooldown", false]]

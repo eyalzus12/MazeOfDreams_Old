@@ -2,7 +2,7 @@ extends ItemModifier
 
 const LASER := preload("res://Objects/Modifier/ItemModifier/LaserModifier/Laser.tscn")
 
-func attack_start() -> void:
+func attack_started() -> void:
 	if not is_instance_valid(entity): return
 	var laser := LASER.instantiate()
 	laser.position = entity.position

@@ -1,6 +1,10 @@
 extends CharacterBody2D
 class_name Character
 
+signal attack_started
+signal attack_ended
+signal attack_hit(who: Area2D)
+
 @onready var dash_cooldown_timer: Timer = $DashCooldownTimer
 @onready var in_dash_timer: Timer = $InDashTimer
 @onready var iframes_timer: Timer = $InvincibilityTimer
@@ -9,6 +13,7 @@ class_name Character
 @onready var sprite: Sprite2D = $Sprite
 @onready var debug_label: Label = $UILayer/DebugLabel
 @onready var health_bar: TextureProgressBar = $UILayer/HealthBar
+@onready var inventory: GridContainer = $UILayer/InventoryGrid
 
 var state_frame: int
 var current_state: String
@@ -23,28 +28,23 @@ var current_state: String
 		if not is_inside_tree():
 			await ready
 		if is_instance_valid(weapon):
+			weapon.attack_started.disconnect(_attack_started)
+			weapon.attack_ended.disconnect(_attack_ended)
+			weapon.attack_hit.disconnect(_attack_hit)
 			weapon.process_mode = Node.PROCESS_MODE_DISABLED
 			weapon.visible = false
 		weapon = value
 		if is_instance_valid(weapon):
+			weapon.attack_started.connect(_attack_started)
+			weapon.attack_ended.connect(_attack_ended)
+			weapon.attack_hit.connect(_attack_hit)
 			weapon.process_mode = Node.PROCESS_MODE_INHERIT
 			weapon.visible = true
 			weapon._ready()
-		for item_modifier in item_modifiers:
-			if is_instance_valid(item_modifier):
-				item_modifier.weapon = weapon
 			
 @export var item_modifiernp: Array[NodePath]
-@onready var item_modifiers: Array[Node2D]:
-	set(value):
-		if not is_inside_tree():
-			await ready
-		
-		item_modifiers = value
-		for item_modifier in item_modifiers:
-			if is_instance_valid(item_modifier):
-				item_modifier.weapon = weapon
-				item_modifier.entity = self
+var active_item_modifiers: ItemModifierCollection
+var inactive_item_modifiers: ItemModifierCollection
 		
 @export var dash_cooldown: float:
 	set(value):
@@ -94,9 +94,18 @@ var down: bool
 var debug_active: bool = false
 
 func _ready() -> void:
-	item_modifiers.assign(item_modifiernp.map(get_node))
-	#hack to get the setter to function
-	item_modifiers = item_modifiers
+	active_item_modifiers = ItemModifierCollection.new(self, [])
+	inactive_item_modifiers = ItemModifierCollection.new(self, item_modifiernp)
+	
+	var current_modifiers := inactive_item_modifiers.get_modifiers()
+	for modifier in current_modifiers:
+		activate_modifier(modifier)
+	
+	#temp code. remove.
+	var slot1 := inventory.get_child(0).get_node(^"InventorySlot") as InventorySlot
+	slot1.contained_item = load("res://Testing/TestSwordItem.tres")
+	var slot2 := inventory.get_child(1).get_node(^"InventorySlot") as InventorySlot
+	slot2.contained_item = load("res://Testing/TestHammerItem.tres")
 	
 func _physics_process(_delta: float) -> void:
 	if is_zero_approx(velocity.x): velocity.x = 0
@@ -105,6 +114,32 @@ func _physics_process(_delta: float) -> void:
 	if Input.is_action_just_pressed(&"toggle_debug"): debug_active = not debug_active
 	debug_label.visible = debug_active
 	if debug_active: debug_label.update_text(self)
+	
+	if Input.is_action_just_pressed(&"inventory_open"):
+		#closing inventory. handle putting item back in slot.
+		if inventory.visible and Globals.dragged_item:
+			#original slot has an item. find available slot.
+			if Globals.dragged_item_slot.contained_item:
+				var found_slot := false
+				#go over slots
+				for child in inventory.get_children():
+					var slot := child.get_node(^"InventorySlot") as InventorySlot
+					#found empty one. set item.
+					if not slot.contained_item:
+						found_slot = true
+						slot.contained_item = Globals.dragged_item
+						break
+				#none empty.
+				if not found_slot:
+					push_error("oopsy doopsy! the inventory was closed with an item held, and there's no place in the inventory to put it! items on the floor aren't properly implemented yet, so this is a fun little memory leak")
+			#can safetly put in origin slot.
+			else:
+				Globals.dragged_item_slot.contained_item = Globals.dragged_item
+			Globals.dragged_item = null
+			Globals.dragged_item_slot = null
+		#toggle inventory visibility.
+		inventory.visible = not inventory.visible
+		
 
 func set_direction() -> void:
 	direction = global_position.direction_to(get_global_mouse_position())
@@ -113,12 +148,13 @@ func set_direction() -> void:
 		sprite.flip_h = false
 	elif direction.x < 0 and not sprite.flip_h:
 		sprite.flip_h = true
-
-	weapon.rotation = direction.angle()
-	if weapon.scale.y == 1 and direction.x < 0:
-		weapon.scale.y = -1
-	elif weapon.scale.y == -1 and direction.x > 0:
-		weapon.scale.y = 1
+	
+	if is_instance_valid(weapon):
+		weapon.rotation = direction.angle()
+		if weapon.scale.y == 1 and direction.x < 0:
+			weapon.scale.y = -1
+		elif weapon.scale.y == -1 and direction.x > 0:
+			weapon.scale.y = 1
 
 func set_inputs() -> void:
 	set_horizontal_inputs()
@@ -163,3 +199,23 @@ func set_vertical_inputs() -> void:
 	if Input.is_action_pressed(&"player_down") and not up:
 		down = true
 
+func _attack_started() -> void:
+	emit_signal(&"attack_started")
+func _attack_ended() -> void:
+	emit_signal(&"attack_ended")
+func _attack_hit(who: Node2D) -> void:
+	emit_signal(&"attack_hit", who)
+
+func activate_modifier(modifier: ItemModifier) -> void:
+	if active_item_modifiers.has(modifier): return
+	if inactive_item_modifiers.has(modifier):
+		inactive_item_modifiers.remove(modifier)
+		active_item_modifiers.add(modifier)
+		modifier.process_mode = Node.PROCESS_MODE_INHERIT
+
+func deactive_modifier(modifier: ItemModifier) -> void:
+	if inactive_item_modifiers.has(modifier): return
+	if active_item_modifiers.has(modifier):
+		active_item_modifiers.remove(modifier)
+		inactive_item_modifiers.add(modifier)
+		modifier.process_mode = Node.PROCESS_MODE_DISABLED

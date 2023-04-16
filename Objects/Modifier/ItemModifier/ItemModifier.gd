@@ -1,25 +1,28 @@
 extends Node2D
 class_name ItemModifier
 
-var weapon: Weapon:
+var entity: Character:
 	set(value):
-		if is_instance_valid(weapon):
-			weapon.attack_started.disconnect(attack_start)
-			weapon.attack_ended.disconnect(attack_end)
-			weapon.attack_hit.disconnect(attack_hit)
-		weapon = value
-		if not is_inside_tree(): await ready
-		if is_instance_valid(weapon):
-			weapon.attack_started.connect(attack_start)
-			weapon.attack_ended.connect(attack_end)
-			weapon.attack_hit.connect(attack_hit)
+		if not is_inside_tree():
+			await ready
+		entity = value
+		
+		if entity.has_signal(&"attack_started") \
+		and not entity.attack_started.is_connected(attack_started):
+			entity.attack_started.connect(attack_started)
+			
+		if entity.has_signal(&"attack_ended") \
+		and not entity.attack_ended.is_connected(attack_ended):
+			entity.attack_ended.connect(attack_ended)
+			
+		if entity.has_signal(&"attack_hit") \
+		and not entity.attack_hit.is_connected(attack_hit):
+			entity.attack_hit.connect(attack_hit)
 
-var entity: Character
-
-func attack_start() -> void:
+func attack_started() -> void:
 	pass
 
-func attack_end() -> void:
+func attack_ended() -> void:
 	pass
 
 func attack_hit(_who: Area2D) -> void:

@@ -17,6 +17,13 @@ func _ready() -> void:
 	character = parent
 	set_state(states.idle)
 
+func _unhandled_input(event: InputEvent) -> void:
+	#attack
+	if event.is_action(&"player_attack") and not event.is_echo() and event.is_pressed():
+		if not state in [states.hurt] and is_instance_valid(character.weapon) and not character.weapon.is_attacking:
+			character.weapon.attack()
+	
+
 func _state_logic(_delta: float) -> void:
 	character.state_frame = state_frame
 	character.current_state = state_names[state]
@@ -26,10 +33,9 @@ func _state_logic(_delta: float) -> void:
 		sprite_effects_player.play(&"death")
 		animation_player.play(&"death")
 		return
-
-	if not state in [states.hurt] and is_instance_valid(character.weapon) and not character.weapon.is_attacking:
-		if Input.is_action_just_pressed("player_attack"):
-			character.weapon.attack()
+	
+	#turnaround
+	if not state in [states.hurt] and (not is_instance_valid(character.weapon) or not character.weapon.is_attacking):
 		character.set_direction()
 
 	if state in [states.idle, states.move]:
