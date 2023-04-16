@@ -7,10 +7,22 @@ var dragged_item: Item:
 		dragged_item = value
 		queue_redraw()
 var dragged_item_slot: InventorySlot
+var old_window_mode: DisplayServer.WindowMode
 
 func _process(_delta: float) -> void:
 	if dragged_item:
 		queue_redraw()
+	if Input.is_action_just_pressed(&"close_game"):
+		get_tree().quit()
+	if Input.is_action_just_pressed(&"toggle_fullscreen"):
+		match DisplayServer.window_get_mode():
+			DisplayServer.WINDOW_MODE_FULLSCREEN:
+				DisplayServer.window_set_mode(old_window_mode)
+				old_window_mode = DisplayServer.WINDOW_MODE_MAXIMIZED
+			_:
+				old_window_mode = DisplayServer.window_get_mode()
+				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+			
 
 func _draw() -> void:
 	if not dragged_item: return

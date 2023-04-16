@@ -29,7 +29,7 @@ func _state_logic(_delta: float) -> void:
 	character.current_state = state_names[state]
 	character.set_inputs()
 
-	if character.current_hp < 0 and not animation_player.assigned_animation == &"death":
+	if character.current_hp <= 0 and not animation_player.assigned_animation == &"death":
 		sprite_effects_player.play(&"death")
 		animation_player.play(&"death")
 		return
