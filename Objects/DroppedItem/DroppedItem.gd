@@ -1,12 +1,21 @@
 extends CollisionObject2D
 class_name DroppedItem
 
-@onready var sprite := $Sprite
-@onready var collision := $Collision
-@onready var animation_player := $AnimationPlayer
-@onready var info_label := $InfoLabelBase/InfoLabel
-@onready var info_label_base := $InfoLabelBase
-@onready var pickup_area := $PickupArea
+@export var item: Item:
+	set(value):
+		item = value
+		if not item: return
+		if not is_inside_tree():
+			await ready
+		sprite.texture = item.texture
+		info_label.text = item.item_name
+
+@onready var sprite: Sprite2D = $Sprite
+@onready var collision: CollisionShape2D = $Collision
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var info_label: Label = $InfoLabelBase/InfoLabel
+@onready var info_label_base: Control = $InfoLabelBase
+@onready var pickup_area: Area2D = $PickupArea
 
 var label_offset: Vector2 = Vector2(NAN,NAN)
 
@@ -62,5 +71,13 @@ func mouse_exit() -> void:
 
 func on_input(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
 	if not event.is_action(&"player_interact") or not event.is_pressed(): return
-	print("picked me up uwu")
+	if not item: return
+	
+	for inventory_ in Globals.inventories:
+		var inventory: Inventory = inventory_
+		if not inventory.pickup_target: continue
+		var inserted: bool = inventory.try_insert(item)
+		if inserted:
+			queue_free()
+			return
 

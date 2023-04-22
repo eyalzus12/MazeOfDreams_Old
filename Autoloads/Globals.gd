@@ -1,5 +1,8 @@
 extends Node2D
 
+const DROPPED_ITEM: PackedScene = preload("res://Objects/DroppedItem/DroppedItem.tscn")
+const DISABLE_ENEMIES: bool = false
+
 var dragged_item: Item:
 	set(value):
 		if not is_inside_tree():
@@ -9,6 +12,10 @@ var dragged_item: Item:
 var dragged_item_inventory: Inventory
 var dragged_item_slot: InventorySlot
 
+var drop_input_handled: bool = false
+
+#set of inventories
+var inventories: Dictionary
 #set of inventories
 var open_inventories: Dictionary
 
@@ -27,6 +34,49 @@ func _process(_delta: float) -> void:
 			_:
 				old_window_mode = DisplayServer.window_get_mode()
 				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+
+func _unhandled_input(event: InputEvent) -> void:
+	if dragged_item and event.is_action(&"player_interact") and event.is_pressed():
+		await temp_signal(self, 0.1)
+		if drop_input_handled:
+			drop_input_handled = false
+			return
+		drop_item(dragged_item, get_global_mouse_position())
+		dragged_item = null
+		dragged_item_slot = null
+		dragged_item_inventory = null
+
+func drop_item(item: Item, pos: Vector2) -> void:
+	var dropped_item: DroppedItem = DROPPED_ITEM.instantiate()
+	dropped_item.item = item
+	dropped_item.global_position = pos
+	get_tree().root.add_child(dropped_item)
+	
+	dropped_item.pickup_area.input_pickable = false
+	schedule_property_change(dropped_item.pickup_area,&"input_pickable",true)
+
+func temp_timer(time: float = 0.1) -> Timer:
+	var timer := Timer.new()
+	timer.process_callback = Timer.TIMER_PROCESS_PHYSICS
+	timer.wait_time = time
+	timer.autostart = true
+	timer.one_shot = true
+	timer.timeout.connect(timer.queue_free)
+	return timer
+
+func add_temp_timer(node: Node, time: float = 0.1) -> Timer:
+	var timer := temp_timer(time)
+	node.add_child(timer)
+	return timer
+
+func temp_signal(node: Node, time: float = 0.1) -> Signal:
+	return add_temp_timer(node, time).timeout
+
+func schedule_action(node: Node, action: Callable, time: float = 0.1) -> void:
+	add_temp_timer(node, time).timeout.connect(action)
+
+func schedule_property_change(node: Node, property: StringName, value: Variant, time: float = 0.1) -> void:
+	schedule_action(node, node.set.bind(property,value), time)
 
 func _draw() -> void:
 	if not dragged_item: return

@@ -19,8 +19,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if is_open and event.is_action(&"inventory_toggle"):
 		close()
 
-func on_input(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
+func on_input(_viewport: Viewport, event: InputEvent, _shape_idx: int) -> void:
 	if event.is_action(&"player_interact") and event.is_pressed():
+		Globals.drop_input_handled = true
 		toggle()
 
 func open() -> void:

@@ -57,7 +57,7 @@ var inactive_item_modifiers: ItemModifierCollection
 
 @export var initial_hp: float = 100
 
-@export var current_hp: float = initial_hp :
+@export var current_hp: float = initial_hp:
 	set(value):
 		current_hp = value
 		if not is_inside_tree():

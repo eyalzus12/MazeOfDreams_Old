@@ -4,6 +4,7 @@ class_name Inventory
 const SLOT := preload("res://Objects/UI/InventorySlot/InventorySlot.tscn")
 
 @export var inventory: InventoryResource
+@export var pickup_target: bool
 var slots: Array[InventorySlot]
 
 var is_open: bool:
@@ -14,8 +15,12 @@ var is_open: bool:
 		else: _close()
 
 func _ready() -> void:
+	Globals.inventories[self] = null
 	if inventory:
 		columns = inventory.columns
+
+func _exit_tree() -> void:
+	Globals.inventories.erase(self)
 
 func add_slot(i: int, j: int, allow_category: Array, block_category: Array):
 	if inventory:
@@ -47,23 +52,22 @@ func _close() -> void:
 	if Globals.dragged_item_inventory == self:
 		#original slot has an item. find available slot.
 		if Globals.dragged_item_slot.contained_item:
-			var found_slot := false
-			#go over slots
-			for slot in Globals.dragged_item_inventory.slots:
-				#found empty one. set item.
-				if not slot.contained_item:
-					found_slot = true
-					slot.contained_item = Globals.dragged_item
-					break
-			#none empty.
-			if not found_slot:
-				push_error("oopsy doopsy! the inventory was closed with an item held, and there's no place in the inventory to put it! items on the floor aren't properly implemented yet, so this is a fun little memory leak")
+			var has_space := try_insert(Globals.dragged_item)
+			if not has_space:
+				Globals.drop_item(Globals.dragged_item, global_position)
 		#can safetly put in origin slot.
 		else:
 			Globals.dragged_item_slot.contained_item = Globals.dragged_item
 		Globals.dragged_item = null
 		Globals.dragged_item_inventory = null
 		Globals.dragged_item_slot = null
+
+func try_insert(item: Item) -> bool:
+	for slot in slots:
+		if not slot.contained_item:
+			slot.contained_item = item
+			return true
+	return false
 
 func get_at(i: int, j: int) -> Item:
 	return inventory.get_at(i,j)

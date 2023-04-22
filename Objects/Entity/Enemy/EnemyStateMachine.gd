@@ -20,6 +20,7 @@ func _ready() -> void:
 	set_state(states.idle)
 
 func _state_logic(_delta: float) -> void:
+	if Globals.DISABLE_ENEMIES: return
 	if enemy.current_hp < 0 and not animation_player.assigned_animation == &"death":
 		sprite_effects_player.play(&"death")
 		animation_player.play(&"death")

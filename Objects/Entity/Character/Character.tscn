@@ -208,6 +208,7 @@ offset_bottom = -88.0
 r = 10
 c = 10
 inventory = SubResource("Resource_xpdph")
+pickup_target = true
 
 [node name="EquipSlots" type="GridContainer" parent="UILayer"]
 offset_top = 88.0
