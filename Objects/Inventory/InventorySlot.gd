@@ -6,9 +6,12 @@ signal item_change(slot: InventorySlot, from: Item, to: Item)
 @export var allow_category: Array[String] = []
 @export var block_category: Array[String] = []
 
+@export var is_locked: bool = false
+
 @export var inventory: Inventory
 @export var i: int
 @export var j: int
+
 var contained_item: Item:
 	set(value):
 		emit_signal("item_change", self, contained_item, value)
@@ -26,19 +29,20 @@ func _pressed() -> void:
 	if Globals.dragged_item:
 		if can_hold_item(Globals.dragged_item):
 			if contained_item:
-				#swap items
-				var temp = contained_item
-				contained_item = Globals.dragged_item
-				Globals.dragged_item = temp
-				Globals.dragged_item_slot = self
-				
-				Globals.dragged_item_inventory = inventory
+				if can_remove_item():
+					#swap items
+					var temp = contained_item
+					contained_item = Globals.dragged_item
+					Globals.dragged_item = temp
+					Globals.dragged_item_slot = self
+					
+					Globals.dragged_item_inventory = inventory
 			else:
 				contained_item = Globals.dragged_item
 				Globals.dragged_item = null
 				Globals.dragged_item_slot = null
 				Globals.dragged_item_inventory = null
-	elif contained_item:
+	elif contained_item and can_remove_item():
 		Globals.dragged_item = contained_item
 		Globals.dragged_item_slot = self
 		Globals.dragged_item_inventory = inventory
@@ -48,3 +52,6 @@ func can_hold_item(item: Item) -> bool:
 	var block := not block_category.is_empty() and item.item_category in block_category
 	var allow := allow_category.is_empty() or item.item_category in allow_category
 	return allow and not block
+
+func can_remove_item() -> bool:
+	return not is_locked

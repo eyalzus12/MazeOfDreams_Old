@@ -100,6 +100,7 @@ func _enter_state(_prev_state: int, _state: int) -> void:
 
 #got hit
 func _on_CharacterHurtbox_area_entered(area: Area2D) -> void:
+	if Globals.god: return
 	if not area is Hitbox: return
 	var hitbox = area as Hitbox
 	character.current_hp -= hitbox.damage

@@ -15,9 +15,9 @@ signal attack_hit(who: Area2D)
 @onready var health_bar: TextureProgressBar = $UILayer/HealthBar
 @onready var inventory: InventoryGrid = $UILayer/InventoryGrid
 
-@onready var weaponSlots: InventoryGrid = $UILayer/EquipSlots/EquipWeapon
-@onready var aSlots: InventoryGrid = $UILayer/EquipSlots/EquipA
-@onready var bSlots: InventoryGrid = $UILayer/EquipSlots/EquipB
+@onready var weapon_slots: InventoryGrid = $UILayer/EquipSlots/EquipWeapon
+@onready var a_slots: InventoryGrid = $UILayer/EquipSlots/EquipA
+@onready var b_slots: InventoryGrid = $UILayer/EquipSlots/EquipB
 
 var state_frame: int
 var current_state: String
@@ -27,6 +27,8 @@ var current_state: String
 @export var dash_startup: float = 2
 @export var dash_speed: float = 1000
 @export var dash_bounce_mult: float = 1.3
+
+var weapon_slot: InventorySlot
 
 var weapon: Weapon:
 	set(value):
@@ -40,9 +42,11 @@ var weapon: Weapon:
 			weapon.attack_started.connect(_attack_started)
 			weapon.attack_ended.connect(_attack_ended)
 			weapon.attack_hit.connect(_attack_hit)
+		weapon_slot.is_locked = false
 
-var aModifiers: Array[Modifier]
-var bModifiers: Array[Modifier]
+
+var a_modifiers: Array[Modifier]
+var b_modifiers: Array[Modifier]
 
 @export var dash_cooldown: float:
 	set(value):
@@ -96,10 +100,12 @@ func _ready() -> void:
 	EventBus.chest_closed.connect(on_chest_close)
 	
 	#weapon slots
-	weaponSlots.slots[0].item_change.connect(on_weapon_item_change)
+	weapon_slot = weapon_slots.slots[0]
+	weapon_slot.item_change.connect(on_weapon_item_change)
 	#modifier slots
-	connect_modifier_slots(aModifiers, aSlots, on_aModifier_item_change)
-	connect_modifier_slots(bModifiers, bSlots, on_bModifier_item_change)
+	connect_modifier_slots(a_modifiers, a_slots, on_a_modifier_item_change)
+	connect_modifier_slots(b_modifiers, b_slots, on_b_modifier_item_change)
+
 
 func connect_modifier_slots(list: Array[Modifier], slots: InventoryGrid, to_call: Callable):
 	list.resize(slots.slots.size())
@@ -162,10 +168,10 @@ func on_modifier_item_change(slot: InventorySlot, from: Item, to: Item, list: Ar
 		list[index].queue_free()
 	list[index] = mnew_modifier
 
-func on_aModifier_item_change(slot: InventorySlot, from: Item, to: Item):
-	on_modifier_item_change(slot,from,to,aModifiers)
-func on_bModifier_item_change(slot: InventorySlot, from: Item, to: Item):
-	on_modifier_item_change(slot,from,to,bModifiers)
+func on_a_modifier_item_change(slot: InventorySlot, from: Item, to: Item):
+	on_modifier_item_change(slot,from,to,a_modifiers)
+func on_b_modifier_item_change(slot: InventorySlot, from: Item, to: Item):
+	on_modifier_item_change(slot,from,to,b_modifiers)
 
 func _physics_process(_delta: float) -> void:
 	if is_zero_approx(velocity.x): velocity.x = 0
@@ -242,8 +248,10 @@ func set_vertical_inputs() -> void:
 		down = true
 
 func _attack_started() -> void:
+	weapon_slot.is_locked = true
 	emit_signal(&"attack_started")
 func _attack_ended() -> void:
+	weapon_slot.is_locked = false
 	emit_signal(&"attack_ended")
 func _attack_hit(who: Node2D) -> void:
 	emit_signal(&"attack_hit", who)

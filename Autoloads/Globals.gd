@@ -1,6 +1,7 @@
 extends Node2D
 
 const DROPPED_ITEM: PackedScene = preload("res://Objects/DroppedItem/DroppedItem.tscn")
+const DAMAGE_POPUP := preload("res://Objects/UI/DamagePopup/DamagePopup.tscn")
 const DISABLE_ENEMIES: bool = false
 
 var dragged_item: Item:
@@ -21,9 +22,14 @@ var open_inventories: Dictionary
 
 var old_window_mode: DisplayServer.WindowMode
 
+var god: bool = false
+
 func _process(_delta: float) -> void:
 	if dragged_item:
 		queue_redraw()
+	if Input.is_action_just_pressed(&"toggle_god"):
+		god = not god
+		print("god" if god else "not god")
 	if Input.is_action_just_pressed(&"close_game"):
 		get_tree().quit()
 	if Input.is_action_just_pressed(&"toggle_fullscreen"):
