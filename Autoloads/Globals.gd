@@ -81,4 +81,5 @@ func schedule_property_change(node: Node, property: StringName, value: Variant, 
 func _draw() -> void:
 	if not dragged_item: return
 	var mouse_pos := get_local_mouse_position()
-	draw_texture(dragged_item.texture, mouse_pos)
+	var center_offset := dragged_item.texture.get_size()/2
+	draw_texture(dragged_item.texture, mouse_pos-center_offset)

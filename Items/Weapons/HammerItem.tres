@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="WeaponItem" load_steps=4 format=3 uid="uid://3mm8fpyercst"]
+
+[ext_resource type="PackedScene" uid="uid://b5fn6kgg5x0jp" path="res://Objects/HeldItem/Weapon/Hammer/Hammer.tscn" id="1_jojds"]
+[ext_resource type="Script" path="res://Objects/Item/WeaponItem.gd" id="2_e0p2y"]
+[ext_resource type="Texture2D" uid="uid://co1xdjjcr7nwm" path="res://Assets/jessesans.jpg" id="3_7j46n"]
+
+[resource]
+script = ExtResource("2_e0p2y")
+weapon_layers = 130
+weapon_masks = 2080
+scene = ExtResource("1_jojds")
+item_name = "Hammer"
+item_category = "Weapon"
+texture = ExtResource("3_7j46n")
+extra_info = {}

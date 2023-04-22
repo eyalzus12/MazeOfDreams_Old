@@ -1,4 +1,4 @@
-extends ItemModifier
+extends Modifier
 
 const LASER := preload("res://Objects/Modifier/ItemModifier/LaserModifier/Laser.tscn")
 

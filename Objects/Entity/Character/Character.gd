@@ -14,7 +14,10 @@ signal attack_hit(who: Area2D)
 @onready var debug_label: Label = $UILayer/DebugLabel
 @onready var health_bar: TextureProgressBar = $UILayer/HealthBar
 @onready var inventory: InventoryGrid = $UILayer/InventoryGrid
-@onready var weaponSlot: InventoryGrid = $UILayer/EquipSlots/EquipWeapon
+
+@onready var weaponSlots: InventoryGrid = $UILayer/EquipSlots/EquipWeapon
+@onready var aSlots: InventoryGrid = $UILayer/EquipSlots/EquipA
+@onready var bSlots: InventoryGrid = $UILayer/EquipSlots/EquipB
 
 var state_frame: int
 var current_state: String
@@ -24,6 +27,7 @@ var current_state: String
 @export var dash_startup: float = 2
 @export var dash_speed: float = 1000
 @export var dash_bounce_mult: float = 1.3
+
 var weapon: Weapon:
 	set(value):
 		if not is_inside_tree():
@@ -36,11 +40,10 @@ var weapon: Weapon:
 			weapon.attack_started.connect(_attack_started)
 			weapon.attack_ended.connect(_attack_ended)
 			weapon.attack_hit.connect(_attack_hit)
-			
-@export var item_modifiernp: Array[NodePath]
-var active_item_modifiers: ItemModifierCollection
-var inactive_item_modifiers: ItemModifierCollection
-		
+
+var aModifiers: Array[Modifier]
+var bModifiers: Array[Modifier]
+
 @export var dash_cooldown: float:
 	set(value):
 		dash_cooldown = value
@@ -91,14 +94,16 @@ var debug_active: bool = false
 func _ready() -> void:
 	EventBus.chest_opened.connect(on_chest_open)
 	EventBus.chest_closed.connect(on_chest_close)
-	weaponSlot.slots[0].item_change.connect(on_weapon_item_change)
 	
-	active_item_modifiers = ItemModifierCollection.new(self, [])
-	inactive_item_modifiers = ItemModifierCollection.new(self, item_modifiernp)
-	
-	var current_modifiers := inactive_item_modifiers.get_modifiers()
-	for modifier in current_modifiers:
-		activate_modifier(modifier)
+	#weapon slots
+	weaponSlots.slots[0].item_change.connect(on_weapon_item_change)
+	#modifier slots
+	connect_modifier_slots(aModifiers, aSlots, on_aModifier_item_change)
+	connect_modifier_slots(bModifiers, bSlots, on_bModifier_item_change)
+
+func connect_modifier_slots(list: Array[Modifier], slots: InventoryGrid, to_call: Callable):
+	list.resize(slots.slots.size())
+	for slot in slots.slots: slot.item_change.connect(to_call)
 
 func on_weapon_item_change(_slot: InventorySlot, from: Item, to: Item):
 	#no change
@@ -118,11 +123,49 @@ func on_weapon_item_change(_slot: InventorySlot, from: Item, to: Item):
 	#not actually a weapon
 	if not new_weapon is Weapon:
 		push_error("attempt to switch weapon to non weapon ", new_weapon)
-		new_weapon.queue_free()
+		if new_weapon: new_weapon.queue_free()
 		return
 	#equip weapon
 	var wnew_weapon := new_weapon as Weapon
 	weapon = wnew_weapon
+
+func on_modifier_item_change(slot: InventorySlot, from: Item, to: Item, list: Array[Modifier]):
+	var index := slot.j
+	
+	#no change
+	if from == to:
+		return
+	#removing modifier
+	if not is_instance_valid(to):
+		if is_instance_valid(list[index]):
+			list[index].queue_free()
+		list[index] = null
+		return
+	#not a modifier item
+	if not to is ModifierItem:
+		push_error("attempt to switch modifier to non modifier item ", to)
+		return
+	var nto := to as ModifierItem
+	#create modifier
+	var new_modifier: Node2D = nto.init_node()
+	#not actually a modifier
+	if not new_modifier is Modifier:
+		push_error("attempt to switch modifier to non modifier ", new_modifier)
+		if new_modifier: new_modifier.queue_free()
+		return
+	#equip modifier
+	var mnew_modifier := new_modifier as Modifier
+	mnew_modifier.entity = self
+	
+	add_child(mnew_modifier)
+	if is_instance_valid(list[index]):
+		list[index].queue_free()
+	list[index] = mnew_modifier
+
+func on_aModifier_item_change(slot: InventorySlot, from: Item, to: Item):
+	on_modifier_item_change(slot,from,to,aModifiers)
+func on_bModifier_item_change(slot: InventorySlot, from: Item, to: Item):
+	on_modifier_item_change(slot,from,to,bModifiers)
 
 func _physics_process(_delta: float) -> void:
 	if is_zero_approx(velocity.x): velocity.x = 0
@@ -205,16 +248,3 @@ func _attack_ended() -> void:
 func _attack_hit(who: Node2D) -> void:
 	emit_signal(&"attack_hit", who)
 
-func activate_modifier(modifier: ItemModifier) -> void:
-	if active_item_modifiers.has(modifier): return
-	if inactive_item_modifiers.has(modifier):
-		inactive_item_modifiers.remove(modifier)
-		active_item_modifiers.add(modifier)
-		modifier.process_mode = Node.PROCESS_MODE_INHERIT
-
-func deactive_modifier(modifier: ItemModifier) -> void:
-	if inactive_item_modifiers.has(modifier): return
-	if active_item_modifiers.has(modifier):
-		active_item_modifiers.remove(modifier)
-		inactive_item_modifiers.add(modifier)
-		modifier.process_mode = Node.PROCESS_MODE_DISABLED

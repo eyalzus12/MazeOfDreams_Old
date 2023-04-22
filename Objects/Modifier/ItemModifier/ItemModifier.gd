@@ -1,5 +1,5 @@
 extends Node2D
-class_name ItemModifier
+class_name Modifier
 
 var entity: Character:
 	set(value):

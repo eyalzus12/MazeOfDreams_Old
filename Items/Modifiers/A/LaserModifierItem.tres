@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ModifierItem" load_steps=4 format=3 uid="uid://broxhyhw27lkl"]
+
+[ext_resource type="Script" path="res://Objects/Item/ModifierItem.gd" id="1_hki2d"]
+[ext_resource type="PackedScene" uid="uid://coehm3od7x5u6" path="res://Objects/Modifier/ItemModifier/LaserModifier/LaserModifier.tscn" id="1_x38rq"]
+[ext_resource type="Texture2D" uid="uid://dtd0taqqw30b2" path="res://Assets/d.png" id="3_68i4k"]
+
+[resource]
+script = ExtResource("1_hki2d")
+scene = ExtResource("1_x38rq")
+item_name = "Laser Modifier"
+item_category = "A"
+texture = ExtResource("3_68i4k")
+extra_info = {}

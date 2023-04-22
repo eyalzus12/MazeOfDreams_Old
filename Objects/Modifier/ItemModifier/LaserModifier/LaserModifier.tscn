@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://coehm3od7x5u6"]
+
+[ext_resource type="Script" path="res://Objects/Modifier/ItemModifier/LaserModifier/LaserModifier.gd" id="1_bsvs5"]
+
+[node name="LaserModifier" type="Node2D"]
+script = ExtResource("1_bsvs5")
