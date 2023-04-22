@@ -34,7 +34,9 @@ func _ready() -> void:
 	pickup_area.input_event.connect(on_input)
 
 func _process(_delta: float) -> void:
-	if is_nan(label_offset.x): label_offset = info_label.position
+	if is_nan(label_offset.x):
+		label_offset = info_label.position
+		info_label.position = Vector2.ZERO
 	info_label_base.global_position = global_position + label_offset
 
 func mouse_enter() -> void:
