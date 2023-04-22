@@ -1,9 +1,16 @@
-extends GridContainer
+extends Inventory
+class_name InventoryGrid
 
-const SLOT := preload("res://Objects/UI/InventorySlot/InventorySlot.tscn")
+@export var allow_category: Array[String] = []
+@export var block_category: Array[String] = []
+
+@export var r: int
+@export var c: int
 
 func _ready() -> void:
-	for i in range(columns):
-		for j in range(columns):
-			var slot := SLOT.instantiate()
-			add_child(slot)
+	super._ready()
+	if inventory:
+		for i in range(c):
+			for j in range(r):
+				add_slot(i,j,allow_category,block_category)
+

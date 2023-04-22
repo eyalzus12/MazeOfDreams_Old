@@ -61,6 +61,6 @@ func mouse_exit() -> void:
 
 
 func on_input(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
-	if not event.is_action(&"player_pickup") or not event.is_pressed(): return
+	if not event.is_action(&"player_interact") or not event.is_pressed(): return
 	print("picked me up uwu")
 

@@ -10,3 +10,5 @@ grow_horizontal = 2
 grow_vertical = 2
 columns = 10
 script = ExtResource("1_l6aey")
+r = null
+c = null

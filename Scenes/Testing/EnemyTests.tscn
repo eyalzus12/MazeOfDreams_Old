@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://5cm3l1wuau55"]
+[gd_scene load_steps=15 format=3 uid="uid://5cm3l1wuau55"]
 
 [ext_resource type="Texture2D" uid="uid://dtd0taqqw30b2" path="res://Assets/d.png" id="1_47gxp"]
 [ext_resource type="Texture2D" uid="uid://c6dh2kvvgpad4" path="res://Assets/cum.png" id="2_aeoiw"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://b2o4lr7cqhhxm" path="res://Objects/MapObjects/Trap/SpikesTrap/SpikesTrap.tscn" id="5_foj6x"]
 [ext_resource type="Script" path="res://Scenes/Testing/TestAIStateMachine.gd" id="5_lws6b"]
 [ext_resource type="PackedScene" uid="uid://c63t8e3i2anym" path="res://Objects/DroppedItem/DroppedItem.tscn" id="6_q0m2u"]
+[ext_resource type="PackedScene" uid="uid://ctu1tasavfknc" path="res://Objects/Chest/Chest.tscn" id="8_haudu"]
 
 [sub_resource type="CircleShape2D" id="3"]
 radius = 30.0
@@ -4924,6 +4925,9 @@ position = Vector2(794.658, 287.2)
 position = Vector2(794.658, 287.2)
 
 [node name="Avoid" type="Node2D" parent="."]
+
+[node name="Chest" parent="." instance=ExtResource("8_haudu")]
+position = Vector2(984, 72)
 
 [editable path="Enemy"]
 [editable path="Enemy/Hitbox"]

@@ -6,7 +6,12 @@ var dragged_item: Item:
 			await ready
 		dragged_item = value
 		queue_redraw()
+var dragged_item_inventory: Inventory
 var dragged_item_slot: InventorySlot
+
+#set of inventories
+var open_inventories: Dictionary
+
 var old_window_mode: DisplayServer.WindowMode
 
 func _process(_delta: float) -> void:
@@ -22,7 +27,6 @@ func _process(_delta: float) -> void:
 			_:
 				old_window_mode = DisplayServer.window_get_mode()
 				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
-			
 
 func _draw() -> void:
 	if not dragged_item: return

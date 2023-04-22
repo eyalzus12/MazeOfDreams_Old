@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://ced6li08ssu8o"]
+[gd_scene load_steps=29 format=3 uid="uid://ced6li08ssu8o"]
 
 [ext_resource type="Script" path="res://Objects/Entity/Character/Character.gd" id="1_70khu"]
 [ext_resource type="Texture2D" uid="uid://co1xdjjcr7nwm" path="res://Assets/jessesans.jpg" id="2_ufpbp"]
@@ -6,11 +6,44 @@
 [ext_resource type="Theme" uid="uid://beyjrh481pkj4" path="res://LabelBackgroundTheme.tres" id="4_r3t6d"]
 [ext_resource type="PackedScene" uid="uid://b0vxsub54aedm" path="res://Objects/UI/InventoryGrid/InventoryGrid.tscn" id="5_62rkv"]
 [ext_resource type="Script" path="res://Objects/Entity/Character/DebugLabel.gd" id="5_djjja"]
+[ext_resource type="Script" path="res://Objects/Item/WeaponItem.gd" id="7_3uhhe"]
 [ext_resource type="PackedScene" uid="uid://bku7s3gdgpwmb" path="res://Objects/Hurtbox/Hurtbox.tscn" id="7_yp4o6"]
 [ext_resource type="PackedScene" uid="uid://dk8tierjbr0k8" path="res://Objects/HeldItem/Weapon/Sword/Sword.tscn" id="8_48bid"]
+[ext_resource type="Texture2D" uid="uid://c1agvd7wnmrgw" path="res://icon.png" id="8_tnqjl"]
 [ext_resource type="PackedScene" uid="uid://b5fn6kgg5x0jp" path="res://Objects/HeldItem/Weapon/Hammer/Hammer.tscn" id="9_1rsqb"]
 [ext_resource type="Script" path="res://Objects/Entity/Character/CharacterStateMachine.gd" id="9_4emhb"]
 [ext_resource type="Script" path="res://Objects/Modifier/ItemModifier/LaserModifier/LaserModifier.gd" id="10_25uv6"]
+[ext_resource type="Script" path="res://Objects/Inventory/InventoryResource.gd" id="11_xjos7"]
+
+[sub_resource type="Resource" id="Resource_7qmrn"]
+script = ExtResource("7_3uhhe")
+weapon_layers = 130
+weapon_masks = 2080
+scene = ExtResource("8_48bid")
+item_name = "Sword"
+item_category = "Weapon"
+texture = ExtResource("8_tnqjl")
+extra_info = {}
+
+[sub_resource type="Resource" id="Resource_ckkdc"]
+script = ExtResource("7_3uhhe")
+weapon_layers = 130
+weapon_masks = 2080
+scene = ExtResource("9_1rsqb")
+item_name = "Hammer"
+item_category = "Weapon"
+texture = ExtResource("2_ufpbp")
+extra_info = {}
+
+[sub_resource type="Resource" id="Resource_xpdph"]
+script = ExtResource("11_xjos7")
+items = Array[Resource("res://Objects/Item/Item.gd")]([SubResource("Resource_7qmrn"), SubResource("Resource_ckkdc"), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null])
+columns = 10
+
+[sub_resource type="Resource" id="Resource_i0fmo"]
+script = ExtResource("11_xjos7")
+items = Array[Resource("res://Objects/Item/Item.gd")]([null])
+columns = 1
 
 [sub_resource type="Animation" id="11"]
 length = 0.001
@@ -140,12 +173,11 @@ _data = {
 "hurt": SubResource("4")
 }
 
-[node name="Character" type="CharacterBody2D" node_paths=PackedStringArray("weapon") groups=["characters"]]
+[node name="Character" type="CharacterBody2D" groups=["characters"]]
 collision_layer = 4161
 collision_mask = 8
 motion_mode = 1
 script = ExtResource("1_70khu")
-weapon = NodePath("Weapon")
 item_modifiernp = Array[NodePath]([NodePath("LaserModifier")])
 dash_cooldown = 0.5
 dash_time = 0.2
@@ -173,6 +205,23 @@ offset_left = 600.0
 offset_top = 208.0
 offset_right = -16.0
 offset_bottom = -88.0
+r = 10
+c = 10
+inventory = SubResource("Resource_xpdph")
+
+[node name="EquipSlots" type="GridContainer" parent="UILayer"]
+offset_top = 88.0
+offset_right = 40.0
+offset_bottom = 224.0
+
+[node name="EquipWeapon" parent="UILayer/EquipSlots" instance=ExtResource("5_62rkv")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+allow_category = Array[String](["Weapon"])
+r = 1
+c = 1
+inventory = SubResource("Resource_i0fmo")
 
 [node name="Camera" type="Camera2D" parent="."]
 position_smoothing_enabled = true
@@ -221,20 +270,6 @@ script = ExtResource("9_4emhb")
 [node name="InvincibilityTimer" type="Timer" parent="."]
 process_callback = 0
 one_shot = true
-
-[node name="Weapon" parent="." instance=ExtResource("8_48bid")]
-process_mode = 4
-visible = false
-position = Vector2(8, 0)
-weapon_layers = 130
-weapon_masks = 2080
-
-[node name="WeaponHammer" parent="." instance=ExtResource("9_1rsqb")]
-process_mode = 4
-visible = false
-position = Vector2(16, 0)
-weapon_layers = 130
-weapon_masks = 2080
 
 [node name="LaserModifier" type="Node2D" parent="." groups=["modifiers"]]
 script = ExtResource("10_25uv6")

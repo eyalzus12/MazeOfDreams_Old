@@ -13,7 +13,8 @@ signal attack_hit(who: Area2D)
 @onready var sprite: Sprite2D = $Sprite
 @onready var debug_label: Label = $UILayer/DebugLabel
 @onready var health_bar: TextureProgressBar = $UILayer/HealthBar
-@onready var inventory: GridContainer = $UILayer/InventoryGrid
+@onready var inventory: InventoryGrid = $UILayer/InventoryGrid
+@onready var weaponSlot: InventoryGrid = $UILayer/EquipSlots/EquipWeapon
 
 var state_frame: int
 var current_state: String
@@ -23,24 +24,18 @@ var current_state: String
 @export var dash_startup: float = 2
 @export var dash_speed: float = 1000
 @export var dash_bounce_mult: float = 1.3
-@export var weapon: Weapon:
+var weapon: Weapon:
 	set(value):
 		if not is_inside_tree():
 			await ready
 		if is_instance_valid(weapon):
-			weapon.attack_started.disconnect(_attack_started)
-			weapon.attack_ended.disconnect(_attack_ended)
-			weapon.attack_hit.disconnect(_attack_hit)
-			weapon.process_mode = Node.PROCESS_MODE_DISABLED
-			weapon.visible = false
+			weapon.queue_free()
 		weapon = value
 		if is_instance_valid(weapon):
+			add_child(weapon)
 			weapon.attack_started.connect(_attack_started)
 			weapon.attack_ended.connect(_attack_ended)
 			weapon.attack_hit.connect(_attack_hit)
-			weapon.process_mode = Node.PROCESS_MODE_INHERIT
-			weapon.visible = true
-			weapon._ready()
 			
 @export var item_modifiernp: Array[NodePath]
 var active_item_modifiers: ItemModifierCollection
@@ -94,19 +89,41 @@ var down: bool
 var debug_active: bool = false
 
 func _ready() -> void:
+	EventBus.chest_opened.connect(on_chest_open)
+	EventBus.chest_closed.connect(on_chest_close)
+	weaponSlot.slots[0].item_change.connect(on_weapon_item_change)
+	
 	active_item_modifiers = ItemModifierCollection.new(self, [])
 	inactive_item_modifiers = ItemModifierCollection.new(self, item_modifiernp)
 	
 	var current_modifiers := inactive_item_modifiers.get_modifiers()
 	for modifier in current_modifiers:
 		activate_modifier(modifier)
-	
-	#temp code. remove.
-	var slot1 := inventory.get_child(0).get_node(^"InventorySlot") as InventorySlot
-	slot1.contained_item = load("res://Testing/TestSwordItem.tres")
-	var slot2 := inventory.get_child(1).get_node(^"InventorySlot") as InventorySlot
-	slot2.contained_item = load("res://Testing/TestHammerItem.tres")
-	
+
+func on_weapon_item_change(_slot: InventorySlot, from: Item, to: Item):
+	#no change
+	if from == to:
+		return
+	#removing weapon
+	if not is_instance_valid(to):
+		weapon = null
+		return
+	#not a weapon item
+	if not to is WeaponItem:
+		push_error("attempt to switch weapon to non weapon item ", to)
+		return
+	var nto := to as WeaponItem
+	#create weapon
+	var new_weapon: Node2D = nto.init_node()
+	#not actually a weapon
+	if not new_weapon is Weapon:
+		push_error("attempt to switch weapon to non weapon ", new_weapon)
+		new_weapon.queue_free()
+		return
+	#equip weapon
+	var wnew_weapon := new_weapon as Weapon
+	weapon = wnew_weapon
+
 func _physics_process(_delta: float) -> void:
 	if is_zero_approx(velocity.x): velocity.x = 0
 	if is_zero_approx(velocity.y): velocity.y = 0
@@ -115,30 +132,13 @@ func _physics_process(_delta: float) -> void:
 	debug_label.visible = debug_active
 	if debug_active: debug_label.update_text(self)
 	
-	if Input.is_action_just_pressed(&"inventory_open"):
-		#toggle inventory visibility.
-		inventory.visible = not inventory.visible
-		#closing inventory. handle putting item back in slot.
-		if not inventory.visible and Globals.dragged_item:
-			#original slot has an item. find available slot.
-			if Globals.dragged_item_slot.contained_item:
-				var found_slot := false
-				#go over slots
-				for child in inventory.get_children():
-					var slot := child.get_node(^"InventorySlot") as InventorySlot
-					#found empty one. set item.
-					if not slot.contained_item:
-						found_slot = true
-						slot.contained_item = Globals.dragged_item
-						break
-				#none empty.
-				if not found_slot:
-					push_error("oopsy doopsy! the inventory was closed with an item held, and there's no place in the inventory to put it! items on the floor aren't properly implemented yet, so this is a fun little memory leak")
-			#can safetly put in origin slot.
-			else:
-				Globals.dragged_item_slot.contained_item = Globals.dragged_item
-			Globals.dragged_item = null
-			Globals.dragged_item_slot = null
+	if Input.is_action_just_pressed(&"inventory_toggle"):
+		inventory.toggle()
+
+func on_chest_open(_who: Chest) -> void:
+	inventory.open()
+func on_chest_close(_who: Chest) -> void:
+	pass
 
 func set_direction() -> void:
 	direction = global_position.direction_to(get_global_mouse_position())
