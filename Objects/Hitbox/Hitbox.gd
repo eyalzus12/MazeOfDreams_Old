@@ -4,6 +4,7 @@ class_name Hitbox
 @export var damage: float
 @export var stun: float
 @export var pushback: float
+@export var is_projectile: bool = false
 
 @export var active: bool:
 	set(value):

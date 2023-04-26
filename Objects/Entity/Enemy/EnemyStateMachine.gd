@@ -1,6 +1,6 @@
 extends StateMachine
 
-const DamagePopup := preload("res://Objects/UI/DamagePopup/DamagePopup.tscn")
+const DAMAGE_POPUP := preload("res://Objects/UI/DamagePopup/DamagePopup.tscn")
 
 var enemy: Enemy
 @onready var animation_player: AnimationPlayer = $"../AnimationPlayer"
@@ -86,7 +86,7 @@ func _on_EnemyHurtbox_area_entered(area: Area2D) -> void:
 		* area.pushback
 	set_state(states.hurt)
 
-	var popup := DamagePopup.instantiate()
+	var popup := ObjectPool.load_object(DAMAGE_POPUP)
 	popup.value = -area.damage
 	get_tree().root.add_child(popup)
 	popup.global_position = enemy.global_position

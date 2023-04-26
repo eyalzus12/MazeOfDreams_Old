@@ -23,6 +23,7 @@ InputDebugger="*res://Autoloads/InputDebugger.cs"
 Randomizer="*res://Autoloads/Randomizer.cs"
 Globals="*res://Autoloads/Globals.gd"
 EventBus="*res://Autoloads/EventBus.gd"
+ObjectPool="*res://Autoloads/ObjectPool.gd"
 
 [debug]
 

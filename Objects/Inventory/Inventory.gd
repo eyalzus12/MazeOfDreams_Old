@@ -24,7 +24,7 @@ func _exit_tree() -> void:
 
 func add_slot(i: int, j: int, allow_category: Array, block_category: Array):
 	if inventory:
-		var slot_container: InventorySlotContainer = SLOT.instantiate()
+		var slot_container: InventorySlotContainer = ObjectPool.load_object(SLOT)
 		slot_container.allow_category = allow_category
 		slot_container.block_category = block_category
 		slot_container.inventory = self

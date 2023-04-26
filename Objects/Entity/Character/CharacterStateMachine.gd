@@ -108,7 +108,7 @@ func _on_CharacterHurtbox_area_entered(area: Area2D) -> void:
 		* hitbox.pushback
 	set_state(states.hurt)
 
-	var popup := DAMAGE_POPUP.instantiate()
+	var popup := ObjectPool.load_object(DAMAGE_POPUP)
 	popup.value = -hitbox.damage
 	get_tree().root.add_child(popup)
 	popup.global_position = character.global_position

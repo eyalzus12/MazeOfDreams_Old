@@ -53,7 +53,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		dragged_item_inventory = null
 
 func drop_item(item: Item, pos: Vector2) -> void:
-	var dropped_item: DroppedItem = DROPPED_ITEM.instantiate()
+	var dropped_item: DroppedItem = ObjectPool.load_object(DROPPED_ITEM)
 	dropped_item.item = item
 	dropped_item.global_position = pos
 	get_tree().root.add_child(dropped_item)

@@ -16,6 +16,12 @@ var value: float:
 			0: #none
 				modulate = Color.WHITE
 
+func _ready() -> void:
+	player.play(&"RESET")
+	player.advance(0)
+
 func appear() -> void:
 	player.play("appear")
 
+func disappear() -> void:
+	ObjectPool.return_object(self)

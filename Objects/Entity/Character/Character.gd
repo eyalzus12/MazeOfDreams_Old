@@ -35,13 +35,16 @@ var weapon: Weapon:
 		if not is_inside_tree():
 			await ready
 		if is_instance_valid(weapon):
-			weapon.queue_free()
+			ObjectPool.return_object(weapon)
 		weapon = value
 		if is_instance_valid(weapon):
 			add_child(weapon)
-			weapon.attack_started.connect(_attack_started)
-			weapon.attack_ended.connect(_attack_ended)
-			weapon.attack_hit.connect(_attack_hit)
+			if not weapon.attack_started.is_connected(_attack_started):
+				weapon.attack_started.connect(_attack_started)
+			if not weapon.attack_ended.is_connected(_attack_ended):
+				weapon.attack_ended.connect(_attack_ended)
+			if not weapon.attack_hit.is_connected(_attack_hit):
+				weapon.attack_hit.connect(_attack_hit)
 		weapon_slot.is_locked = false
 
 
@@ -96,12 +99,15 @@ var down: bool
 var debug_active: bool = false
 
 func _ready() -> void:
-	EventBus.chest_opened.connect(on_chest_open)
-	EventBus.chest_closed.connect(on_chest_close)
+	if not EventBus.chest_opened.is_connected(on_chest_open):
+		EventBus.chest_opened.connect(on_chest_open)
+	if not EventBus.chest_closed.is_connected(on_chest_close):
+		EventBus.chest_closed.connect(on_chest_close)
 	
 	#weapon slots
 	weapon_slot = weapon_slots.slots[0]
-	weapon_slot.item_change.connect(on_weapon_item_change)
+	if not weapon_slot.item_change.is_connected(on_weapon_item_change):
+		weapon_slot.item_change.connect(on_weapon_item_change)
 	#modifier slots
 	connect_modifier_slots(a_modifiers, a_slots, on_a_modifier_item_change)
 	connect_modifier_slots(b_modifiers, b_slots, on_b_modifier_item_change)
@@ -109,7 +115,9 @@ func _ready() -> void:
 
 func connect_modifier_slots(list: Array[Modifier], slots: InventoryGrid, to_call: Callable):
 	list.resize(slots.slots.size())
-	for slot in slots.slots: slot.item_change.connect(to_call)
+	for slot in slots.slots:
+		if not slot.item_change.is_connected(to_call):
+			slot.item_change.connect(to_call)
 
 func on_weapon_item_change(_slot: InventorySlot, from: Item, to: Item):
 	#no change
@@ -144,7 +152,7 @@ func on_modifier_item_change(slot: InventorySlot, from: Item, to: Item, list: Ar
 	#removing modifier
 	if not is_instance_valid(to):
 		if is_instance_valid(list[index]):
-			list[index].queue_free()
+			ObjectPool.return_object(list[index])
 		list[index] = null
 		return
 	#not a modifier item
@@ -165,7 +173,7 @@ func on_modifier_item_change(slot: InventorySlot, from: Item, to: Item, list: Ar
 	
 	add_child(mnew_modifier)
 	if is_instance_valid(list[index]):
-		list[index].queue_free()
+		ObjectPool.return_object(list[index])
 	list[index] = mnew_modifier
 
 func on_a_modifier_item_change(slot: InventorySlot, from: Item, to: Item):
@@ -249,10 +257,10 @@ func set_vertical_inputs() -> void:
 
 func _attack_started() -> void:
 	weapon_slot.is_locked = true
-	emit_signal(&"attack_started")
+	attack_started.emit()
 func _attack_ended() -> void:
 	weapon_slot.is_locked = false
-	emit_signal(&"attack_ended")
+	attack_ended.emit()
 func _attack_hit(who: Node2D) -> void:
-	emit_signal(&"attack_hit", who)
+	attack_hit.emit(who)
 

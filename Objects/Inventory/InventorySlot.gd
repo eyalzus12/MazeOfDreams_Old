@@ -14,7 +14,7 @@ signal item_change(slot: InventorySlot, from: Item, to: Item)
 
 var contained_item: Item:
 	set(value):
-		emit_signal("item_change", self, contained_item, value)
+		item_change.emit(self, contained_item, value)
 		inventory.set_at(i,j,value)
 	get:
 		return inventory.get_at(i,j)

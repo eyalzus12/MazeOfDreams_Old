@@ -43,7 +43,7 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [],
-"method": &"queue_free"
+"method": &"disappear"
 }]
 }
 tracks/1/type = "value"

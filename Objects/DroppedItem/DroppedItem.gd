@@ -4,7 +4,8 @@ class_name DroppedItem
 @export var item: Item:
 	set(value):
 		item = value
-		if not item: return
+		if not item:
+			return
 		if not is_inside_tree():
 			await ready
 		sprite.texture = item.texture
@@ -29,9 +30,12 @@ const DISAPPEAR_TIME := 0.3
 const DISAPPEAR_DELAY := 0.5
 
 func _ready() -> void:
-	pickup_area.mouse_entered.connect(mouse_enter)
-	pickup_area.mouse_exited.connect(mouse_exit)
-	pickup_area.input_event.connect(on_input)
+	if not pickup_area.mouse_entered.is_connected(mouse_enter):
+		pickup_area.mouse_entered.connect(mouse_enter)
+	if not pickup_area.mouse_exited.is_connected(mouse_exit):
+		pickup_area.mouse_exited.connect(mouse_exit)
+	if not pickup_area.input_event.is_connected(on_input):
+		pickup_area.input_event.connect(on_input)
 
 func _process(_delta: float) -> void:
 	if is_nan(label_offset.x):
@@ -80,6 +84,6 @@ func on_input(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
 		if not inventory.pickup_target: continue
 		var inserted: bool = inventory.try_insert(item)
 		if inserted:
-			queue_free()
+			ObjectPool.return_object(self)
 			return
 
