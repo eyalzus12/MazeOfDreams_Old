@@ -1,12 +1,23 @@
 extends CollisionObject2D
 class_name DroppedItem
 
-@onready var sprite := $Sprite
-@onready var collision := $Collision
-@onready var animation_player := $AnimationPlayer
-@onready var info_label := $InfoLabelBase/InfoLabel
-@onready var info_label_base := $InfoLabelBase
-@onready var pickup_area := $PickupArea
+@export var item: Item:
+	set(value):
+		item = value
+		if not item: return
+		if not is_inside_tree():
+			await ready
+		sprite.texture = item.texture
+		info_label.text = item.item_name
+
+@onready var sprite: Sprite2D = $Sprite
+@onready var collision: CollisionShape2D = $Collision
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var info_label: Label = $InfoLabelBase/InfoLabel
+@onready var info_label_base: Control = $InfoLabelBase
+@onready var pickup_area: Area2D = $PickupArea
+
+var label_offset: Vector2 = Vector2(NAN,NAN)
 
 var appear_tween: Tween = null
 var disappear_tween: Tween = null
@@ -22,6 +33,12 @@ func _ready() -> void:
 	pickup_area.mouse_exited.connect(mouse_exit)
 	pickup_area.input_event.connect(on_input)
 
+func _process(_delta: float) -> void:
+	if is_nan(label_offset.x):
+		label_offset = info_label.position
+		info_label.position = Vector2.ZERO
+	info_label_base.global_position = global_position + label_offset
+
 func mouse_enter() -> void:
 	#kill current tweens if exist
 	if disappear_tween and disappear_tween.is_valid():
@@ -33,7 +50,7 @@ func mouse_enter() -> void:
 	appear_tween = create_tween().set_parallel(true)
 	#tween the position and modulate
 	appear_tween\
-		.tween_property(info_label_base, ^"position", APPEAR_MOVEMENT, APPEAR_TIME)\
+		.tween_property(info_label, ^"position", APPEAR_MOVEMENT, APPEAR_TIME)\
 		.from_current().set_trans(Tween.TRANS_QUINT)
 	appear_tween\
 		.tween_property(info_label_base, ^"modulate", APPEAR_COLOR, APPEAR_TIME)\
@@ -47,7 +64,7 @@ func mouse_exit() -> void:
 	disappear_tween = create_tween().set_parallel(true)
 	#tween the position and modulate
 	disappear_tween\
-		.tween_property(info_label_base, ^"position", Vector2.ZERO, DISAPPEAR_TIME)\
+		.tween_property(info_label, ^"position", Vector2.ZERO, DISAPPEAR_TIME)\
 		.from_current().set_delay(DISAPPEAR_DELAY).set_trans(Tween.TRANS_QUAD)
 	disappear_tween\
 		.tween_property(info_label_base, ^"modulate", Color(1,1,1,0), DISAPPEAR_TIME)\
@@ -55,6 +72,14 @@ func mouse_exit() -> void:
 
 
 func on_input(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
-	if not event.is_action(&"player_pickup"): return
-	print("picked me up uwu")
+	if not event.is_action(&"player_interact") or not event.is_pressed(): return
+	if not item: return
+	
+	for inventory_ in Globals.inventories:
+		var inventory: Inventory = inventory_
+		if not inventory.pickup_target: continue
+		var inserted: bool = inventory.try_insert(item)
+		if inserted:
+			queue_free()
+			return
 

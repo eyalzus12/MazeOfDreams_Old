@@ -1,14 +1,37 @@
-[gd_scene load_steps=20 format=3 uid="uid://ced6li08ssu8o"]
+[gd_scene load_steps=27 format=3 uid="uid://ced6li08ssu8o"]
 
 [ext_resource type="Script" path="res://Objects/Entity/Character/Character.gd" id="1_70khu"]
 [ext_resource type="Texture2D" uid="uid://co1xdjjcr7nwm" path="res://Assets/jessesans.jpg" id="2_ufpbp"]
 [ext_resource type="PackedScene" uid="uid://bwsp4odghqbcv" path="res://Objects/UI/HealthBar/HealthBar.tscn" id="3_ji2kw"]
 [ext_resource type="Theme" uid="uid://beyjrh481pkj4" path="res://LabelBackgroundTheme.tres" id="4_r3t6d"]
+[ext_resource type="PackedScene" uid="uid://b0vxsub54aedm" path="res://Objects/UI/InventoryGrid/InventoryGrid.tscn" id="5_62rkv"]
 [ext_resource type="Script" path="res://Objects/Entity/Character/DebugLabel.gd" id="5_djjja"]
+[ext_resource type="Resource" uid="uid://4c51nw2gssmx" path="res://Items/Weapons/SwordItem.tres" id="6_nnqtj"]
+[ext_resource type="Resource" uid="uid://3mm8fpyercst" path="res://Items/Weapons/HammerItem.tres" id="7_wufio"]
 [ext_resource type="PackedScene" uid="uid://bku7s3gdgpwmb" path="res://Objects/Hurtbox/Hurtbox.tscn" id="7_yp4o6"]
-[ext_resource type="PackedScene" uid="uid://dk8tierjbr0k8" path="res://Objects/HeldItem/Weapon/Sword/Sword.tscn" id="8_48bid"]
-[ext_resource type="PackedScene" uid="uid://b5fn6kgg5x0jp" path="res://Objects/HeldItem/Weapon/Hammer/Hammer.tscn" id="9_1rsqb"]
+[ext_resource type="Resource" uid="uid://broxhyhw27lkl" path="res://Items/Modifiers/A/LaserModifierItem.tres" id="8_oydgb"]
 [ext_resource type="Script" path="res://Objects/Entity/Character/CharacterStateMachine.gd" id="9_4emhb"]
+[ext_resource type="Script" path="res://Objects/Inventory/InventoryResource.gd" id="11_xjos7"]
+
+[sub_resource type="Resource" id="Resource_xpdph"]
+script = ExtResource("11_xjos7")
+items = Array[Resource("res://Objects/Item/Item.gd")]([ExtResource("6_nnqtj"), ExtResource("7_wufio"), ExtResource("8_oydgb"), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null])
+columns = 10
+
+[sub_resource type="Resource" id="Resource_i0fmo"]
+script = ExtResource("11_xjos7")
+items = Array[Resource("res://Objects/Item/Item.gd")]([null])
+columns = 1
+
+[sub_resource type="Resource" id="Resource_mfmkk"]
+script = ExtResource("11_xjos7")
+items = Array[Resource("res://Objects/Item/Item.gd")]([null])
+columns = 1
+
+[sub_resource type="Resource" id="Resource_lba8p"]
+script = ExtResource("11_xjos7")
+items = Array[Resource("res://Objects/Item/Item.gd")]([null])
+columns = 1
 
 [sub_resource type="Animation" id="11"]
 length = 0.001
@@ -147,6 +170,62 @@ dash_cooldown = 0.5
 dash_time = 0.2
 i_frames = 0.5
 
+[node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="HealthBar" parent="UILayer" instance=ExtResource("3_ji2kw")]
+visible = false
+z_index = -1
+offset_right = 615.0
+offset_bottom = 617.0
+scale = Vector2(0.743549, 0.050791)
+
+[node name="DebugLabel" type="Label" parent="UILayer"]
+visible = false
+offset_right = 21.0
+offset_bottom = 43.0
+theme = ExtResource("4_r3t6d")
+script = ExtResource("5_djjja")
+
+[node name="InventoryGrid" parent="UILayer" instance=ExtResource("5_62rkv")]
+visible = false
+offset_left = 600.0
+offset_top = 208.0
+offset_right = -16.0
+offset_bottom = -88.0
+r = 10
+c = 10
+inventory = SubResource("Resource_xpdph")
+pickup_target = true
+
+[node name="EquipSlots" type="GridContainer" parent="UILayer"]
+offset_top = 88.0
+offset_right = 40.0
+offset_bottom = 224.0
+
+[node name="EquipWeapon" parent="UILayer/EquipSlots" instance=ExtResource("5_62rkv")]
+layout_mode = 2
+tooltip_text = "Weapons"
+allow_category = Array[String](["Weapon"])
+r = 1
+c = 1
+inventory = SubResource("Resource_i0fmo")
+
+[node name="EquipA" parent="UILayer/EquipSlots" instance=ExtResource("5_62rkv")]
+layout_mode = 2
+tooltip_text = "A Modifiers"
+allow_category = Array[String](["A"])
+r = 1
+c = 1
+inventory = SubResource("Resource_mfmkk")
+
+[node name="EquipB" parent="UILayer/EquipSlots" instance=ExtResource("5_62rkv")]
+layout_mode = 2
+tooltip_text = "A Modifiers"
+allow_category = Array[String](["B"])
+r = 1
+c = 1
+inventory = SubResource("Resource_lba8p")
+
 [node name="Camera" type="Camera2D" parent="."]
 position_smoothing_enabled = true
 position_smoothing_speed = 10.0
@@ -164,17 +243,6 @@ libraries = {
 [node name="Collision" type="CollisionShape2D" parent="."]
 shape = SubResource("1")
 debug_color = Color(0, 1, 1, 0.419608)
-
-[node name="UILayer" type="CanvasLayer" parent="."]
-
-[node name="HealthBar" parent="UILayer" instance=ExtResource("3_ji2kw")]
-visible = false
-scale = Vector2(0.743549, 0.050791)
-
-[node name="DebugLabel" type="Label" parent="UILayer"]
-visible = false
-theme = ExtResource("4_r3t6d")
-script = ExtResource("5_djjja")
 
 [node name="DashCooldownTimer" type="Timer" parent="."]
 process_callback = 0
@@ -205,18 +273,6 @@ script = ExtResource("9_4emhb")
 [node name="InvincibilityTimer" type="Timer" parent="."]
 process_callback = 0
 one_shot = true
-
-[node name="Weapon2" parent="." instance=ExtResource("8_48bid")]
-process_mode = 4
-visible = false
-position = Vector2(8, 0)
-weapon_layers = 130
-weapon_masks = 2080
-
-[node name="Weapon" parent="." instance=ExtResource("9_1rsqb")]
-position = Vector2(16, 0)
-weapon_layers = 130
-weapon_masks = 2080
 
 [connection signal="timeout" from="DashCooldownTimer" to="." method="set" binds= ["dash_in_cooldown", false]]
 [connection signal="timeout" from="InDashTimer" to="." method="set" binds= ["in_dash", false]]

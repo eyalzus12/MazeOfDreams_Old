@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://bivamdo3l8cv7"]
+
+[ext_resource type="Script" path="res://Objects/UI/InventorySlot/InventorySlotContainer.gd" id="1_dyb8g"]
+[ext_resource type="Script" path="res://Objects/Inventory/InventorySlot.gd" id="1_tpfbb"]
+
+[node name="InventorySlotContainer" type="AspectRatioContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment_vertical = 0
+script = ExtResource("1_dyb8g")
+
+[node name="InventorySlot" type="Button" parent="."]
+layout_mode = 2
+icon_alignment = 1
+expand_icon = true
+script = ExtResource("1_tpfbb")

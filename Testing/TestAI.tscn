@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://vsnvcjvebqur"]
+
+[ext_resource type="PackedScene" uid="uid://ced6li08ssu8o" path="res://Objects/Entity/Character/Character.tscn" id="1_f77l1"]
+[ext_resource type="PackedScene" uid="uid://lcitiwkqtt70" path="res://Objects/Entity/Enemy/Enemy.tscn" id="2_6h6hy"]
+[ext_resource type="Script" path="res://Scenes/Testing/TestAIStateMachine.gd" id="3_a1gwt"]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Character" parent="." instance=ExtResource("1_f77l1")]
+
+[node name="Camera" parent="Character" index="0"]
+zoom = Vector2(0.5, 0.5)
+
+[node name="Enemy" parent="." instance=ExtResource("2_6h6hy")]
+
+[node name="StateMachine" parent="Enemy" index="9"]
+script = ExtResource("3_a1gwt")
+
+[editable path="Character"]
+[editable path="Character/Hurtbox"]
+[editable path="Enemy"]
+[editable path="Enemy/Hitbox"]
+[editable path="Enemy/Hurtbox"]

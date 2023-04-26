@@ -1,11 +1,13 @@
-[gd_scene load_steps=13 format=3 uid="uid://5cm3l1wuau55"]
+[gd_scene load_steps=15 format=3 uid="uid://5cm3l1wuau55"]
 
 [ext_resource type="Texture2D" uid="uid://dtd0taqqw30b2" path="res://Assets/d.png" id="1_47gxp"]
 [ext_resource type="Texture2D" uid="uid://c6dh2kvvgpad4" path="res://Assets/cum.png" id="2_aeoiw"]
 [ext_resource type="PackedScene" uid="uid://ced6li08ssu8o" path="res://Objects/Entity/Character/Character.tscn" id="3_b8g87"]
 [ext_resource type="PackedScene" uid="uid://lcitiwkqtt70" path="res://Objects/Entity/Enemy/Enemy.tscn" id="4_8becr"]
 [ext_resource type="PackedScene" uid="uid://b2o4lr7cqhhxm" path="res://Objects/MapObjects/Trap/SpikesTrap/SpikesTrap.tscn" id="5_foj6x"]
+[ext_resource type="Script" path="res://Scenes/Testing/TestAIStateMachine.gd" id="5_lws6b"]
 [ext_resource type="PackedScene" uid="uid://c63t8e3i2anym" path="res://Objects/DroppedItem/DroppedItem.tscn" id="6_q0m2u"]
+[ext_resource type="PackedScene" uid="uid://ctu1tasavfknc" path="res://Objects/Chest/Chest.tscn" id="8_haudu"]
 
 [sub_resource type="CircleShape2D" id="3"]
 radius = 30.0
@@ -4796,14 +4798,14 @@ physics_layer_0/collision_mask = 0
 sources/0 = SubResource("TileSetAtlasSource_pdau1")
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_7uke1"]
-vertices = PackedVector2Array(117.54, -75.563, 117.54, 100.437, -58.46, 100.437, -58.46, -75.563)
+vertices = PackedVector2Array(133.54, -83.563, 133.54, 116.437, -74.46, 116.437, -74.46, -83.563)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-58.46, -75.563, -58.46, 100.437, 117.54, 100.437, 117.54, -75.563)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-74.46, -83.563, -74.46, 116.437, 133.54, 116.437, 133.54, -83.563)])
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_fu5hy"]
-vertices = PackedVector2Array(-123.883, 384.932, -115.883, 360.932, 300.117, -31.068, 1372.12, -415.068, -115.883, 632.932, -131.883, 616.932, 124.117, -31.068, -123.883, 336.932, -115.883, 776.932, 1372.12, 1792.93, -131.883, 792.932, -147.883, 392.932, -275.883, 616.932, 300.117, -207.068, -1251.88, -415.068, 124.117, -207.068, -1251.88, 1792.93, -171.883, 336.932, -171.883, 384.932, -275.883, 792.932, -291.883, 776.932, -147.883, 328.932, -291.883, 632.932, -179.883, 360.932)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4, 5), PackedInt32Array(6, 2, 1, 7), PackedInt32Array(8, 3, 9, 10), PackedInt32Array(3, 8, 4), PackedInt32Array(11, 0, 5, 12), PackedInt32Array(3, 2, 13), PackedInt32Array(14, 3, 13, 15), PackedInt32Array(16, 14, 15, 17), PackedInt32Array(18, 11, 12), PackedInt32Array(10, 9, 16, 19), PackedInt32Array(20, 19, 16), PackedInt32Array(6, 7, 21, 15), PackedInt32Array(22, 20, 16), PackedInt32Array(23, 18, 12, 22), PackedInt32Array(15, 21, 17), PackedInt32Array(22, 16, 17, 23)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-1251.88, -415.068, -1251.88, 1792.93, 1372.12, 1792.93, 1372.12, -415.068), PackedVector2Array(-123.883, 336.932, -147.883, 328.932, -171.883, 336.932, -179.883, 360.932, -171.883, 384.932, -147.883, 392.932, -123.883, 384.932, -115.883, 360.932), PackedVector2Array(124.117, -207.068, 124.117, -31.068, 300.117, -31.068, 300.117, -207.068), PackedVector2Array(-275.883, 616.932, -291.883, 632.932, -291.883, 776.932, -275.883, 792.932, -131.883, 792.932, -115.883, 776.932, -115.883, 632.932, -131.883, 616.932)])
+vertices = PackedVector2Array(-123.883, 384.932, -115.883, 360.932, 316.117, -15.068, 1372.12, -415.068, -115.883, 632.932, -131.883, 616.932, 108.117, -15.068, -123.883, 336.932, -115.883, 776.932, 1372.12, 1792.93, -131.883, 792.932, 316.117, -215.068, -1251.88, -415.068, 108.117, -215.068, -147.883, 392.932, -275.883, 616.932, -1251.88, 1792.93, -171.883, 336.932, -171.883, 384.932, -275.883, 792.932, -291.883, 776.932, -147.883, 328.932, -291.883, 632.932, -179.883, 360.932)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4, 5), PackedInt32Array(6, 2, 1, 7), PackedInt32Array(8, 3, 9, 10), PackedInt32Array(3, 8, 4), PackedInt32Array(3, 2, 11), PackedInt32Array(12, 3, 11, 13), PackedInt32Array(14, 0, 5, 15), PackedInt32Array(16, 12, 13, 17), PackedInt32Array(18, 14, 15), PackedInt32Array(10, 9, 16, 19), PackedInt32Array(20, 19, 16), PackedInt32Array(6, 7, 21, 13), PackedInt32Array(22, 20, 16), PackedInt32Array(23, 18, 15, 22), PackedInt32Array(13, 21, 17), PackedInt32Array(22, 16, 17, 23)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-1251.88, -415.068, -1251.88, 1792.93, 1372.12, 1792.93, 1372.12, -415.068), PackedVector2Array(-123.883, 336.932, -147.883, 328.932, -171.883, 336.932, -179.883, 360.932, -171.883, 384.932, -147.883, 392.932, -123.883, 384.932, -115.883, 360.932), PackedVector2Array(108.117, -215.068, 108.117, -15.068, 316.117, -15.068, 316.117, -215.068), PackedVector2Array(-275.883, 616.932, -291.883, 632.932, -291.883, 776.932, -275.883, 792.932, -131.883, 792.932, -115.883, 776.932, -115.883, 632.932, -131.883, 616.932)])
 
 [node name="Node2D" type="Node2D"]
 
@@ -4845,7 +4847,11 @@ layer_0/tile_data = PackedInt32Array(-1376289, 0, 0, -1376288, 0, 0, -1376287, 0
 position = Vector2(544.736, 152.708)
 
 [node name="Enemy" parent="." instance=ExtResource("4_8becr")]
+modulate = Color(1, 0.141176, 1, 1)
 position = Vector2(-88, 472)
+
+[node name="StateMachine" parent="Enemy" index="9"]
+script = ExtResource("5_lws6b")
 
 [node name="Enemy2" parent="." instance=ExtResource("4_8becr")]
 position = Vector2(-120, -560)
@@ -4865,10 +4871,20 @@ position = Vector2(1525.77, 1170)
 [node name="Enemy7" parent="." instance=ExtResource("4_8becr")]
 position = Vector2(-454.831, 892.818)
 
+[node name="Enemy8" parent="." instance=ExtResource("4_8becr")]
+position = Vector2(-552, 176)
+
+[node name="Enemy9" parent="." instance=ExtResource("4_8becr")]
+position = Vector2(1416, 320)
+
+[node name="Enemy10" parent="." instance=ExtResource("4_8becr")]
+position = Vector2(1016, -544)
+
 [node name="SpikesTrap" parent="." instance=ExtResource("5_foj6x")]
 position = Vector2(712, -584)
 
 [node name="Trap" type="NavigationRegion2D" parent="."]
+visible = false
 position = Vector2(682.46, -596.437)
 navigation_polygon = SubResource("NavigationPolygon_7uke1")
 enter_cost = 700.0
@@ -4876,6 +4892,7 @@ travel_cost = 10.0
 metadata/_edit_lock_ = true
 
 [node name="Main" type="NavigationRegion2D" parent="."]
+visible = false
 position = Vector2(499.883, -464.932)
 navigation_polygon = SubResource("NavigationPolygon_fu5hy")
 metadata/_edit_lock_ = true
@@ -4906,3 +4923,12 @@ position = Vector2(794.658, 287.2)
 
 [node name="DroppedItem9" parent="." instance=ExtResource("6_q0m2u")]
 position = Vector2(794.658, 287.2)
+
+[node name="Avoid" type="Node2D" parent="."]
+
+[node name="Chest" parent="." instance=ExtResource("8_haudu")]
+position = Vector2(984, 72)
+
+[editable path="Enemy"]
+[editable path="Enemy/Hitbox"]
+[editable path="Enemy/Hurtbox"]

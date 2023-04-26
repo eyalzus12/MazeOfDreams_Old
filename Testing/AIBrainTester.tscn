@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://cbkq6jonttedc"]
+
+[ext_resource type="Script" path="res://Testing/AIBrainTester.gd" id="1_jtjiu"]
+[ext_resource type="Resource" uid="uid://bf0es1b53t1c" path="res://Testing/testbrain.tres" id="2_v06jm"]
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_jtjiu")
+brain = ExtResource("2_v06jm")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(0.5, 0.5)

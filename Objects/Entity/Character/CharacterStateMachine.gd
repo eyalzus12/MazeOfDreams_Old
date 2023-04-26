@@ -1,10 +1,9 @@
 extends StateMachine
 
-const DamagePopup := preload("res://Objects/UI/DamagePopup/DamagePopup.tscn")
+const DAMAGE_POPUP := preload("res://Objects/UI/DamagePopup/DamagePopup.tscn")
 
 @onready var animation_player: AnimationPlayer = $"../AnimationPlayer"
 @onready var sprite_effects_player: AnimationPlayer = $"../Sprite/SpriteEffectPlayer"
-@onready var weapon: Weapon = $"../Weapon"
 var character: Character
 @onready var hurtbox: Hurtbox = $"../Hurtbox"
 
@@ -18,18 +17,25 @@ func _ready() -> void:
 	character = parent
 	set_state(states.idle)
 
+func _unhandled_input(event: InputEvent) -> void:
+	#attack
+	if event.is_action(&"player_attack") and not event.is_echo() and event.is_pressed():
+		if not state in [states.hurt] and is_instance_valid(character.weapon) and not character.weapon.is_attacking:
+			character.weapon.attack()
+	
+
 func _state_logic(_delta: float) -> void:
 	character.state_frame = state_frame
 	character.current_state = state_names[state]
 	character.set_inputs()
 
-	if character.current_hp < 0 and not animation_player.assigned_animation == &"death":
+	if character.current_hp <= 0 and not animation_player.assigned_animation == &"death":
 		sprite_effects_player.play(&"death")
 		animation_player.play(&"death")
 		return
-
-	if not state in [states.hurt] and not weapon.is_attacking:
-		if Input.is_action_just_pressed("player_attack"): weapon.attack()
+	
+	#turnaround
+	if not state in [states.hurt] and (not is_instance_valid(character.weapon) or not character.weapon.is_attacking):
 		character.set_direction()
 
 	if state in [states.idle, states.move]:
@@ -94,6 +100,7 @@ func _enter_state(_prev_state: int, _state: int) -> void:
 
 #got hit
 func _on_CharacterHurtbox_area_entered(area: Area2D) -> void:
+	if Globals.god: return
 	if not area is Hitbox: return
 	var hitbox = area as Hitbox
 	character.current_hp -= hitbox.damage
@@ -101,7 +108,7 @@ func _on_CharacterHurtbox_area_entered(area: Area2D) -> void:
 		* hitbox.pushback
 	set_state(states.hurt)
 
-	var popup := DamagePopup.instantiate()
+	var popup := DAMAGE_POPUP.instantiate()
 	popup.value = -hitbox.damage
 	get_tree().root.add_child(popup)
 	popup.global_position = character.global_position

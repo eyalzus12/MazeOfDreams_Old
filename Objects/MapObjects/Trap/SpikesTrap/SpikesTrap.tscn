@@ -124,6 +124,7 @@ debug_color = Color(1, 0, 0, 0.419608)
 shape = SubResource("1")
 
 [node name="AnimationPlayer" parent="." index="3"]
+playback_process_mode = 0
 libraries = {
 "": SubResource("AnimationLibrary_c5vmk")
 }

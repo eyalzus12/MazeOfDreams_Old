@@ -1,0 +1,74 @@
+[gd_scene load_steps=13 format=3 uid="uid://ctu1tasavfknc"]
+
+[ext_resource type="Script" path="res://Objects/Chest/Chest.gd" id="1_mwlfx"]
+[ext_resource type="Texture2D" uid="uid://c1agvd7wnmrgw" path="res://icon.png" id="1_w3tt4"]
+[ext_resource type="PackedScene" uid="uid://b0vxsub54aedm" path="res://Objects/UI/InventoryGrid/InventoryGrid.tscn" id="3_1not6"]
+[ext_resource type="Theme" uid="uid://beyjrh481pkj4" path="res://LabelBackgroundTheme.tres" id="3_tnnfy"]
+[ext_resource type="Script" path="res://Objects/Item/Item.gd" id="4_opfkf"]
+[ext_resource type="Texture2D" uid="uid://c6dh2kvvgpad4" path="res://Assets/cum.png" id="5_8ragc"]
+[ext_resource type="Script" path="res://Objects/Inventory/InventoryResource.gd" id="6_3wmm1"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_q06bo"]
+font_color = Color(1, 1, 0, 1)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_djj21"]
+size = Vector2(160, 48)
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_3fk5l"]
+radius = 40.0
+height = 192.0
+
+[sub_resource type="Resource" id="Resource_x1pn0"]
+script = ExtResource("4_opfkf")
+item_name = "test"
+item_category = "Dummy"
+texture = ExtResource("5_8ragc")
+extra_info = {}
+
+[sub_resource type="Resource" id="Resource_ssat5"]
+script = ExtResource("6_3wmm1")
+items = Array[ExtResource("4_opfkf")]([SubResource("Resource_x1pn0"), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null])
+columns = 5
+
+[node name="Chest" type="StaticBody2D"]
+collision_layer = 9
+collision_mask = 0
+script = ExtResource("1_mwlfx")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+scale = Vector2(2.62504, 0.827702)
+texture = ExtResource("1_w3tt4")
+
+[node name="Label" type="Label" parent="Sprite"]
+offset_left = -30.0
+offset_top = -29.0
+offset_right = 30.0
+offset_bottom = 29.0
+theme = ExtResource("3_tnnfy")
+text = "chest"
+label_settings = SubResource("LabelSettings_q06bo")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_djj21")
+debug_color = Color(0, 1, 1, 0.419608)
+
+[node name="InteractArea" type="Area2D" parent="."]
+collision_layer = 32768
+collision_mask = 0
+
+[node name="InteractShape" type="CollisionShape2D" parent="InteractArea"]
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_3fk5l")
+debug_color = Color(1, 0.568627, 1, 0.419608)
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="InventoryGrid" parent="UILayer" instance=ExtResource("3_1not6")]
+visible = false
+offset_left = 800.0
+offset_bottom = -464.0
+r = 5
+c = 5
+inventory = SubResource("Resource_ssat5")
