@@ -1,6 +1,6 @@
 extends Node2D
 
-const SPAWN_DEVIATION: float = 20
+const SPAWN_DEVIATION: float = 50
 
 @onready var label: Label = $LabelBase/DamageLabel
 @onready var player: AnimationPlayer = $LabelBase/DamageLabel/DamageLabelPlayer
@@ -16,7 +16,7 @@ var value: float:
 			-1: #negative
 				modulate = Color.RED
 			0: #none
-				modulate = Color.WHITE
+				modulate = Color.BLUE
 
 func _ready() -> void:
 	player.play(&"RESET")

@@ -1,33 +1,18 @@
-[gd_scene load_steps=8 format=3 uid="uid://c776rdtoa1qfd"]
+[gd_scene load_steps=7 format=3 uid="uid://c776rdtoa1qfd"]
 
 [ext_resource type="PackedScene" uid="uid://dbndc8y60ac6e" path="res://Objects/HeldItem/Weapon/BaseWeapon/Weapon.tscn" id="1_w4tqr"]
 [ext_resource type="Script" path="res://Objects/HeldItem/Weapon/FingerNailGun/FingerNailGun.gd" id="2_fs2ue"]
 [ext_resource type="Texture2D" uid="uid://bud2cui47v1fa" path="res://Assets/gun_fingernail_shoot.png" id="3_hlfwe"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_g4lqf"]
-size = Vector2(40, 24)
 
 [sub_resource type="Animation" id="Animation_6jp5p"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Base/Sprite2D/Hitbox:active")
+tracks/0/path = NodePath("Base/Sprite2D:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [false]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Base/Sprite2D:frame")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
@@ -37,25 +22,13 @@ tracks/1/keys = {
 [sub_resource type="Animation" id="Animation_c313y"]
 resource_name = "attack"
 length = 0.4
-tracks/0/type = "value"
+tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Base/Sprite2D/Hitbox:active")
+tracks/0/path = NodePath(".")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.2),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [true, false]
-}
-tracks/1/type = "method"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
 "times": PackedFloat32Array(0.2),
 "transitions": PackedFloat32Array(1),
 "values": [{
@@ -63,13 +36,13 @@ tracks/1/keys = {
 "method": &"shoot"
 }]
 }
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Base/Sprite2D:frame")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Base/Sprite2D:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
 "times": PackedFloat32Array(0, 0.2, 0.4),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
@@ -93,14 +66,12 @@ hframes = 4
 
 [node name="Hitbox" parent="Base/Sprite2D" index="0"]
 visible = false
-active = false
+active = true
 metadata/_edit_pinned_properties_ = [&"active"]
 
 [node name="HitboxShape" parent="Base/Sprite2D/Hitbox" index="0"]
 visible = false
 position = Vector2(0.470079, 0.0539608)
-scale = Vector2(1, 1)
-shape = SubResource("RectangleShape2D_g4lqf")
 
 [node name="ShootLocationMarker" type="Marker2D" parent="Base" index="1"]
 visible = false

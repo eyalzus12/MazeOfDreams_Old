@@ -22,7 +22,7 @@ var contained_item: Item:
 		return inventory.get_at(i,j)
 
 func _process(_delta: float) -> void:
-	if contained_item:
+	if is_instance_valid(contained_item):
 		icon = contained_item.texture
 	else:
 		icon = null

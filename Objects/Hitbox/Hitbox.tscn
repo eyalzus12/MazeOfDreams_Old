@@ -4,7 +4,7 @@
 
 [node name="Hitbox" type="Area2D" groups=["hitboxes"]]
 modulate = Color(1, 0, 0, 1)
-collision_layer = 2
+collision_layer = 0
 collision_mask = 0
 input_pickable = false
 script = ExtResource("1")

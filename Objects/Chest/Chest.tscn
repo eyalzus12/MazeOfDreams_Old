@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://ctu1tasavfknc"]
+[gd_scene load_steps=14 format=3 uid="uid://ctu1tasavfknc"]
 
 [ext_resource type="Script" path="res://Objects/Chest/Chest.gd" id="1_mwlfx"]
 [ext_resource type="Texture2D" uid="uid://c1agvd7wnmrgw" path="res://icon.png" id="1_w3tt4"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://Objects/Item/Item.gd" id="4_opfkf"]
 [ext_resource type="Texture2D" uid="uid://c6dh2kvvgpad4" path="res://Assets/cum.png" id="5_8ragc"]
 [ext_resource type="Script" path="res://Objects/Inventory/InventoryResource.gd" id="6_3wmm1"]
+[ext_resource type="Resource" uid="uid://s4hp7gy16ppf" path="res://Items/Weapons/FlameThrowerItem.tres" id="7_y8w6j"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_q06bo"]
 font_color = Color(1, 1, 0, 1)
@@ -24,10 +25,11 @@ item_name = "test"
 item_category = "Dummy"
 texture = ExtResource("5_8ragc")
 extra_info = {}
+meta_info = {}
 
 [sub_resource type="Resource" id="Resource_ssat5"]
 script = ExtResource("6_3wmm1")
-items = Array[ExtResource("4_opfkf")]([SubResource("Resource_x1pn0"), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null])
+items = Array[ExtResource("4_opfkf")]([SubResource("Resource_x1pn0"), ExtResource("7_y8w6j"), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null])
 columns = 5
 
 [node name="Chest" type="StaticBody2D"]

@@ -4915,22 +4915,22 @@ position = Vector2(435.131, -50.9644)
 position = Vector2(374.154, 575.851)
 
 [node name="DroppedItem4" parent="." instance=ExtResource("6_q0m2u")]
-position = Vector2(794.658, 287.2)
+position = Vector2(800, 300)
 
 [node name="DroppedItem5" parent="." instance=ExtResource("6_q0m2u")]
-position = Vector2(794.658, 287.2)
+position = Vector2(800, 300)
 
 [node name="DroppedItem6" parent="." instance=ExtResource("6_q0m2u")]
-position = Vector2(794.658, 287.2)
+position = Vector2(800, 300)
 
 [node name="DroppedItem7" parent="." instance=ExtResource("6_q0m2u")]
-position = Vector2(794.658, 287.2)
+position = Vector2(800, 300)
 
 [node name="DroppedItem8" parent="." instance=ExtResource("6_q0m2u")]
-position = Vector2(794.658, 287.2)
+position = Vector2(800, 300)
 
 [node name="DroppedItem9" parent="." instance=ExtResource("6_q0m2u")]
-position = Vector2(794.658, 287.2)
+position = Vector2(800, 300)
 
 [node name="Avoid" type="Node2D" parent="."]
 

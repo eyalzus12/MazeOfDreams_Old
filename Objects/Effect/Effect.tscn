@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://c8h33ws78c277"]
+
+[ext_resource type="Script" path="res://Objects/Effect/Effect.gd" id="1_wshp5"]
+
+[node name="Effect" type="Node2D"]
+script = ExtResource("1_wshp5")
+
+[node name="EffectTimer" type="Timer" parent="."]
+process_callback = 0
+one_shot = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[connection signal="timeout" from="EffectTimer" to="." method="_on_timer_timeout"]

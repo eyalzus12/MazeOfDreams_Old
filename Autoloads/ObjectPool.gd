@@ -83,6 +83,8 @@ func return_object(pooled_object: Node) -> void:
 	if pooled_object in return_queue_set[object]:
 		return
 	
+	if pooled_object.has_method(&"pool_cleanup"):
+		pooled_object.pool_cleanup()
 	return_queue[object].push_back(pooled_object)
 	return_queue_set[object][pooled_object] = null
 

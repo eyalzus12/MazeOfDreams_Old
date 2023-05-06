@@ -6,10 +6,9 @@
 
 [resource]
 script = ExtResource("1_1gjfo")
-weapon_layers = 130
-weapon_masks = 2080
 scene = ExtResource("1_uv2de")
 item_name = "Sword"
 item_category = "Weapon"
 texture = ExtResource("3_5uy3b")
 extra_info = {}
+meta_info = {}

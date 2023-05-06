@@ -5,22 +5,22 @@ signal attack_started
 signal attack_ended
 signal attack_hit(who: Area2D)
 
-@onready var hitbox := $Base/Sprite2D/Hitbox
+@export var weapon_owner: Node:
+	set(value):
+		if not is_inside_tree():
+			await ready
+		weapon_owner = value
+		if weapon_owner:
+			if weapon_owner.has_meta("hitbox_layers"):
+				hitbox.layers = weapon_owner.get_meta("hitbox_layers")
+			if weapon_owner.has_meta("hitbox_masks"):
+				hitbox.masks = weapon_owner.get_meta("hitbox_masks")
+			hitbox.hitbox_owner = weapon_owner
+
+@onready var hitbox: Hitbox = $Base/Sprite2D/Hitbox
 @onready var animation_player: AnimationPlayer = get_node_or_null(^"AnimationPlayer")
 
 var connected_signals := false
-
-@export_flags_2d_physics var weapon_layers: int:
-	set(value):
-		weapon_layers = value
-		if not is_inside_tree(): await ready
-		hitbox.collision_layer = weapon_layers
-
-@export_flags_2d_physics var weapon_masks: int:
-	set(value):
-		weapon_masks = value
-		if not is_inside_tree(): await ready
-		hitbox.collision_mask = weapon_masks
 
 var is_attacking: bool = false
 

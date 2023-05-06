@@ -44,7 +44,7 @@ func pool_setup() -> void:
 	if info_label:
 		info_label.text = ""
 		info_label.size = Vector2.ZERO
-		info_label_base.modulate = Color.TRANSPARENT
+		info_label_base.modulate = Color(1,1,1,0)
 
 func _ready() -> void:
 	if not pickup_area.mouse_entered.is_connected(mouse_enter):
@@ -91,7 +91,7 @@ func mouse_exit() -> void:
 		.tween_property(info_label, ^"position", Vector2.ZERO, DISAPPEAR_TIME)\
 		.from_current().set_delay(DISAPPEAR_DELAY).set_trans(Tween.TRANS_QUAD)
 	disappear_tween\
-		.tween_property(info_label_base, ^"modulate", Color.TRANSPARENT, DISAPPEAR_TIME)\
+		.tween_property(info_label_base, ^"modulate", Color(1,1,1,0), DISAPPEAR_TIME)\
 		.from_current().set_delay(DISAPPEAR_DELAY).set_trans(Tween.TRANS_QUAD)
 
 

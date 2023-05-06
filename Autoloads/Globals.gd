@@ -7,6 +7,24 @@ const DROPPED_ITEM: PackedScene = preload("res://Objects/DroppedItem/DroppedItem
 const DAMAGE_POPUP := preload("res://Objects/UI/DamagePopup/DamagePopup.tscn")
 const DISABLE_ENEMIES: bool = false
 
+const PHYSICS_LAYERS: Dictionary = {
+	collision_map = 1,
+	collision_character = 2,
+	collision_enemy = 3,
+	collision_item = 4,
+	
+	hitbox_map = 9,
+	hitbox_character = 10,
+	hitbox_enemy = 11,
+	
+	hurtbox_map = 17,
+	hurtbox_character = 18,
+	hurtbox_enemy = 19,
+	
+	area_interaction = 25
+}
+
+
 var dragged_item: Item:
 	set(value):
 		if not is_inside_tree():
@@ -109,6 +127,13 @@ func schedule_action(node: Node, action: Callable, time: float = SMALL_WAIT_TIME
 
 func schedule_property_change(node: Node, property: StringName, value: Variant, time: float = SMALL_WAIT_TIME) -> void:
 	schedule_action(node, node.set.bind(property,value), time)
+
+func create_damage_popup(number: float, pos: Vector2) -> void:
+	var popup := ObjectPool.load_object(DAMAGE_POPUP)
+	popup.value = number
+	get_tree().root.add_child(popup)
+	popup.global_position = pos
+	popup.appear()
 
 func _draw() -> void:
 	if not dragged_item: return

@@ -1,7 +1,5 @@
 extends StateMachine
 
-const DAMAGE_POPUP := preload("res://Objects/UI/DamagePopup/DamagePopup.tscn")
-
 var enemy: Enemy
 @onready var animation_player: AnimationPlayer = $"../AnimationPlayer"
 @onready var sprite_effects_player: AnimationPlayer = $"../Sprite/SpriteEffectPlayer"
@@ -81,16 +79,7 @@ func _on_EnemyHitbox_area_entered(area: Area2D) -> void:
 #got hit
 func _on_EnemyHurtbox_area_entered(area: Area2D) -> void:
 	if not area is Hitbox: return
-	enemy.current_hp -= area.damage
-	enemy.velocity = area.global_position.direction_to(enemy.global_position) \
-		* area.pushback
-	set_state(states.hurt)
-
-	var popup := ObjectPool.load_object(DAMAGE_POPUP)
-	popup.value = -area.damage
-	get_tree().root.add_child(popup)
-	popup.global_position = enemy.global_position
-	popup.appear()
+	enemy.apply_hit(area)
 
 func _on_InvincibilityTimer_timeout() -> void:
 	hurtbox.active = true

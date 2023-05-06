@@ -12,7 +12,6 @@ radius = 8.06226
 
 [node name="FingerNail" type="CharacterBody2D"]
 collision_layer = 0
-collision_mask = 8
 motion_mode = 1
 script = ExtResource("1_tasxe")
 speed = 600.0
@@ -28,8 +27,6 @@ shape = SubResource("CircleShape2D_1da1j")
 debug_color = Color(0, 1, 1, 0.419608)
 
 [node name="Hitbox" parent="." instance=ExtResource("2_p220r")]
-collision_layer = 130
-collision_mask = 2080
 damage = 5.0
 pushback = 100.0
 is_projectile = true

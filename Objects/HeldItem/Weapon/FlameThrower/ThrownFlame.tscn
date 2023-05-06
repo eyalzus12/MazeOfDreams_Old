@@ -1,0 +1,38 @@
+[gd_scene load_steps=6 format=3 uid="uid://dnf037nlq71la"]
+
+[ext_resource type="Script" path="res://Objects/HeldItem/Weapon/FlameThrower/ThrownFlame.gd" id="1_wdwpi"]
+[ext_resource type="Texture2D" uid="uid://c1agvd7wnmrgw" path="res://icon.png" id="2_tin2s"]
+[ext_resource type="PackedScene" uid="uid://rk40mo0i46sm" path="res://Objects/Hitbox/Hitbox.tscn" id="3_egjug"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_2co7b"]
+radius = 5.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_688h7"]
+radius = 11.0
+
+[node name="ThrownFlame" type="CharacterBody2D"]
+collision_layer = 0
+motion_mode = 1
+script = ExtResource("1_wdwpi")
+speed = 400.0
+pierce_amount = 3
+
+[node name="Sprite" type="Sprite2D" parent="."]
+modulate = Color(0.960784, 0.352941, 0, 0.701961)
+position = Vector2(2.38419e-07, 4.76837e-07)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("2_tin2s")
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_2co7b")
+debug_color = Color(0, 1, 1, 0.419608)
+
+[node name="Hitbox" parent="." node_paths=PackedStringArray("hitbox_owner") instance=ExtResource("3_egjug")]
+damage = 5.0
+pushback = 80.0
+is_projectile = true
+active = true
+hitbox_owner = NodePath("..")
+
+[node name="HitboxShape" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource("CircleShape2D_688h7")

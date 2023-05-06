@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="WeaponItem" load_steps=4 format=3 uid="uid://s4hp7gy16ppf"]
+
+[ext_resource type="PackedScene" uid="uid://52mopdn2slk" path="res://Objects/HeldItem/Weapon/FlameThrower/FlameThrower.tscn" id="1_06bcj"]
+[ext_resource type="Script" path="res://Objects/Item/WeaponItem.gd" id="1_udyex"]
+[ext_resource type="Texture2D" uid="uid://bud2cui47v1fa" path="res://Assets/gun_fingernail_shoot.png" id="3_v4jxq"]
+
+[resource]
+script = ExtResource("1_udyex")
+scene = ExtResource("1_06bcj")
+item_name = "Flame Thrower"
+item_category = "Weapon"
+texture = ExtResource("3_v4jxq")
+extra_info = {
+"fire_damage": 10.0,
+"fire_interval": 1.0,
+"time_left": 2.0
+}
+meta_info = {}

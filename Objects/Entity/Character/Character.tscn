@@ -21,23 +21,21 @@
 
 [sub_resource type="Resource" id="Resource_iwmyv"]
 script = ExtResource("7_g5flv")
-weapon_layers = 130
-weapon_masks = 2080
 scene = ExtResource("6_6nb2p")
 item_name = "Sword"
 item_category = "Weapon"
 texture = ExtResource("8_ntgt4")
 extra_info = {}
+meta_info = {}
 
 [sub_resource type="Resource" id="Resource_8vila"]
 script = ExtResource("7_g5flv")
-weapon_layers = 130
-weapon_masks = 2080
 scene = ExtResource("9_m2sv4")
 item_name = "Hammer"
 item_category = "Weapon"
 texture = ExtResource("2_ufpbp")
 extra_info = {}
+meta_info = {}
 
 [sub_resource type="Resource" id="Resource_1c631"]
 script = ExtResource("12_by6am")
@@ -46,16 +44,16 @@ item_name = "Laser Modifier"
 item_category = "A"
 texture = ExtResource("13_wnveg")
 extra_info = {}
+meta_info = {}
 
 [sub_resource type="Resource" id="Resource_pduml"]
 script = ExtResource("7_g5flv")
-weapon_layers = 2
-weapon_masks = 0
 scene = ExtResource("14_v11df")
 item_name = "Finger Nail Gun"
 item_category = "Weapon"
 texture = ExtResource("15_ekbq2")
 extra_info = {}
+meta_info = {}
 
 [sub_resource type="Resource" id="Resource_xpdph"]
 script = ExtResource("11_xjos7")
@@ -206,13 +204,16 @@ _data = {
 }
 
 [node name="Character" type="CharacterBody2D" groups=["characters"]]
-collision_layer = 4161
-collision_mask = 8
+collision_layer = 2
 motion_mode = 1
 script = ExtResource("1_70khu")
 dash_cooldown = 0.5
 dash_time = 0.2
 i_frames = 0.5
+metadata/hitbox_layers = ["character"]
+metadata/hitbox_masks = ["map", "enemy"]
+metadata/hurtbox_layers = ["character"]
+metadata/hurtbox_masks = ["map", "enemy"]
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 
@@ -296,10 +297,11 @@ one_shot = true
 process_callback = 0
 one_shot = true
 
-[node name="Hurtbox" parent="." groups=["character hurtboxes"] instance=ExtResource("7_yp4o6")]
+[node name="Hurtbox" parent="." node_paths=PackedStringArray("hurtbox_owner") groups=["character hurtboxes"] instance=ExtResource("7_yp4o6")]
 modulate = Color(1, 1, 1, 1)
-collision_layer = 260
-collision_mask = 1040
+hurtbox_layers = ["character"]
+hurtbox_masks = ["map", "enemy"]
+hurtbox_owner = NodePath("..")
 
 [node name="HurtboxShape" type="CollisionShape2D" parent="Hurtbox"]
 shape = SubResource("12")

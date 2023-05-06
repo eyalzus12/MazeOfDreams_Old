@@ -25,8 +25,6 @@ func _unhandled_input(event: InputEvent) -> void:
 	
 
 func _state_logic(_delta: float) -> void:
-	character.state_frame = state_frame
-	character.current_state = state_names[state]
 	character.set_inputs()
 
 	if character.current_hp <= 0 and not animation_player.assigned_animation == &"death":
@@ -102,17 +100,7 @@ func _enter_state(_prev_state: int, _state: int) -> void:
 func _on_CharacterHurtbox_area_entered(area: Area2D) -> void:
 	if Globals.god: return
 	if not area is Hitbox: return
-	var hitbox = area as Hitbox
-	character.current_hp -= hitbox.damage
-	character.velocity = hitbox.global_position.direction_to(character.global_position) \
-		* hitbox.pushback
-	set_state(states.hurt)
-
-	var popup := ObjectPool.load_object(DAMAGE_POPUP)
-	popup.value = -hitbox.damage
-	get_tree().root.add_child(popup)
-	popup.global_position = character.global_position
-	popup.appear()
+	character.apply_hit(area)
 
 #finished animation
 func _on_CharacterAnimationPlayer_animation_finished(anim_name: StringName) -> void:
