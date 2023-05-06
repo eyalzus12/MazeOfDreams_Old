@@ -115,9 +115,7 @@ func _ready() -> void:
 
 func connect_modifier_slots(list: Array[Modifier], slots: InventoryGrid, to_call: Callable):
 	list.resize(slots.slots.size())
-	for slot in slots.slots:
-		if not slot.item_change.is_connected(to_call):
-			slot.item_change.connect(to_call)
+	slots.item_change.connect(to_call)
 
 func on_weapon_item_change(_slot: InventorySlot, from: Item, to: Item):
 	#no change
@@ -191,6 +189,11 @@ func _physics_process(_delta: float) -> void:
 	
 	if Input.is_action_just_pressed(&"inventory_toggle"):
 		inventory.toggle()
+		if not inventory.is_open:
+			weapon_slots.return_dragged_item()
+			a_slots.return_dragged_item()
+			b_slots.return_dragged_item()
+		
 
 func on_chest_open(_who: Chest) -> void:
 	inventory.open()

@@ -18,6 +18,9 @@ var pooled_object_amount := 0
 func _process(_delta: float) -> void:
 	full_handle_return_queue()
 
+#NOTE: certain objects, like rigid bodies, don't reset all of their properties in _ready
+#put that explicit reset logic in pool_setup
+#some objects, like rigid bodies, may need some more coding to properly reset them
 func load_object(
 		object: PackedScene,
 		additional_load_override = DEFAUT_ADDITIONAL_LOAD_AMOUNT,
@@ -36,6 +39,10 @@ func load_object(
 	
 	pooled_object_amount -= 1
 	pooled_object.set_meta(&"origin_object", object)
+	
+	if pooled_object.has_method(&"pool_setup"):
+		pooled_object.pool_setup()
+		
 	pooled_object.request_ready()
 	return pooled_object
 

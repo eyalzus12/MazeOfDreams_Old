@@ -1,5 +1,6 @@
 extends Node2D
 
+const SMALL_WAIT_TIME: float = 0.01
 const DROPPED_ITEM: PackedScene = preload("res://Objects/DroppedItem/DroppedItem.tscn")
 const DAMAGE_POPUP := preload("res://Objects/UI/DamagePopup/DamagePopup.tscn")
 const DISABLE_ENEMIES: bool = false
@@ -12,6 +13,13 @@ var dragged_item: Item:
 		queue_redraw()
 var dragged_item_inventory: Inventory
 var dragged_item_slot: InventorySlot
+var dragged_item_owner: Node2D
+
+func reset_item() -> void:
+	dragged_item = null
+	dragged_item_inventory = null
+	dragged_item_slot = null
+	dragged_item_owner = null
 
 var drop_input_handled: bool = false
 
@@ -43,14 +51,29 @@ func _process(_delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if dragged_item and event.is_action(&"player_interact") and event.is_pressed():
-		await temp_signal(self, 0.1)
+		await temp_signal(self, SMALL_WAIT_TIME)
 		if drop_input_handled:
 			drop_input_handled = false
 			return
 		drop_item(dragged_item, get_global_mouse_position())
-		dragged_item = null
-		dragged_item_slot = null
-		dragged_item_inventory = null
+		reset_item()
+
+#call this function to return the dragged item to any fitting inventory
+#this should preferably be called by inventories that are explicitly rejecting the item
+#like when closing the inventory and holding something from the modifier inventory
+func return_dragged_item() -> void:
+	if not is_instance_valid(dragged_item): return
+	
+	for inventory_ in inventories:
+		var inventory: Inventory = inventory_
+		if not inventory.pickup_target: continue
+		var inserted: bool = inventory.try_insert(dragged_item)
+		if inserted:
+			reset_item()
+			return
+	#if we got here, the item couldn't find an inventory to get dropped to
+	#so we drop it on the ground
+	drop_item(dragged_item, dragged_item_owner.global_position)
 
 func drop_item(item: Item, pos: Vector2) -> void:
 	var dropped_item: DroppedItem = ObjectPool.load_object(DROPPED_ITEM)
@@ -61,7 +84,7 @@ func drop_item(item: Item, pos: Vector2) -> void:
 	dropped_item.pickup_area.input_pickable = false
 	schedule_property_change(dropped_item.pickup_area,&"input_pickable",true)
 
-func temp_timer(time: float = 0.1) -> Timer:
+func temp_timer(time: float = SMALL_WAIT_TIME) -> Timer:
 	var timer := Timer.new()
 	timer.process_callback = Timer.TIMER_PROCESS_PHYSICS
 	timer.wait_time = time
@@ -70,18 +93,18 @@ func temp_timer(time: float = 0.1) -> Timer:
 	timer.timeout.connect(timer.queue_free)
 	return timer
 
-func add_temp_timer(node: Node, time: float = 0.1) -> Timer:
+func add_temp_timer(node: Node, time: float = SMALL_WAIT_TIME) -> Timer:
 	var timer := temp_timer(time)
 	node.add_child(timer)
 	return timer
 
-func temp_signal(node: Node, time: float = 0.1) -> Signal:
+func temp_signal(node: Node, time: float = SMALL_WAIT_TIME) -> Signal:
 	return add_temp_timer(node, time).timeout
 
-func schedule_action(node: Node, action: Callable, time: float = 0.1) -> void:
+func schedule_action(node: Node, action: Callable, time: float = SMALL_WAIT_TIME) -> void:
 	add_temp_timer(node, time).timeout.connect(action)
 
-func schedule_property_change(node: Node, property: StringName, value: Variant, time: float = 0.1) -> void:
+func schedule_property_change(node: Node, property: StringName, value: Variant, time: float = SMALL_WAIT_TIME) -> void:
 	schedule_action(node, node.set.bind(property,value), time)
 
 func _draw() -> void:

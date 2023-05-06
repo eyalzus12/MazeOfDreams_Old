@@ -7,9 +7,9 @@ var is_open: bool:
 	set(value):
 		is_open = value
 		inventory.is_open = value
-		EventBus.emit_signal("chest_toggled", self)
-		if is_open: EventBus.emit_signal("chest_opened", self)
-		else: EventBus.emit_signal("chest_closed", self)
+		EventBus.chest_toggled.emit(self)
+		if is_open: EventBus.chest_opened.emit(self)
+		else: EventBus.chest_closed.emit(self)
 
 func _ready() -> void:
 	if not EventBus.chest_opened.is_connected(on_chest_open):
