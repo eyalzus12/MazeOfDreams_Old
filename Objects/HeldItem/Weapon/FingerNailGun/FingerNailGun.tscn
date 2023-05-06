@@ -2,52 +2,10 @@
 
 [ext_resource type="PackedScene" uid="uid://dbndc8y60ac6e" path="res://Objects/HeldItem/Weapon/BaseWeapon/Weapon.tscn" id="1_w4tqr"]
 [ext_resource type="Script" path="res://Objects/HeldItem/Weapon/FingerNailGun/FingerNailGun.gd" id="2_fs2ue"]
-[ext_resource type="Texture2D" uid="uid://c6dh2kvvgpad4" path="res://Assets/cum.png" id="2_wu5ba"]
+[ext_resource type="Texture2D" uid="uid://bud2cui47v1fa" path="res://Assets/gun_fingernail_shoot.png" id="3_hlfwe"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_g4lqf"]
-size = Vector2(655.2, 593)
-
-[sub_resource type="Animation" id="Animation_c313y"]
-resource_name = "attack"
-length = 0.4
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Base/Sprite2D/Hitbox:active")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.2),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [true, false]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Base:position")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.4),
-"transitions": PackedFloat32Array(2.07053, 1, 1),
-"update": 0,
-"values": [Vector2(0, 0), Vector2(-10, 0), Vector2(0, 0)]
-}
-tracks/2/type = "method"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath(".")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0.2),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [],
-"method": &"shoot"
-}]
-}
+size = Vector2(40, 24)
 
 [sub_resource type="Animation" id="Animation_6jp5p"]
 length = 0.001
@@ -66,14 +24,56 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("Base:position")
+tracks/1/path = NodePath("Base/Sprite2D:frame")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(0, 0)]
+"values": [0]
+}
+
+[sub_resource type="Animation" id="Animation_c313y"]
+resource_name = "attack"
+length = 0.4
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Base/Sprite2D/Hitbox:active")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"shoot"
+}]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Base/Sprite2D:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0, 3, 0]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_fnq3c"]
@@ -86,20 +86,25 @@ _data = {
 script = ExtResource("2_fs2ue")
 
 [node name="Sprite2D" parent="Base" index="0"]
-position = Vector2(8, -8)
-scale = Vector2(0.17094, 0.0269815)
-texture = ExtResource("2_wu5ba")
+texture_filter = 3
+position = Vector2(11.5299, -4.05396)
+texture = ExtResource("3_hlfwe")
+hframes = 4
 
 [node name="Hitbox" parent="Base/Sprite2D" index="0"]
+visible = false
 active = false
 metadata/_edit_pinned_properties_ = [&"active"]
 
 [node name="HitboxShape" parent="Base/Sprite2D/Hitbox" index="0"]
-position = Vector2(1.14441e-05, -0.00012207)
+visible = false
+position = Vector2(0.470079, 0.0539608)
+scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_g4lqf")
 
 [node name="ShootLocationMarker" type="Marker2D" parent="Base" index="1"]
-position = Vector2(68, -8)
+visible = false
+position = Vector2(25, -6)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." index="1"]
 playback_process_mode = 0

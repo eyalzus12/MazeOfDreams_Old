@@ -1,5 +1,7 @@
 extends Node2D
 
+signal game_closed
+
 const SMALL_WAIT_TIME: float = 0.01
 const DROPPED_ITEM: PackedScene = preload("res://Objects/DroppedItem/DroppedItem.tscn")
 const DAMAGE_POPUP := preload("res://Objects/UI/DamagePopup/DamagePopup.tscn")
@@ -39,6 +41,7 @@ func _process(_delta: float) -> void:
 		god = not god
 		print("god" if god else "not god")
 	if Input.is_action_just_pressed(&"close_game"):
+		game_closed.emit()
 		get_tree().quit()
 	if Input.is_action_just_pressed(&"toggle_fullscreen"):
 		match DisplayServer.window_get_mode():

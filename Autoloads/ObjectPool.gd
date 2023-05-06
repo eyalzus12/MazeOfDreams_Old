@@ -7,6 +7,10 @@ const DEFAUT_ADDITIONAL_LOAD_AMOUNT := 2
 var pool: Dictionary = {}
 #PackedScene to Dictionary[Node,_]
 var pool_set: Dictionary = {}
+#PackedScene to int
+var pool_fill_counter: Dictionary = {}
+#PackedScene to int
+var pool_load_counter: Dictionary = {}
 
 #PackedScene to Array[Node]
 var return_queue: Dictionary = {}
@@ -14,6 +18,9 @@ var return_queue: Dictionary = {}
 var return_queue_set: Dictionary = {}
 
 var pooled_object_amount := 0
+
+func _ready() -> void:
+	Globals.game_closed.connect(_exit_tree)
 
 func _process(_delta: float) -> void:
 	full_handle_return_queue()
@@ -84,11 +91,15 @@ func pool_load_object(object: PackedScene, amount: int) -> void:
 	if not object in pool:
 		pool[object] = []
 		pool_set[object] = {}
+		pool_fill_counter[object] = 0
+		pool_load_counter[object] = 0
 	for _i in range(amount):
 		var pooled_object = object.instantiate()
 		pool[object].push_back(pooled_object)
 		pool_set[object][pooled_object] = null
 		pooled_object_amount += 1
+		pool_load_counter[object] += 1
+	pool_fill_counter[object] += 1
 
 func full_handle_return_queue() -> void:
 	for object in return_queue.keys():
@@ -114,7 +125,17 @@ func handle_return_queue(object: PackedScene) -> void:
 		pooled_object_amount += 1
 
 func _exit_tree() -> void:
+	if OS.is_debug_build():
+		print_pool_counters()
 	full_clean_pool()
+
+func print_pool_counters() -> void:
+	print("how many times each scene needed a pool fillup:")
+	for scene in pool_fill_counter.keys():
+		print(pool_fill_counter[scene], " - ", scene.resource_path)
+	print("how many times new instances were created:")
+	for scene in pool_load_counter.keys():
+		print(pool_load_counter[scene], " - ", scene.resource_path)
 
 func full_clean_pool() -> void:
 	for object in pool.keys():
