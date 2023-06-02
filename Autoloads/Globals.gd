@@ -123,10 +123,22 @@ func temp_signal(node: Node, time: float = SMALL_WAIT_TIME) -> Signal:
 	return add_temp_timer(node, time).timeout
 
 func schedule_action(node: Node, action: Callable, time: float = SMALL_WAIT_TIME) -> void:
-	add_temp_timer(node, time).timeout.connect(action)
+	temp_signal(node,time).connect(action)
 
 func schedule_property_change(node: Node, property: StringName, value: Variant, time: float = SMALL_WAIT_TIME) -> void:
 	schedule_action(node, node.set.bind(property,value), time)
+
+func loop_timer(time: float = SMALL_WAIT_TIME) -> Timer:
+	var timer := Timer.new()
+	timer.process_callback = Timer.TIMER_PROCESS_PHYSICS
+	timer.wait_time = time
+	timer.autostart = true
+	return timer
+
+func add_loop_timer(node: Node, time: float = SMALL_WAIT_TIME) -> Timer:
+	var timer := loop_timer(time)
+	node.add_child(timer)
+	return timer
 
 func create_damage_popup(number: float, pos: Vector2) -> void:
 	var popup := ObjectPool.load_object(DAMAGE_POPUP)

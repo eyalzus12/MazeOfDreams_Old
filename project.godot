@@ -19,14 +19,14 @@ config/icon="res://Assets/cum.png"
 [autoload]
 
 UiLayer="*res://Autoloads/UILayer.tscn"
-InputDebugger="*res://Autoloads/InputDebugger.cs"
-Randomizer="*res://Autoloads/Randomizer.cs"
 Globals="*res://Autoloads/Globals.gd"
 EventBus="*res://Autoloads/EventBus.gd"
 ObjectPool="*res://Autoloads/ObjectPool.gd"
 
 [debug]
 
+gdscript/warnings/integer_division=0
+gdscript/warnings/confusable_identifier=0
 shapes/collision/shape_color=Color(1, 1, 1, 0.419608)
 
 [display]
