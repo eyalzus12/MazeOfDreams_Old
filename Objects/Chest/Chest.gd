@@ -7,13 +7,15 @@ var is_open: bool:
 	set(value):
 		is_open = value
 		inventory.is_open = value
-		EventBus.emit_signal("chest_toggled", self)
-		if is_open: EventBus.emit_signal("chest_opened", self)
-		else: EventBus.emit_signal("chest_closed", self)
+		EventBus.chest_toggled.emit(self)
+		if is_open: EventBus.chest_opened.emit(self)
+		else: EventBus.chest_closed.emit(self)
 
 func _ready() -> void:
-	EventBus.chest_opened.connect(on_chest_open)
-	interact_area.input_event.connect(on_input)
+	if not EventBus.chest_opened.is_connected(on_chest_open):
+		EventBus.chest_opened.connect(on_chest_open)
+	if not interact_area.input_event.is_connected(on_input):
+		interact_area.input_event.connect(on_input)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if is_open and event.is_action(&"inventory_toggle"):

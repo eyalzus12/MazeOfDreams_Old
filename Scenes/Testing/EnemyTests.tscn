@@ -4856,6 +4856,9 @@ script = ExtResource("5_lws6b")
 [node name="Enemy2" parent="." instance=ExtResource("4_8becr")]
 position = Vector2(-120, -560)
 
+[node name="Enemy11" parent="." instance=ExtResource("4_8becr")]
+position = Vector2(-448, -352)
+
 [node name="Enemy3" parent="." instance=ExtResource("4_8becr")]
 position = Vector2(1576, -596)
 
@@ -4867,6 +4870,11 @@ position = Vector2(1097.39, 1013.77)
 
 [node name="Enemy6" parent="." instance=ExtResource("4_8becr")]
 position = Vector2(1525.77, 1170)
+
+[node name="Enemy12" parent="." instance=ExtResource("4_8becr")]
+position = Vector2(480, 1024)
+scale = Vector2(2.40733, 2.40733)
+initial_hp = 300.0
 
 [node name="Enemy7" parent="." instance=ExtResource("4_8becr")]
 position = Vector2(-454.831, 892.818)
@@ -4907,22 +4915,22 @@ position = Vector2(435.131, -50.9644)
 position = Vector2(374.154, 575.851)
 
 [node name="DroppedItem4" parent="." instance=ExtResource("6_q0m2u")]
-position = Vector2(794.658, 287.2)
+position = Vector2(800, 300)
 
 [node name="DroppedItem5" parent="." instance=ExtResource("6_q0m2u")]
-position = Vector2(794.658, 287.2)
+position = Vector2(800, 300)
 
 [node name="DroppedItem6" parent="." instance=ExtResource("6_q0m2u")]
-position = Vector2(794.658, 287.2)
+position = Vector2(800, 300)
 
 [node name="DroppedItem7" parent="." instance=ExtResource("6_q0m2u")]
-position = Vector2(794.658, 287.2)
+position = Vector2(800, 300)
 
 [node name="DroppedItem8" parent="." instance=ExtResource("6_q0m2u")]
-position = Vector2(794.658, 287.2)
+position = Vector2(800, 300)
 
 [node name="DroppedItem9" parent="." instance=ExtResource("6_q0m2u")]
-position = Vector2(794.658, 287.2)
+position = Vector2(800, 300)
 
 [node name="Avoid" type="Node2D" parent="."]
 

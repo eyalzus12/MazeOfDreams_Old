@@ -12,15 +12,17 @@ signal item_change(slot: InventorySlot, from: Item, to: Item)
 @export var i: int
 @export var j: int
 
+var slot_owner: Node2D
+
 var contained_item: Item:
 	set(value):
-		emit_signal("item_change", self, contained_item, value)
+		item_change.emit(self, contained_item, value)
 		inventory.set_at(i,j,value)
 	get:
 		return inventory.get_at(i,j)
 
 func _process(_delta: float) -> void:
-	if contained_item:
+	if is_instance_valid(contained_item):
 		icon = contained_item.texture
 	else:
 		icon = null
@@ -35,17 +37,16 @@ func _pressed() -> void:
 					contained_item = Globals.dragged_item
 					Globals.dragged_item = temp
 					Globals.dragged_item_slot = self
-					
 					Globals.dragged_item_inventory = inventory
+					Globals.dragged_item_owner = slot_owner
 			else:
 				contained_item = Globals.dragged_item
-				Globals.dragged_item = null
-				Globals.dragged_item_slot = null
-				Globals.dragged_item_inventory = null
+				Globals.reset_item()
 	elif contained_item and can_remove_item():
 		Globals.dragged_item = contained_item
 		Globals.dragged_item_slot = self
 		Globals.dragged_item_inventory = inventory
+		Globals.dragged_item_owner = slot_owner
 		contained_item = null
 
 func can_hold_item(item: Item) -> bool:

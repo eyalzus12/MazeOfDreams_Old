@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="WeaponItem" load_steps=4 format=3 uid="uid://cm4v1gwl3h3nx"]
+
+[ext_resource type="PackedScene" uid="uid://c776rdtoa1qfd" path="res://Objects/HeldItem/Weapon/FingerNailGun/FingerNailGun.tscn" id="1_50qoa"]
+[ext_resource type="Script" path="res://Objects/Item/WeaponItem.gd" id="1_lcogc"]
+[ext_resource type="Texture2D" uid="uid://20moa0xynjiq" path="res://Assets/stop doing rpg.jpg" id="3_rlm7s"]
+
+[resource]
+resource_name = "finger nail gun item"
+script = ExtResource("1_lcogc")
+scene = ExtResource("1_50qoa")
+item_name = "Finger Nail Gun"
+item_category = "Weapon"
+texture = ExtResource("3_rlm7s")
+extra_info = {}
+meta_info = {}

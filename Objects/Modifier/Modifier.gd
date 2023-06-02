@@ -1,23 +1,23 @@
 extends Node2D
 class_name Modifier
 
-var entity: Character:
+var modifier_owner: Node:
 	set(value):
 		if not is_inside_tree():
 			await ready
-		entity = value
+		modifier_owner = value
 		
-		if entity.has_signal(&"attack_started") \
-		and not entity.attack_started.is_connected(attack_started):
-			entity.attack_started.connect(attack_started)
+		if modifier_owner.has_signal(&"attack_started") \
+		and not modifier_owner.attack_started.is_connected(attack_started):
+			modifier_owner.attack_started.connect(attack_started)
 			
-		if entity.has_signal(&"attack_ended") \
-		and not entity.attack_ended.is_connected(attack_ended):
-			entity.attack_ended.connect(attack_ended)
+		if modifier_owner.has_signal(&"attack_ended") \
+		and not modifier_owner.attack_ended.is_connected(attack_ended):
+			modifier_owner.attack_ended.connect(attack_ended)
 			
-		if entity.has_signal(&"attack_hit") \
-		and not entity.attack_hit.is_connected(attack_hit):
-			entity.attack_hit.connect(attack_hit)
+		if modifier_owner.has_signal(&"attack_hit") \
+		and not modifier_owner.attack_hit.is_connected(attack_hit):
+			modifier_owner.attack_hit.connect(attack_hit)
 
 func attack_started() -> void:
 	pass

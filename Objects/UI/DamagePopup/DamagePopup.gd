@@ -1,5 +1,7 @@
 extends Node2D
 
+const SPAWN_DEVIATION: float = 50
+
 @onready var label: Label = $LabelBase/DamageLabel
 @onready var player: AnimationPlayer = $LabelBase/DamageLabel/DamageLabelPlayer
 
@@ -14,8 +16,20 @@ var value: float:
 			-1: #negative
 				modulate = Color.RED
 			0: #none
-				modulate = Color.WHITE
+				modulate = Color.BLUE
+
+func _ready() -> void:
+	player.play(&"RESET")
+	player.advance(0)
 
 func appear() -> void:
 	player.play("appear")
+	
+	#slightly randomize spawn position
+	position = position + Vector2(
+		randf_range(-SPAWN_DEVIATION,SPAWN_DEVIATION),
+		randf_range(-SPAWN_DEVIATION,SPAWN_DEVIATION)
+	)
 
+func disappear() -> void:
+	ObjectPool.return_object(self)

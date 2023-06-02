@@ -11,3 +11,4 @@ item_name = "Laser Modifier"
 item_category = "A"
 texture = ExtResource("3_68i4k")
 extra_info = {}
+meta_info = {}

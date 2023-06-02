@@ -19,8 +19,16 @@ signal attack_hit(who: Area2D)
 @onready var a_slots: InventoryGrid = $UILayer/EquipSlots/EquipA
 @onready var b_slots: InventoryGrid = $UILayer/EquipSlots/EquipB
 
-var state_frame: int
-var current_state: String
+
+@onready var state_machine: StateMachine = $StateMachine
+
+var state_frame: int:
+	get:
+		return state_machine.state_frame
+var current_state: String:
+	get:
+		return state_machine.state_names[state_machine.state]
+
 
 @export var speed: float = 300
 @export var acceleration: float = 50
@@ -35,13 +43,17 @@ var weapon: Weapon:
 		if not is_inside_tree():
 			await ready
 		if is_instance_valid(weapon):
-			weapon.queue_free()
+			ObjectPool.return_object(weapon)
 		weapon = value
 		if is_instance_valid(weapon):
+			weapon.weapon_owner = self
 			add_child(weapon)
-			weapon.attack_started.connect(_attack_started)
-			weapon.attack_ended.connect(_attack_ended)
-			weapon.attack_hit.connect(_attack_hit)
+			if not weapon.attack_started.is_connected(_attack_started):
+				weapon.attack_started.connect(_attack_started)
+			if not weapon.attack_ended.is_connected(_attack_ended):
+				weapon.attack_ended.connect(_attack_ended)
+			if not weapon.attack_hit.is_connected(_attack_hit):
+				weapon.attack_hit.connect(_attack_hit)
 		weapon_slot.is_locked = false
 
 
@@ -80,6 +92,9 @@ var b_modifiers: Array[Modifier]
 			await ready
 		iframes_timer.wait_time = i_frames
 
+#Dictionary[String,Effect]
+var active_effects: Dictionary
+
 var dash_in_cooldown: bool = false
 var in_dash: bool = false
 
@@ -96,12 +111,15 @@ var down: bool
 var debug_active: bool = false
 
 func _ready() -> void:
-	EventBus.chest_opened.connect(on_chest_open)
-	EventBus.chest_closed.connect(on_chest_close)
+	if not EventBus.chest_opened.is_connected(on_chest_open):
+		EventBus.chest_opened.connect(on_chest_open)
+	if not EventBus.chest_closed.is_connected(on_chest_close):
+		EventBus.chest_closed.connect(on_chest_close)
 	
 	#weapon slots
 	weapon_slot = weapon_slots.slots[0]
-	weapon_slot.item_change.connect(on_weapon_item_change)
+	if not weapon_slot.item_change.is_connected(on_weapon_item_change):
+		weapon_slot.item_change.connect(on_weapon_item_change)
 	#modifier slots
 	connect_modifier_slots(a_modifiers, a_slots, on_a_modifier_item_change)
 	connect_modifier_slots(b_modifiers, b_slots, on_b_modifier_item_change)
@@ -109,7 +127,7 @@ func _ready() -> void:
 
 func connect_modifier_slots(list: Array[Modifier], slots: InventoryGrid, to_call: Callable):
 	list.resize(slots.slots.size())
-	for slot in slots.slots: slot.item_change.connect(to_call)
+	slots.item_change.connect(to_call)
 
 func on_weapon_item_change(_slot: InventorySlot, from: Item, to: Item):
 	#no change
@@ -144,7 +162,7 @@ func on_modifier_item_change(slot: InventorySlot, from: Item, to: Item, list: Ar
 	#removing modifier
 	if not is_instance_valid(to):
 		if is_instance_valid(list[index]):
-			list[index].queue_free()
+			ObjectPool.return_object(list[index])
 		list[index] = null
 		return
 	#not a modifier item
@@ -161,11 +179,11 @@ func on_modifier_item_change(slot: InventorySlot, from: Item, to: Item, list: Ar
 		return
 	#equip modifier
 	var mnew_modifier := new_modifier as Modifier
-	mnew_modifier.entity = self
+	mnew_modifier.modifier_owner = self
 	
 	add_child(mnew_modifier)
 	if is_instance_valid(list[index]):
-		list[index].queue_free()
+		ObjectPool.return_object(list[index])
 	list[index] = mnew_modifier
 
 func on_a_modifier_item_change(slot: InventorySlot, from: Item, to: Item):
@@ -183,6 +201,12 @@ func _physics_process(_delta: float) -> void:
 	
 	if Input.is_action_just_pressed(&"inventory_toggle"):
 		inventory.toggle()
+		#closing inventory. inventories will try and reject the dragged item
+		if not inventory.is_open:
+			weapon_slots.return_dragged_item()
+			a_slots.return_dragged_item()
+			b_slots.return_dragged_item()
+		
 
 func on_chest_open(_who: Chest) -> void:
 	inventory.open()
@@ -249,10 +273,38 @@ func set_vertical_inputs() -> void:
 
 func _attack_started() -> void:
 	weapon_slot.is_locked = true
-	emit_signal(&"attack_started")
+	attack_started.emit()
 func _attack_ended() -> void:
 	weapon_slot.is_locked = false
-	emit_signal(&"attack_ended")
+	attack_ended.emit()
 func _attack_hit(who: Node2D) -> void:
-	emit_signal(&"attack_hit", who)
+	attack_hit.emit(who)
 
+func apply_hit(hitbox: Hitbox) -> void:
+	apply_damage(hitbox.damage)
+	apply_knockback(hitbox.global_position.direction_to(global_position) \
+		* hitbox.pushback)
+	state_machine.set_state(state_machine.states.hurt)
+
+func apply_damage(damage: float) -> void:
+	current_hp -= damage
+	Globals.create_damage_popup(-damage, global_position)
+
+func apply_knockback(vector: Vector2) -> void:
+	velocity = vector
+
+func apply_effect(effect: Effect) -> void:
+	if effect.effect_type == "":
+		push_error("trying to apply effect without type: ", effect)
+	if not effect.effect_type in active_effects\
+	or not is_instance_valid(active_effects[effect.effect_type]):
+		active_effects[effect.effect_type] = effect
+		add_child(effect)
+	active_effects[effect.effect_type].update_with_time(effect.time_left)
+
+func remove_effect(effect: Effect) -> void:
+	if effect.effect_type == "":
+		push_error("trying to remove effect without type: ", effect)
+	if not effect.effect_type in active_effects:
+		return
+	active_effects.erase(effect.effect_type)

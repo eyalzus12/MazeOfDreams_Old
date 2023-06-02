@@ -5,11 +5,11 @@
 [ext_resource type="Texture2D" uid="uid://co1xdjjcr7nwm" path="res://Assets/jessesans.jpg" id="3_7j46n"]
 
 [resource]
+resource_name = "hammer item"
 script = ExtResource("2_e0p2y")
-weapon_layers = 130
-weapon_masks = 2080
 scene = ExtResource("1_jojds")
 item_name = "Hammer"
 item_category = "Weapon"
 texture = ExtResource("3_7j46n")
 extra_info = {}
+meta_info = {}
