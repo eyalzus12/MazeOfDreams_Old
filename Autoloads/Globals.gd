@@ -24,6 +24,8 @@ const PHYSICS_LAYERS: Dictionary = {
 	area_interaction = 25
 }
 
+func _ready() -> void:
+	z_index = 100
 
 var dragged_item: Item:
 	set(value):

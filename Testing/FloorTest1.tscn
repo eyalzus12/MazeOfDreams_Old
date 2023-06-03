@@ -1,7 +1,7 @@
 [gd_scene load_steps=14 format=3]
 
 [ext_resource type="PackedScene" path="res://Scenes/Rooms/MainRoomTest.tscn" id="1"]
-[ext_resource type="PackedScene" path="res://Objects/Generation/MazeDreamer.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://Testing/OldMazeDreamer.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://Scenes/Rooms/MainRoomTest3.tscn" id="3"]
 [ext_resource type="PackedScene" path="res://Scenes/Rooms/MainRoomTest2.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://Objects/Enemy/BaseEnemy/Enemy.tscn" id="5"]
