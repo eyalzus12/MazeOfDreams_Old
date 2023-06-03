@@ -29,3 +29,9 @@ func random_point_in_ring(r_min: float, r_max: float) -> Vector2:
 	var θ_random := TAU * randf()
 	#convert to cart
 	return r_random * Vector2.from_angle(θ_random)
+
+func chance(of: int) -> bool:
+	return randi_range(0,of-1) == 0
+
+func chance_times(times: int, of: int) -> bool:
+	return randi_range(0,of-1) < times

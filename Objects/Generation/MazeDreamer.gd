@@ -225,6 +225,10 @@ func create_mst() -> Array[ConnectionEdge]:
 		var room2 = edge.room2
 		if dsu.union(room1,room2):
 			result.append(edge)
+#	for edge in room_edge_list:
+#		if not edge in result:
+#			if rand.chance(9):
+#				result.append(edge)
 	return result
 
 func create_hallways() -> Array[HallwaySegment]:
