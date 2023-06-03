@@ -4,6 +4,7 @@
 
 [node name="RoomShape" type="RigidBody2D"]
 gravity_scale = 0.0
+custom_integrator = true
 lock_rotation = true
 script = ExtResource("1_1anro")
 
