@@ -351,7 +351,6 @@ z_index = 1
 script = ExtResource("1_uueyu")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-enabled = false
 zoom = Vector2(0.016, 0.016)
 script = ExtResource("2_mts36")
 

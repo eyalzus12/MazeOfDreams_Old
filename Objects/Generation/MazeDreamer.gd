@@ -29,8 +29,18 @@ var final_room_list: Array[RoomShape] = []
 var final_positions: Array[Vector2] = []
 var final_shapes: Array[Shape2D] = []
 
+var hallway_intersections_list: Array[Vector2i] = []
+
+var backup_wall_cord_set: Dictionary = {}
+var backup_floor_cord_set: Dictionary = {}
+
+var temp_wall_cord_set: Dictionary = {}
+var temp_floor_cord_set: Dictionary = {}
+
 var wall_cord_set: Dictionary = {}
 var floor_cord_set: Dictionary = {}
+
+var room_tile_set: Dictionary = {}
 
 var check_timer: Timer
 var timeout_timer: Timer
@@ -41,7 +51,7 @@ func seed_with(x) -> void:
 func create_random_room() -> RoomShape:
 	var room_shape: RoomShape = ObjectPool.load_object(ROOM_SHAPE)
 	var collision_shape := RectangleShape2D.new()
-	collision_shape.size = 64*Vector2(
+	collision_shape.size = 2.*tileset.tile_size*Vector2(
 		rand.randi_range(min_room_size, max_room_size),
 		rand.randi_range(min_room_size, max_room_size)
 	)
@@ -87,7 +97,7 @@ func spread_timeout() -> void:
 func check_spread_finish() -> void:
 	if finished: return
 	for room in room_list:
-		room.global_position = room.global_position.snapped(32*Vector2.ONE)
+		room.global_position = room.global_position.snapped(tileset.tile_size)
 	await get_tree().physics_frame
 	#failsafe for race condition
 	if finished: return
@@ -103,7 +113,7 @@ func finish_spread() -> void:
 	timeout_timer.queue_free()
 	check_timer.queue_free()
 	for room in room_list:
-		room.global_position = room.global_position.snapped(32*Vector2.ONE)
+		room.global_position = room.global_position.snapped(tileset.tile_size)
 		room.freeze = true
 	big_room_list = filter_big_rooms()
 	draw_big_flag = true
@@ -128,24 +138,53 @@ func finish_spread() -> void:
 	use_final_shapes = true
 	queue_redraw()
 	await get_tree().process_frame
-	
-	floor_cord_set.clear()
+	place_tiles()
+
+func place_tiles() -> void:
+	create_room_tile_list()
+	create_hallway_corner_tile_list()
+	create_hallway_tile_list()
+	place_tile_lists()
+	after_place_cleanup()
+
+func prepare_tile_list() -> void:
+	temp_floor_cord_set.clear()
+	temp_wall_cord_set.clear()
+	backup_floor_cord_set = floor_cord_set.duplicate()
+	backup_wall_cord_set = wall_cord_set.duplicate()
+
+func commit_tile_list() -> void:
+	floor_cord_set.merge(temp_floor_cord_set)
+	wall_cord_set.merge(temp_wall_cord_set)
+
+func create_room_tile_list() -> void:
+	prepare_tile_list()
 	place_all_room_floor_tiles()
-	for cell in floor_cord_set.keys():
-		tilemap.set_cell(0,cell,0,Vector2i.ZERO)
-	
-	wall_cord_set.clear()
 	place_all_room_wall_tiles()
-	tilemap.set_cells_terrain_connect(1,wall_cord_set.keys(),0,0)
-	
-	floor_cord_set.clear()
+	commit_tile_list()
+
+func create_hallway_corner_tile_list() -> void:
+	prepare_tile_list()
+	create_hallway_intersection_list()
+	create_all_hallway_intersections()
+	commit_tile_list()
+
+func create_hallway_tile_list() -> void:
+	prepare_tile_list()
 	place_all_hallway_floor_tiles()
-	wall_cord_set.clear()
 	place_all_hallway_wall_tiles()
-	
+	commit_tile_list()
+
+func place_tile_lists() -> void:
 	for cell in floor_cord_set.keys():
 		tilemap.set_cell(0,cell,0,Vector2i.ZERO)
 	tilemap.set_cells_terrain_connect(1,wall_cord_set.keys(),0,0)
+
+func after_place_cleanup() -> void:
+	temp_floor_cord_set.clear()
+	temp_wall_cord_set.clear()
+	backup_floor_cord_set.clear()
+	backup_wall_cord_set.clear()
 
 func filter_big_rooms() -> Array[RoomShape]:
 	return room_list.filter(func(room): return room.get_room_size() >= big_room_start*4*tileset.tile_size.x*tileset.tile_size.y)
@@ -241,7 +280,7 @@ func create_intersected_room_list() -> Array[RoomShape]:
 
 func save_final_data() -> void:
 	for room in final_room_list:
-		final_positions.append(room.global_position.snapped(32*Vector2.ONE))
+		final_positions.append(room.global_position.snapped(tileset.tile_size))
 		final_shapes.append(room.collision.shape)
 	final_room_list.clear()
 
@@ -252,26 +291,6 @@ func cleanup_rooms() -> void:
 	big_room_list.clear()
 	room_edge_list.clear()
 	mst_edge_list.clear()
-
-func place_all_room_wall_tiles() -> void:
-	for i in range(final_positions.size()):
-		place_room_wall_tiles(i)
-
-func place_room_wall_tiles(idx: int) -> void:
-	var shape := final_shapes[idx] as RectangleShape2D
-	var room_pos := final_positions[idx]
-	var pos_offset := room_pos-shape.size/2
-	#edge
-	for i in range(0,shape.size.x,tileset.tile_size.x):
-		var pos := pos_offset+Vector2(i,0)
-		wall_cord_set[tilemap.local_to_map(tilemap.to_local(pos))] = null
-		var pos2 := pos_offset+Vector2(i,shape.size.y-tileset.tile_size.y)
-		wall_cord_set[tilemap.local_to_map(tilemap.to_local(pos2))] = null
-	for i in range(0,shape.size.y,tileset.tile_size.y):
-		var pos := pos_offset+Vector2(0,i)
-		wall_cord_set[tilemap.local_to_map(tilemap.to_local(pos))] = null
-		var pos2 := pos_offset+Vector2(shape.size.x-tileset.tile_size.x,i)
-		wall_cord_set[tilemap.local_to_map(tilemap.to_local(pos2))] = null
 
 func place_all_room_floor_tiles() -> void:
 	for i in range(final_positions.size()):
@@ -284,58 +303,28 @@ func place_room_floor_tiles(idx: int) -> void:
 	for i in range(0,shape.size.x,tileset.tile_size.x):
 		for j in range(0,shape.size.y,tileset.tile_size.y):
 			var pos := pos_offset+Vector2(i,j)
-			floor_cord_set[tilemap.local_to_map(tilemap.to_local(pos))] = null
+			temp_floor_cord_set[tilemap.local_to_map(tilemap.to_local(pos))] = null
+			room_tile_set[tilemap.local_to_map(tilemap.to_local(pos))] = null
 
-func place_all_hallway_wall_tiles() -> void:
-	for i in range(hallways_list.size()):
-		place_hallway_wall_tiles(i)
+func place_all_room_wall_tiles() -> void:
+	for i in range(final_positions.size()):
+		place_room_wall_tiles(i)
 
-func place_hallway_wall_tiles(idx: int) -> void:
-	var hallway := hallways_list[idx]
-	var from := hallway.pos1
-	var fromtile := tilemap.local_to_map(tilemap.to_local(from))
-	var to := hallway.pos2
-	var totile := tilemap.local_to_map(tilemap.to_local(to))
-	var dir := Vector2i(from.direction_to(to))
-	var curr := fromtile
-	var in_room := \
-		curr in floor_cord_set or \
-		curr - Vector2i(dir.y,dir.x).abs() in floor_cord_set
-	while(curr != totile):
-		if not in_room:
-			var should_place1 := true
-			var temp := curr
-			for __ in range(hallway_width):
-				temp += Vector2i(dir.y,dir.x).abs()
-				if temp in wall_cord_set:
-					should_place1 = false
-					break
-			if should_place1:
-				wall_cord_set[curr + hallway_width*Vector2i(dir.y,dir.x).abs()] = null
-			var should_place2 := true
-			temp = curr - Vector2i(dir.y,dir.x).abs()
-			for __ in range(hallway_width):
-				temp -= Vector2i(dir.y,dir.x).abs()
-				if temp in wall_cord_set:
-					should_place2 = false
-					break
-			if should_place2:
-				wall_cord_set[curr - (hallway_width+1)*Vector2i(dir.y,dir.x).abs()] = null
-		if \
-		curr in wall_cord_set or \
-		curr - Vector2i(dir.y,dir.x).abs() in wall_cord_set:
-			in_room = not in_room
-			var temp := curr
-			wall_cord_set.erase(temp)
-			for __ in range(hallway_width-1):
-				temp += Vector2i(dir.y,dir.x).abs()
-				wall_cord_set.erase(temp)
-			temp = curr - Vector2i(dir.y,dir.x).abs()
-			wall_cord_set.erase(temp)
-			for __ in range(hallway_width-1):
-				temp -= Vector2i(dir.y,dir.x).abs()
-				wall_cord_set.erase(temp)
-		curr += dir
+func place_room_wall_tiles(idx: int) -> void:
+	var shape := final_shapes[idx] as RectangleShape2D
+	var room_pos := final_positions[idx]
+	var pos_offset := room_pos-shape.size/2
+	#edge
+	for i in range(0,shape.size.x,tileset.tile_size.x):
+		var pos := pos_offset+Vector2(i,0)
+		temp_wall_cord_set[tilemap.local_to_map(tilemap.to_local(pos))] = null
+		var pos2 := pos_offset+Vector2(i,shape.size.y-tileset.tile_size.y)
+		temp_wall_cord_set[tilemap.local_to_map(tilemap.to_local(pos2))] = null
+	for i in range(0,shape.size.y,tileset.tile_size.y):
+		var pos := pos_offset+Vector2(0,i)
+		temp_wall_cord_set[tilemap.local_to_map(tilemap.to_local(pos))] = null
+		var pos2 := pos_offset+Vector2(shape.size.x-tileset.tile_size.x,i)
+		temp_wall_cord_set[tilemap.local_to_map(tilemap.to_local(pos2))] = null
 
 func place_all_hallway_floor_tiles() -> void:
 	for i in range(hallways_list.size()):
@@ -350,25 +339,162 @@ func place_hallway_floor_tiles(idx: int) -> void:
 	var dir := Vector2i(from.direction_to(to))
 	var curr := fromtile
 	var in_room := \
-		curr in floor_cord_set or \
-		curr - Vector2i(dir.y,dir.x).abs() in floor_cord_set
-	while(curr != totile):
+		curr in backup_floor_cord_set or \
+		curr - Vector2i(dir.y,dir.x).abs() in backup_floor_cord_set
+	while curr != totile:
+		in_room = curr in room_tile_set or curr - Vector2i(dir.y,dir.x).abs() in room_tile_set
 		if not in_room:
-			floor_cord_set[curr] = null
-			floor_cord_set[curr - Vector2i(dir.y,dir.x).abs()] = null
+			var temp := curr
+			for __ in range(hallway_width):
+				temp_floor_cord_set[temp] = null
+				temp += Vector2i(dir.y,dir.x).abs()
+			temp = curr - Vector2i(dir.y,dir.x).abs()
+			for __ in range(hallway_width):
+				temp_floor_cord_set[temp] = null
+				temp -= Vector2i(dir.y,dir.x).abs()
+		curr += dir
+
+func place_all_hallway_wall_tiles() -> void:
+	for i in range(hallways_list.size()):
+		place_hallway_wall_tiles(i)
+
+func place_hallway_wall_tiles(idx: int) -> void:
+	var hallway := hallways_list[idx]
+	var from := hallway.pos1
+	var fromtile := tilemap.local_to_map(tilemap.to_local(from))
+	var to := hallway.pos2
+	var totile := tilemap.local_to_map(tilemap.to_local(to))
+	var dir := Vector2i(from.direction_to(to))
+	var curr := fromtile
+	var in_room := \
+		curr in backup_floor_cord_set or \
+		curr - Vector2i(dir.y,dir.x).abs() in backup_floor_cord_set
+	while curr != totile:
+		in_room = curr in room_tile_set or curr - Vector2i(dir.y,dir.x).abs() in room_tile_set
+		if not in_room:
+			var should_place1 := true
 			var temp := curr
 			for __ in range(hallway_width):
 				temp += Vector2i(dir.y,dir.x).abs()
-				floor_cord_set[temp] = null
+				if temp in backup_wall_cord_set:
+					should_place1 = false
+					break
+			if should_place1:
+				temp_wall_cord_set[temp] = null
+			var should_place2 := true
 			temp = curr - Vector2i(dir.y,dir.x).abs()
 			for __ in range(hallway_width):
 				temp -= Vector2i(dir.y,dir.x).abs()
-				floor_cord_set[temp] = null
+				if temp in backup_wall_cord_set:
+					should_place2 = false
+					break
+			if should_place2:
+				temp_wall_cord_set[temp] = null
 		if \
-		curr in wall_cord_set or \
-		curr - Vector2i(dir.y,dir.x).abs() in wall_cord_set:
-			in_room = not in_room
+		curr in backup_wall_cord_set or \
+		curr - Vector2i(dir.y,dir.x).abs() in backup_wall_cord_set:
+			var temp := curr
+			var stop := false
+			for __ in range(hallway_width):
+				if stop and temp in backup_wall_cord_set: break
+				if not temp in backup_wall_cord_set: stop = true
+				if not temp in temp_floor_cord_set:
+					wall_cord_set.erase(temp)
+					temp_wall_cord_set.erase(temp)
+				temp_floor_cord_set[temp] = null
+				temp += Vector2i(dir.y,dir.x).abs()
+			
+			var check := temp
+			if not check in backup_floor_cord_set:
+				if not check in temp_floor_cord_set:
+					temp_wall_cord_set[check] = null
+				temp_floor_cord_set[check] = null
+			check = temp - Vector2i(dir.y,dir.x).abs() - dir
+			if not check in backup_floor_cord_set:
+				if not check in temp_floor_cord_set:
+					temp_wall_cord_set[check] = null
+				temp_floor_cord_set[check] = null
+			check = temp - Vector2i(dir.y,dir.x).abs() + dir
+			if not check in backup_floor_cord_set:
+				if not check in temp_floor_cord_set:
+					temp_wall_cord_set[check] = null
+				temp_floor_cord_set[check] = null
+			check = temp - dir
+			if not check in backup_floor_cord_set:
+				if not check in temp_floor_cord_set:
+					temp_wall_cord_set[check] = null
+				temp_floor_cord_set[check] = null
+			check = temp + dir
+			if not check in backup_floor_cord_set:
+				if not check in temp_floor_cord_set:
+					temp_wall_cord_set[check] = null
+				temp_floor_cord_set[check] = null
+			
+			temp = curr - Vector2i(dir.y,dir.x).abs()
+			stop = false
+			for __ in range(hallway_width):
+				if stop and temp in backup_wall_cord_set: break
+				if not temp in backup_wall_cord_set: stop = true
+				if not temp in temp_floor_cord_set:
+					wall_cord_set.erase(temp)
+					temp_wall_cord_set.erase(temp)
+				temp_floor_cord_set[temp] = null
+				temp -= Vector2i(dir.y,dir.x).abs()
+			
+			check = temp
+			if not check in backup_floor_cord_set:
+				if not check in temp_floor_cord_set:
+					temp_wall_cord_set[check] = null
+				temp_floor_cord_set[check] = null
+			check = temp + Vector2i(dir.y,dir.x).abs() - dir
+			if not check in backup_floor_cord_set:
+				if not check in temp_floor_cord_set:
+					temp_wall_cord_set[check] = null
+				temp_floor_cord_set[check] = null
+			check = temp + Vector2i(dir.y,dir.x).abs() + dir
+			if not check in backup_floor_cord_set:
+				if not check in temp_floor_cord_set:
+					temp_wall_cord_set[check] = null
+				temp_floor_cord_set[check] = null
+			check = temp - dir
+			if not check in backup_floor_cord_set:
+				if not check in temp_floor_cord_set:
+					temp_wall_cord_set[check] = null
+				temp_floor_cord_set[check] = null
+			check = temp + dir
+			if not check in backup_floor_cord_set:
+				if not check in temp_floor_cord_set:
+					temp_wall_cord_set[check] = null
+				temp_floor_cord_set[check] = null
 		curr += dir
+
+func create_hallway_intersection_list() -> void:
+	for i in range(hallways_list.size()):
+		for j in range(i+1,hallways_list.size()):
+			var hall1 := hallways_list[i]
+			var hall2 := hallways_list[j]
+			var intersection = Geometry2D.segment_intersects_segment(hall1.pos1, hall1.pos2, hall2.pos1, hall2.pos2)
+			if intersection == null:
+				continue
+			hallway_intersections_list.append(tilemap.local_to_map(tilemap.to_local(intersection as Vector2)))
+
+func create_all_hallway_intersections() -> void:
+	for i in range(hallway_intersections_list.size()):
+		create_hallway_intersection(i)
+
+func create_hallway_intersection(idx: int) -> void:
+	var pos := hallway_intersections_list[idx]
+	#inside room
+	if pos in room_tile_set:
+		return
+	for i in range(-hallway_width-1,hallway_width+1):
+		for j in range(-hallway_width-1,hallway_width+1):
+			var edge := i == -hallway_width-1 or j == -hallway_width-1 or i == hallway_width or j == hallway_width
+			var placepos := pos + Vector2i(i,j)
+			if edge:
+				temp_wall_cord_set[placepos] = null
+			temp_floor_cord_set[placepos] = null
+			room_tile_set[placepos] = null
 
 func _ready() -> void:
 	rand.seed_random()
@@ -377,7 +503,6 @@ func _ready() -> void:
 func _physics_process(_delta: float) -> void:
 	if not finished:
 		queue_redraw()
-
 #this is some very messy debug code
 var draw_big_flag: bool = false
 var draw_edges_flag: bool = false
@@ -408,8 +533,8 @@ func _draw() -> void:
 				var pos := final_positions[i]
 				var shape := final_shapes[i]
 				draw_set_transform(to_local(pos))
-				var color := Color(1,0,0,0.1)
-				shape.draw(get_canvas_item(),color)
+				var color := Color(1,0,0,0.5)
+				draw_rect(shape.get_rect(), color, false)
 				draw_set_transform(Vector2.ZERO)
 	if draw_edges_flag and not use_final_shapes:
 		for edge in room_edge_list:
@@ -439,14 +564,15 @@ func _draw() -> void:
 				if room in big_room_list: continue
 				draw_set_transform(to_local(room.global_position))
 				var color := Color(0,1,1,0.1)
-				room.collision.shape.draw(get_canvas_item(), color)
+				draw_rect(room.collision.shape.get_rect(), color, false)
 				draw_set_transform(Vector2.ZERO)
 		else:
 			for i in range(final_positions.size()):
 				var pos := final_positions[i]
 				var shape := final_shapes[i]
-				if shape.size.x*shape.size.y >= big_room_start*4*tileset.tile_size.x*tileset.tile_size.y: continue
+				if shape.size.x*shape.size.y >= big_room_start*4*tileset.tile_size.x*tileset.tile_size.y:
+					continue
 				draw_set_transform(to_local(pos))
-				var color := Color(0,1,1,0.1)
-				shape.draw(get_canvas_item(), color)
+				var color := Color(0,1,1,0.5)
+				draw_rect(shape.get_rect(), color, false)
 				draw_set_transform(Vector2.ZERO)
