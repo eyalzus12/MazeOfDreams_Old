@@ -484,13 +484,12 @@ func create_all_hallway_intersections() -> void:
 
 func create_hallway_intersection(idx: int) -> void:
 	var pos := hallway_intersections_list[idx]
-	#inside room
-	if pos in room_tile_set:
-		return
 	for i in range(-hallway_width-1,hallway_width+1):
 		for j in range(-hallway_width-1,hallway_width+1):
 			var edge := i == -hallway_width-1 or j == -hallway_width-1 or i == hallway_width or j == hallway_width
 			var placepos := pos + Vector2i(i,j)
+			if placepos in room_tile_set:
+				continue
 			if edge:
 				temp_wall_cord_set[placepos] = null
 			temp_floor_cord_set[placepos] = null
