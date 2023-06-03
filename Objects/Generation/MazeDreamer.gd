@@ -405,7 +405,7 @@ func place_hallway_wall_tiles(idx: int) -> void:
 				temp += Vector2i(dir.y,dir.x).abs()
 			
 			var check := temp
-			if not check in backup_floor_cord_set:
+			if not (stop and temp in backup_wall_cord_set) and not check in backup_floor_cord_set:
 				if not check in temp_floor_cord_set:
 					temp_wall_cord_set[check] = null
 				temp_floor_cord_set[check] = null
@@ -442,7 +442,7 @@ func place_hallway_wall_tiles(idx: int) -> void:
 				temp -= Vector2i(dir.y,dir.x).abs()
 			
 			check = temp
-			if not check in backup_floor_cord_set:
+			if not (stop and temp in backup_wall_cord_set) and not check in backup_floor_cord_set:
 				if not check in temp_floor_cord_set:
 					temp_wall_cord_set[check] = null
 				temp_floor_cord_set[check] = null
