@@ -492,6 +492,8 @@ func create_hallway_intersection(idx: int) -> void:
 				continue
 			if edge:
 				temp_wall_cord_set[placepos] = null
+			else:
+				temp_wall_cord_set.erase(placepos)
 			temp_floor_cord_set[placepos] = null
 			room_tile_set[placepos] = null
 
