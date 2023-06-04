@@ -159,8 +159,7 @@ func commit_tile_list() -> void:
 
 func create_room_tile_list() -> void:
 	prepare_tile_list()
-	place_all_room_floor_tiles()
-	place_all_room_wall_tiles()
+	place_all_room_tiles()
 	commit_tile_list()
 
 func create_hallway_corner_tile_list() -> void:
@@ -171,8 +170,7 @@ func create_hallway_corner_tile_list() -> void:
 
 func create_hallway_tile_list() -> void:
 	prepare_tile_list()
-	place_all_hallway_floor_tiles()
-	place_all_hallway_wall_tiles()
+	place_all_hallway_tiles()
 	commit_tile_list()
 
 func place_tile_lists() -> void:
@@ -296,91 +294,51 @@ func cleanup_rooms() -> void:
 	room_edge_list.clear()
 	mst_edge_list.clear()
 
-func place_all_room_floor_tiles() -> void:
+func place_all_room_tiles() -> void:
 	for i in range(final_positions.size()):
-		place_room_floor_tiles(i)
+		place_room_tiles(i)
 
-func place_room_floor_tiles(idx: int) -> void:
+func place_room_tiles(idx: int) -> void:
 	var shape := final_shapes[idx] as RectangleShape2D
 	var room_pos := final_positions[idx]
 	var pos_offset := room_pos-shape.size/2
 	for i in range(0,shape.size.x,tileset.tile_size.x):
 		for j in range(0,shape.size.y,tileset.tile_size.y):
 			var pos := pos_offset+Vector2(i,j)
-			temp_floor_cord_set[tilemap.local_to_map(tilemap.to_local(pos))] = null
-			room_tile_set[tilemap.local_to_map(tilemap.to_local(pos))] = null
+			var placepos := tilemap.local_to_map(tilemap.to_local(pos))
+			var edge := i == 0 or j == 0 or i == shape.size.x-tileset.tile_size.x or j == shape.size.y-tileset.tile_size.y
+			temp_floor_cord_set[placepos] = null
+			room_tile_set[placepos] = null
+			if edge:
+				temp_wall_cord_set[placepos] = null
 
-func place_all_room_wall_tiles() -> void:
-	for i in range(final_positions.size()):
-		place_room_wall_tiles(i)
-
-func place_room_wall_tiles(idx: int) -> void:
-	var shape := final_shapes[idx] as RectangleShape2D
-	var room_pos := final_positions[idx]
-	var pos_offset := room_pos-shape.size/2
-	#edge
-	for i in range(0,shape.size.x,tileset.tile_size.x):
-		var pos := pos_offset+Vector2(i,0)
-		temp_wall_cord_set[tilemap.local_to_map(tilemap.to_local(pos))] = null
-		var pos2 := pos_offset+Vector2(i,shape.size.y-tileset.tile_size.y)
-		temp_wall_cord_set[tilemap.local_to_map(tilemap.to_local(pos2))] = null
-	for i in range(0,shape.size.y,tileset.tile_size.y):
-		var pos := pos_offset+Vector2(0,i)
-		temp_wall_cord_set[tilemap.local_to_map(tilemap.to_local(pos))] = null
-		var pos2 := pos_offset+Vector2(shape.size.x-tileset.tile_size.x,i)
-		temp_wall_cord_set[tilemap.local_to_map(tilemap.to_local(pos2))] = null
-
-func place_all_hallway_floor_tiles() -> void:
+func place_all_hallway_tiles() -> void:
 	for i in range(hallways_list.size()):
-		place_hallway_floor_tiles(i)
+		place_hallway_tiles(i)
 
-func place_hallway_floor_tiles(idx: int) -> void:
+func place_hallway_tiles(idx: int) -> void:
 	var hallway := hallways_list[idx]
 	var from := hallway.pos1
 	var fromtile := tilemap.local_to_map(tilemap.to_local(from))
 	var to := hallway.pos2
 	var totile := tilemap.local_to_map(tilemap.to_local(to))
 	var dir := Vector2i(from.direction_to(to))
-	var curr := fromtile
-	while curr != totile:
-		if not curr in room_tile_set:
-			var temp := curr
-			for __ in range(hallway_width):
-				temp_floor_cord_set[temp] = null
-				temp += Vector2i(dir.y,dir.x).abs()
-		if not curr - Vector2i(dir.y,dir.x).abs() in room_tile_set:
-			var temp := curr - Vector2i(dir.y,dir.x).abs()
-			for __ in range(hallway_width):
-				temp_floor_cord_set[temp] = null
-				temp -= Vector2i(dir.y,dir.x).abs()
-		curr += dir
-
-func place_all_hallway_wall_tiles() -> void:
-	for i in range(hallways_list.size()):
-		place_hallway_wall_tiles(i)
-
-func place_hallway_wall_tiles(idx: int) -> void:
-	var hallway := hallways_list[idx]
-	var from := hallway.pos1
-	var fromtile := tilemap.local_to_map(tilemap.to_local(from))
-	var to := hallway.pos2
-	var totile := tilemap.local_to_map(tilemap.to_local(to))
-	var dir := Vector2i(from.direction_to(to))
+	var sidedir := Vector2i(dir.y,dir.x).abs()
 	var curr := fromtile
 	while curr != totile:
 		var temp := curr
 		for __ in range(hallway_width):
 			wall_cord_set.erase(temp)
 			temp_floor_cord_set[temp] = null
-			temp += Vector2i(dir.y,dir.x).abs()
+			temp += sidedir
 		if not temp in room_tile_set:
 			temp_wall_cord_set[temp] = null
 			temp_floor_cord_set[temp] = null
-		temp = curr - Vector2i(dir.y,dir.x).abs()
+		temp = curr - sidedir
 		for __ in range(hallway_width):
 			wall_cord_set.erase(temp)
 			temp_floor_cord_set[temp] = null
-			temp -= Vector2i(dir.y,dir.x).abs()
+			temp -= sidedir
 		if not temp in room_tile_set:
 			temp_wall_cord_set[temp] = null
 			temp_floor_cord_set[temp] = null
