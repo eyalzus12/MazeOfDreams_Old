@@ -368,106 +368,22 @@ func place_hallway_wall_tiles(idx: int) -> void:
 	var dir := Vector2i(from.direction_to(to))
 	var curr := fromtile
 	while curr != totile:
-		if true:
-			var temp := curr
-			for __ in range(hallway_width):
-				wall_cord_set.erase(temp)
-				temp += Vector2i(dir.y,dir.x).abs()
-			if not temp in room_tile_set:
-				temp_wall_cord_set[temp] = null
-				temp_floor_cord_set[temp] = null
-		
-		if curr in backup_wall_cord_set:
-			var temp := curr
-			var stop := false
-			for __ in range(hallway_width):
-				var even_more_temp := temp in temp_floor_cord_set
-				temp_floor_cord_set[temp] = null
-				if not even_more_temp:
-					stop = false
-					wall_cord_set.erase(temp)
-					temp_wall_cord_set.erase(temp)
-				if stop and temp in backup_wall_cord_set: break
-				if not temp in backup_wall_cord_set: stop = true
-				temp += Vector2i(dir.y,dir.x).abs()
-			
-			var check := temp
-			if not (stop and temp in backup_wall_cord_set) and not check in backup_floor_cord_set:
-				if not check in temp_floor_cord_set:
-					temp_wall_cord_set[check] = null
-				temp_floor_cord_set[check] = null
-			elif (stop and temp in backup_wall_cord_set) and check in backup_floor_cord_set:
-				check = temp - Vector2i(dir.y,dir.x).abs() - dir
-				if not check in backup_floor_cord_set:
-					if not check in temp_floor_cord_set:
-						temp_wall_cord_set[check] = null
-					temp_floor_cord_set[check] = null
-				check = temp - Vector2i(dir.y,dir.x).abs() + dir
-				if not check in backup_floor_cord_set:
-					if not check in temp_floor_cord_set:
-						temp_wall_cord_set[check] = null
-					temp_floor_cord_set[check] = null
-			check = temp - dir
-			if not check in backup_floor_cord_set:
-				if not check in temp_floor_cord_set:
-					temp_wall_cord_set[check] = null
-				temp_floor_cord_set[check] = null
-			check = temp + dir
-			if not check in backup_floor_cord_set:
-				if not check in temp_floor_cord_set:
-					temp_wall_cord_set[check] = null
-				temp_floor_cord_set[check] = null
-		
-		if true:
-			var temp := curr - Vector2i(dir.y,dir.x).abs()
-			for __ in range(hallway_width):
-				wall_cord_set.erase(temp)
-				temp -= Vector2i(dir.y,dir.x).abs()
-			if not temp in room_tile_set:
-				temp_wall_cord_set[temp] = null
-				temp_floor_cord_set[temp] = null
-
-		if curr - Vector2i(dir.y,dir.x).abs() in backup_wall_cord_set:
-			var temp := curr - Vector2i(dir.y,dir.x).abs()
-			var stop := false
-			for __ in range(hallway_width):
-				var even_more_temp := temp in temp_floor_cord_set
-				temp_floor_cord_set[temp] = null
-				if not even_more_temp:
-					stop = false
-					wall_cord_set.erase(temp)
-					temp_wall_cord_set.erase(temp)
-				if stop and temp in backup_wall_cord_set: break
-				if not temp in backup_wall_cord_set: stop = true
-				temp -= Vector2i(dir.y,dir.x).abs()
-			
-			var check := temp
-			if not (stop and temp in backup_wall_cord_set) and not check in backup_floor_cord_set:
-				if not check in temp_floor_cord_set:
-					temp_wall_cord_set[check] = null
-				temp_floor_cord_set[check] = null
-			elif (stop and temp in backup_wall_cord_set) and check in backup_floor_cord_set:
-				check = temp + Vector2i(dir.y,dir.x).abs() - dir
-				if not check in backup_floor_cord_set:
-					if not check in temp_floor_cord_set:
-						temp_wall_cord_set[check] = null
-					temp_floor_cord_set[check] = null
-				check = temp + Vector2i(dir.y,dir.x).abs() + dir
-				if not check in backup_floor_cord_set:
-					if not check in temp_floor_cord_set:
-						temp_wall_cord_set[check] = null
-					temp_floor_cord_set[check] = null
-			check = temp - dir
-			if not check in backup_floor_cord_set:
-				if not check in temp_floor_cord_set:
-					temp_wall_cord_set[check] = null
-				temp_floor_cord_set[check] = null
-			check = temp + dir
-			if not check in backup_floor_cord_set:
-				if not check in temp_floor_cord_set:
-					temp_wall_cord_set[check] = null
-				temp_floor_cord_set[check] = null
-		
+		var temp := curr
+		for __ in range(hallway_width):
+			wall_cord_set.erase(temp)
+			temp_floor_cord_set[temp] = null
+			temp += Vector2i(dir.y,dir.x).abs()
+		if not temp in room_tile_set:
+			temp_wall_cord_set[temp] = null
+			temp_floor_cord_set[temp] = null
+		temp = curr - Vector2i(dir.y,dir.x).abs()
+		for __ in range(hallway_width):
+			wall_cord_set.erase(temp)
+			temp_floor_cord_set[temp] = null
+			temp -= Vector2i(dir.y,dir.x).abs()
+		if not temp in room_tile_set:
+			temp_wall_cord_set[temp] = null
+			temp_floor_cord_set[temp] = null
 		curr += dir
 
 func create_hallway_intersection_list() -> void:
