@@ -2,6 +2,8 @@ extends Node2D
 class_name MazeDreamer
 
 const ROOM_SHAPE := preload("res://Objects/Generation/RoomShape.tscn")
+const CHARACTER := preload("res://Objects/Entity/Character/Character.tscn")
+const DEBUG_DRAW := false
 
 @export var starting_room_shape: PackedScene = preload("res://Objects/Generation/RoomShape.tscn")
 @export var generated_room_amount: int = 100
@@ -118,31 +120,40 @@ func finish_spread() -> void:
 		room.global_position = room.global_position.snapped(tileset.tile_size)
 		room.freeze = true
 	big_room_list = filter_big_rooms()
-	draw_big_flag = true
-	queue_redraw()
-	await get_tree().process_frame
+	if DEBUG_DRAW:
+		draw_big_flag = true
+		queue_redraw()
+		await get_tree().process_frame
 	room_edge_list = get_room_edges()
-	draw_edges_flag = true
-	queue_redraw()
-	await get_tree().process_frame
+	if DEBUG_DRAW:
+		draw_edges_flag = true
+		queue_redraw()
+		await get_tree().process_frame
 	mst_edge_list = create_mst()
-	draw_mst_flag = true
-	queue_redraw()
-	await get_tree().process_frame
+	if DEBUG_DRAW:
+		draw_mst_flag = true
+		queue_redraw()
+		await get_tree().process_frame
 	hallways_list = create_hallways()
-	draw_hallways_flag = true
-	queue_redraw()
-	await get_tree().process_frame
+	if DEBUG_DRAW:
+		draw_hallways_flag = true
+		queue_redraw()
+		await get_tree().process_frame
 	final_room_list = create_intersected_room_list()
-	draw_final_flag = true
 	save_final_data()
+	if DEBUG_DRAW:
+		draw_final_flag = true
+		queue_redraw()
+		await get_tree().process_frame
 	cleanup_rooms()
-	use_final_shapes = true
-	queue_redraw()
-	await get_tree().process_frame
+	if DEBUG_DRAW:
+		use_final_shapes = true
+		queue_redraw()
+		await get_tree().process_frame
 	place_tiles()
-	queue_redraw()
-	await get_tree().process_frame
+	if DEBUG_DRAW:
+		queue_redraw()
+		await get_tree().process_frame
 
 func place_tiles() -> void:
 	create_room_tile_list()
@@ -150,7 +161,10 @@ func place_tiles() -> void:
 	create_hallway_tile_list()
 	place_tile_lists()
 	after_place_cleanup()
-	$Character.global_position = final_positions[0]
+	
+	var character := ObjectPool.load_object(CHARACTER)
+	character.global_position = final_positions[0]
+	add_child(character)
 
 func prepare_tile_list() -> void:
 	temp_floor_cord_set.clear()
@@ -229,10 +243,10 @@ func create_mst() -> Array[ConnectionEdge]:
 		var room2 = edge.room2
 		if dsu.union(room1,room2):
 			result.append(edge)
-#	for edge in room_edge_list:
-#		if not edge in result:
-#			if rand.chance(9):
-#				result.append(edge)
+	for edge in room_edge_list:
+		if not edge in result:
+			if rand.chance(9):
+				result.append(edge)
 	return result
 
 func create_hallways() -> Array[HallwaySegment]:
@@ -393,6 +407,7 @@ var draw_hallways_flag: bool = false
 var draw_final_flag: bool = false
 var use_final_shapes: bool = false
 func _draw() -> void:
+	if not DEBUG_DRAW: return
 	if finished_placing: return
 	for room in room_list:
 		if not use_final_shapes:

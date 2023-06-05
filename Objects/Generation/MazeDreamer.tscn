@@ -1,9 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://busmaoxwcq2th"]
+[gd_scene load_steps=7 format=3 uid="uid://busmaoxwcq2th"]
 
 [ext_resource type="Script" path="res://Objects/Generation/MazeDreamer.gd" id="1_uueyu"]
 [ext_resource type="Script" path="res://Testing/NavigationCamera.gd" id="2_mts36"]
 [ext_resource type="Texture2D" uid="uid://caqtl6mt5ollh" path="res://Assets/basic_template.png" id="3_lkfn3"]
-[ext_resource type="PackedScene" uid="uid://ced6li08ssu8o" path="res://Objects/Entity/Character/Character.tscn" id="4_sy1if"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_47bss"]
 vertices = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
@@ -516,5 +515,3 @@ layer_1/y_sort_enabled = false
 layer_1/y_sort_origin = 0
 layer_1/z_index = 0
 layer_1/tile_data = PackedInt32Array()
-
-[node name="Character" parent="." instance=ExtResource("4_sy1if")]
