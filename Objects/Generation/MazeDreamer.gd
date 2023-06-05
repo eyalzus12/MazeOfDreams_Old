@@ -19,6 +19,7 @@ const ROOM_SHAPE := preload("res://Objects/Generation/RoomShape.tscn")
 @onready var tilesetsource: TileSetSource = tileset.get_source(0)
 
 var finished: bool = false
+var finished_placing: bool = false
 var rand = Random.new()
 var room_list: Array[RoomShape] = []
 var big_room_list: Array[RoomShape] = []
@@ -75,6 +76,7 @@ func create_and_place_rooms() -> void:
 
 func init_spread() -> void:
 	finished = false
+	finished_placing = false
 	
 	draw_edges_flag = false
 	draw_big_flag = false
@@ -139,6 +141,8 @@ func finish_spread() -> void:
 	queue_redraw()
 	await get_tree().process_frame
 	place_tiles()
+	queue_redraw()
+	await get_tree().process_frame
 
 func place_tiles() -> void:
 	create_room_tile_list()
@@ -146,6 +150,7 @@ func place_tiles() -> void:
 	create_hallway_tile_list()
 	place_tile_lists()
 	after_place_cleanup()
+	$Character.global_position = final_positions[0]
 
 func prepare_tile_list() -> void:
 	temp_floor_cord_set.clear()
@@ -183,6 +188,7 @@ func after_place_cleanup() -> void:
 	temp_wall_cord_set.clear()
 	backup_floor_cord_set.clear()
 	backup_wall_cord_set.clear()
+	finished_placing = true
 
 func filter_big_rooms() -> Array[RoomShape]:
 	return room_list.filter(func(room): return room.get_room_size() >= big_room_start*4*tileset.tile_size.x*tileset.tile_size.y)
@@ -387,6 +393,7 @@ var draw_hallways_flag: bool = false
 var draw_final_flag: bool = false
 var use_final_shapes: bool = false
 func _draw() -> void:
+	if finished_placing: return
 	for room in room_list:
 		if not use_final_shapes:
 			if not is_instance_valid(room) or not room.is_inside_tree(): continue
