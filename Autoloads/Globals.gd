@@ -25,7 +25,7 @@ const PHYSICS_LAYERS: Dictionary = {
 }
 
 func _ready() -> void:
-	z_index = 100
+	z_index = RenderingServer.CANVAS_ITEM_Z_MAX
 
 var dragged_item: Item:
 	set(value):

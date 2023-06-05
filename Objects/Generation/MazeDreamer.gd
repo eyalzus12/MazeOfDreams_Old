@@ -337,7 +337,7 @@ func place_hallway_tiles(idx: int) -> void:
 			wall_cord_set.erase(temp)
 			temp_floor_cord_set[temp] = null
 			temp += sidedir
-		if not temp in room_tile_set:
+		if not temp in room_tile_set and not temp in temp_floor_cord_set:
 			temp_wall_cord_set[temp] = null
 			temp_floor_cord_set[temp] = null
 		temp = curr - sidedir
@@ -345,7 +345,7 @@ func place_hallway_tiles(idx: int) -> void:
 			wall_cord_set.erase(temp)
 			temp_floor_cord_set[temp] = null
 			temp -= sidedir
-		if not temp in room_tile_set:
+		if not temp in room_tile_set and not temp in temp_floor_cord_set:
 			temp_wall_cord_set[temp] = null
 			temp_floor_cord_set[temp] = null
 		curr += dir
