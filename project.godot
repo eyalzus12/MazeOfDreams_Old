@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Maze Of Dreams"
-run/main_scene="res://Scenes/Testing/EnemyTests.tscn"
+run/main_scene="res://Objects/Generation/MazeDreamer.tscn"
 config/features=PackedStringArray("4.0", "C#")
 boot_splash/image="res://Assets/cum.png"
 config/icon="res://Assets/cum.png"
@@ -26,6 +26,8 @@ ObjectPool="*res://Autoloads/ObjectPool.gd"
 [debug]
 
 gdscript/warnings/integer_division=0
+gdscript/warnings/assert_always_true=0
+gdscript/warnings/assert_always_false=0
 gdscript/warnings/confusable_identifier=0
 shapes/collision/shape_color=Color(1, 1, 1, 0.419608)
 

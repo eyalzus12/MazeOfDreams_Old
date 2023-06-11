@@ -30,8 +30,12 @@ func random_point_in_ring(r_min: float, r_max: float) -> Vector2:
 	#convert to cart
 	return r_random * Vector2.from_angle(θ_random)
 
-func chance(of: int) -> bool:
-	return randi_range(0,of-1) == 0
+func random_point_between_Vector2i(from: Vector2i, to: Vector2i) -> Vector2i:
+	return Vector2i(randi_range(from.x,to.x),randi_range(from.y,to.y))
 
-func chance_times(times: int, of: int) -> bool:
-	return randi_range(0,of-1) < times
+#TODO: figure out how to not have to reroll
+func chance(of: float) -> bool:
+	var roll := 1.
+	while roll == 1.:
+		roll = randf_range(0,1)
+	return roll < of
