@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Maze Of Dreams"
-run/main_scene="res://Scenes/Testing/EnemyTests.tscn"
+run/main_scene="res://Objects/Generation/MazeDreamer.tscn"
 config/features=PackedStringArray("4.0", "C#")
 boot_splash/image="res://Assets/cum.png"
 config/icon="res://Assets/cum.png"
@@ -19,14 +19,16 @@ config/icon="res://Assets/cum.png"
 [autoload]
 
 UiLayer="*res://Autoloads/UILayer.tscn"
-InputDebugger="*res://Autoloads/InputDebugger.cs"
-Randomizer="*res://Autoloads/Randomizer.cs"
 Globals="*res://Autoloads/Globals.gd"
 EventBus="*res://Autoloads/EventBus.gd"
 ObjectPool="*res://Autoloads/ObjectPool.gd"
 
 [debug]
 
+gdscript/warnings/integer_division=0
+gdscript/warnings/assert_always_true=0
+gdscript/warnings/assert_always_false=0
+gdscript/warnings/confusable_identifier=0
 shapes/collision/shape_color=Color(1, 1, 1, 0.419608)
 
 [display]
@@ -125,6 +127,16 @@ close_game={
 toggle_god={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":47,"key_label":0,"unicode":47,"echo":false,"script":null)
+]
+}
+ui_zoom_in={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":61,"key_label":0,"unicode":61,"echo":false,"script":null)
+]
+}
+ui_zoom_out={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":45,"key_label":0,"unicode":45,"echo":false,"script":null)
 ]
 }
 

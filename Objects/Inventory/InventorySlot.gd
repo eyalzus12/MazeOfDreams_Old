@@ -3,14 +3,28 @@ class_name InventorySlot
 
 signal item_change(slot: InventorySlot, from: Item, to: Item)
 
+var agressive_update_icon: bool = false
+
 @export var allow_category: Array[String] = []
 @export var block_category: Array[String] = []
 
 @export var is_locked: bool = false
 
-@export var inventory: Inventory
-@export var i: int
-@export var j: int
+@export var inventory: Inventory:
+	set(value):
+		inventory = value
+		if agressive_update_icon:
+			update_icon()
+@export var i: int:
+	set(value):
+		i = value
+		if agressive_update_icon:
+			update_icon()
+@export var j: int:
+	set(value):
+		j = value
+		if agressive_update_icon:
+			update_icon()
 
 var slot_owner: Node2D
 
@@ -18,10 +32,16 @@ var contained_item: Item:
 	set(value):
 		item_change.emit(self, contained_item, value)
 		inventory.set_at(i,j,value)
+		update_icon()
 	get:
+		if not is_instance_valid(inventory):
+			return null
 		return inventory.get_at(i,j)
 
-func _process(_delta: float) -> void:
+func _ready() -> void:
+	update_icon()
+
+func update_icon() -> void:
 	if is_instance_valid(contained_item):
 		icon = contained_item.texture
 	else:

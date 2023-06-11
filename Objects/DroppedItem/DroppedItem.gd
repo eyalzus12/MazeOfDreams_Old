@@ -33,7 +33,7 @@ const DISAPPEAR_TIME := 0.3
 const DISAPPEAR_DELAY := 0.5
 
 func pool_setup() -> void:
-	label_offset = Vector2(NAN,NAN)
+	#label_offset = Vector2(NAN,NAN)
 	
 	if appear_tween: appear_tween.kill()
 	appear_tween = null
@@ -44,6 +44,8 @@ func pool_setup() -> void:
 	if info_label:
 		info_label.text = ""
 		info_label.size = Vector2.ZERO
+		info_label.position = Vector2.ZERO
+	if info_label_base:
 		info_label_base.modulate = Color(1,1,1,0)
 
 func _ready() -> void:

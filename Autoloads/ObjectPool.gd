@@ -65,7 +65,7 @@ func return_object(pooled_object: Node) -> void:
 				pooled_object,
 				" to pool, but it has no origin_object metadata to indicate where to put it.",
 				" additionally, its scene_file_path is empty or invalid.",
-				" this could be caused by the object not being created at the pool.",
+				" this could be caused by the object not being created from a scene or at the pool.",
 				" it will simply be disposed."
 				)
 			pooled_object.queue_free()

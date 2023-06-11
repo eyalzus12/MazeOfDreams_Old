@@ -21,6 +21,8 @@ func _ready() -> void:
 	slot.inventory = inventory
 	slot.i = i
 	slot.j = j
+	slot.agressive_update_icon = true
+	slot.update_icon()
 	
 	#for some reason simply connecting to item_change.emit doesn't work. so this is needed.
 	slot.item_change.connect(_item_change)

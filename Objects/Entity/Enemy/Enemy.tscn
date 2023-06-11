@@ -162,7 +162,7 @@ _data = {
 }
 
 [sub_resource type="CircleShape2D" id="2"]
-radius = 1192.43
+radius = 792.162
 
 [node name="Enemy" type="CharacterBody2D" groups=["enemies"]]
 collision_layer = 4
@@ -237,11 +237,16 @@ shape = SubResource("2")
 
 [node name="PathfindingTimer" type="Timer" parent="."]
 process_callback = 0
-wait_time = 0.05
+wait_time = 0.5
 autostart = true
 
 [node name="StateMachine" type="Node" parent="."]
 script = ExtResource("5_jqrv3")
+
+[node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="."]
+visible = false
+position = Vector2(0.000106812, -7.62939e-05)
+scale = Vector2(80.8, 80.8)
 
 [connection signal="area_entered" from="Hitbox" to="StateMachine" method="_on_EnemyHitbox_area_entered"]
 [connection signal="area_entered" from="Hurtbox" to="StateMachine" method="_on_EnemyHurtbox_area_entered"]

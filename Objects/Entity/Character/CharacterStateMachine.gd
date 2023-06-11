@@ -7,6 +7,8 @@ const DAMAGE_POPUP := preload("res://Objects/UI/DamagePopup/DamagePopup.tscn")
 var character: Character
 @onready var hurtbox: Hurtbox = $"../Hurtbox"
 
+var dash_vector: Vector2
+
 func _init():
 	_add_state("idle")
 	_add_state("move")
@@ -35,16 +37,7 @@ func _state_logic(_delta: float) -> void:
 	#turnaround
 	if not state in [states.hurt] and (not is_instance_valid(character.weapon) or not character.weapon.is_attacking):
 		character.set_direction()
-
-	if state in [states.idle, states.move]:
-		character.move_and_slide()
-		if character.is_on_wall():
-			var col = character.get_slide_collision(0)
-			var grazing = is_zero_approx(col.get_normal().dot(character.velocity))
-			if character.in_dash and not grazing:
-				character.velocity = character.velocity.bounce(col.get_normal())
-				character.velocity *= character.dash_bounce_mult
-
+	
 	match state:
 		states.idle:
 			character.velocity = character.velocity.move_toward( \
@@ -56,12 +49,24 @@ func _state_logic(_delta: float) -> void:
 		states.dash:
 			var dashAcceleration: float = character.dash_speed/ceil(character.dash_startup)
 			character.velocity = character.velocity.move_toward( \
-				character.dash_speed*character.velocity_vector, \
+				character.dash_speed*dash_vector, \
 				dashAcceleration)
+			character.velocity = character.velocity.move_toward( \
+				character.speed*character.velocity_vector, \
+				character.acceleration)
 			character.move_and_slide()
 		states.hurt:
 			character.move_and_slide()
 			character.velocity = character.velocity.move_toward(Vector2.ZERO, character.stun_friction)
+	
+	if state in [states.idle, states.move]:
+		character.move_and_slide()
+		if character.is_on_wall():
+			var col = character.get_slide_collision(0)
+			var grazing = is_zero_approx(col.get_normal().dot(character.velocity))
+			if character.in_dash and not grazing:
+				character.velocity = character.velocity.bounce(col.get_normal())
+				character.velocity *= character.dash_bounce_mult
 
 func _get_transition() -> int:
 	match state:
@@ -71,7 +76,7 @@ func _get_transition() -> int:
 		states.move:
 			if !character.dash_in_cooldown and Input.is_action_just_pressed("player_dash"):
 				return states.dash
-			if character.input_vector == Vector2.ZERO:
+			elif character.input_vector == Vector2.ZERO:
 				return states.idle
 		states.dash:
 			if state_frame > ceil(character.dash_startup):
@@ -83,7 +88,6 @@ func _exit_state(_state_exited: int) -> void:
 		states.dash:
 			character.dash_in_cooldown = true;
 			character.dash_cooldown_timer.start()
-			character.in_dash = true
 			character.in_dash_timer.start()
 		states.hurt:
 			sprite_effects_player.play(&"RESET")
@@ -92,6 +96,9 @@ func _exit_state(_state_exited: int) -> void:
 
 func _enter_state(_prev_state: int, _state: int) -> void:
 	match _state:
+		states.dash:
+			character.in_dash = true
+			dash_vector = character.velocity_vector
 		states.hurt:
 			sprite_effects_player.play(&"hurt")
 			animation_player.play(&"hurt")
