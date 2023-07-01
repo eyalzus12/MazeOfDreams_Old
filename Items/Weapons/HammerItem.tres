@@ -10,6 +10,7 @@ script = ExtResource("2_e0p2y")
 scene = ExtResource("1_jojds")
 item_name = "Hammer"
 item_category = "Weapon"
+item_stack = 1
 texture = ExtResource("3_7j46n")
 extra_info = {}
 meta_info = {}

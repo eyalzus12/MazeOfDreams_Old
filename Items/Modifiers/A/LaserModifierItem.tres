@@ -9,6 +9,7 @@ script = ExtResource("1_hki2d")
 scene = ExtResource("1_x38rq")
 item_name = "Laser Modifier"
 item_category = "A"
+item_stack = 1
 texture = ExtResource("3_68i4k")
 extra_info = {}
 meta_info = {}

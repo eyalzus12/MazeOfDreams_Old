@@ -107,8 +107,9 @@ func on_input(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
 		var inventory_item: InventoryItem = InventoryItem.new()
 		inventory_item.item = item
 		inventory_item.count = 1
-		var inserted: bool = inventory.try_insert(inventory_item)
-		if inserted:
+		var inserted: InventoryItem = inventory.try_insert(inventory_item)
+		# managed to insert everything
+		if not inserted:
 			ObjectPool.return_object(self)
 			return
 

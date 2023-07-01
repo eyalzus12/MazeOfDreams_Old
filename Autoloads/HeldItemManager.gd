@@ -16,16 +16,23 @@ var dragged_item: InventoryItem:
 		if not is_inside_tree():
 			await ready
 		dragged_item = value
+		if value == null:
+			reset_item()
 		queue_redraw()
 var dragged_item_inventory: Inventory
 var dragged_item_slot: InventorySlot
 var dragged_item_owner: Node2D
 
 func reset_item() -> void:
-	dragged_item = null
-	dragged_item_inventory = null
-	dragged_item_slot = null
-	dragged_item_owner = null
+	# the ifs here prevent an infinite loop from reset_item calls inside set functions
+	if dragged_item:
+		dragged_item = null
+	if dragged_item_inventory:
+		dragged_item_inventory = null
+	if dragged_item_slot:
+		dragged_item_slot = null
+	if dragged_item_owner:
+		dragged_item_owner = null
 
 var drop_input_handled: bool = false
 
@@ -54,9 +61,9 @@ func return_dragged_item() -> void:
 	for inventory_ in inventories:
 		var inventory: Inventory = inventory_
 		if not inventory.pickup_target: continue
-		var inserted: bool = inventory.try_insert(dragged_item)
-		if inserted:
-			reset_item()
+		var item_left: InventoryItem = inventory.try_insert(dragged_item)
+		dragged_item = item_left
+		if not item_left:
 			return
 	#if we got here, the item couldn't find an inventory to get dropped to
 	#so we drop it on the ground

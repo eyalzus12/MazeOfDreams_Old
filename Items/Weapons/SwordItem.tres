@@ -9,6 +9,7 @@ script = ExtResource("1_1gjfo")
 scene = ExtResource("1_uv2de")
 item_name = "Sword"
 item_category = "Weapon"
+item_stack = 1
 texture = ExtResource("3_5uy3b")
 extra_info = {}
 meta_info = {}

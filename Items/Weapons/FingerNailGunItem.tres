@@ -10,6 +10,7 @@ script = ExtResource("1_lcogc")
 scene = ExtResource("1_50qoa")
 item_name = "Finger Nail Gun"
 item_category = "Weapon"
+item_stack = 1
 texture = ExtResource("3_rlm7s")
 extra_info = {}
 meta_info = {}

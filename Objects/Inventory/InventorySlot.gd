@@ -61,12 +61,8 @@ func _pressed() -> void:
 			if contained_item:
 				#same as current item. add
 				if HeldItemManager.dragged_item.item == contained_item.item:
-					var can_add: int = max_count - contained_item.count
-					var will_add: int = min(can_add, HeldItemManager.dragged_item.count)
-					contained_item.count += will_add
-					HeldItemManager.dragged_item.count -= will_add
-					if HeldItemManager.dragged_item.count == 0: 
-						HeldItemManager.reset_item()
+					var item_left := insert_item(HeldItemManager.dragged_item)
+					HeldItemManager.dragged_item = item_left
 				#not same. try swap.
 				elif can_remove_item() and HeldItemManager.dragged_item.count <= max_count:
 					#swap items
@@ -96,13 +92,24 @@ func has_place_for_item(item: InventoryItem) -> bool:
 		return true
 	if item.item != contained_item.item:
 		return false
-	return (contained_item.count + item.count) <= max_count
+	var max_item_count: int = min(max_count, contained_item.item.item_stack)
+	return contained_item.count < max_item_count
 
-func insert_item(item: InventoryItem) -> void:
+func insert_item(item: InventoryItem) -> InventoryItem:
 	if item and contained_item and item.item == contained_item.item:
-		contained_item.count += item.count
+		var max_item_count: int = min(max_count, contained_item.item.item_stack)
+		var can_add: int = max_item_count - contained_item.count
+		var will_add: int = min(can_add, item.count)
+		contained_item.count += will_add
+		item.count -= will_add
+		if item.count == 0:
+			return null
+		else:
+			return item
 	else:
+		var result := contained_item
 		contained_item = item
+		return result
 
 func can_remove_item() -> bool:
 	return not is_locked

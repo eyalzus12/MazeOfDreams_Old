@@ -9,6 +9,7 @@ script = ExtResource("1_udyex")
 scene = ExtResource("1_06bcj")
 item_name = "Flame Thrower"
 item_category = "Weapon"
+item_stack = 1
 texture = ExtResource("3_v4jxq")
 extra_info = {
 "fire_damage": 10.0,

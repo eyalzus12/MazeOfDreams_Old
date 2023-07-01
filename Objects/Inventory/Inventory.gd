@@ -65,8 +65,9 @@ func _close() -> void:
 	if HeldItemManager.dragged_item_inventory == self:
 		#original slot has an item. find available slot.
 		if HeldItemManager.dragged_item_slot.contained_item:
-			var has_space := try_insert(HeldItemManager.dragged_item)
-			if not has_space:
+			var item_left := try_insert(HeldItemManager.dragged_item)
+			HeldItemManager.dragged_item = item_left
+			if item_left:
 				HeldItemManager.drop_item(HeldItemManager.dragged_item, global_position)
 		#can safetly put in origin slot.
 		else:
@@ -78,9 +79,6 @@ func return_dragged_item() -> void:
 	if HeldItemManager.dragged_item_inventory == self:
 		HeldItemManager.return_dragged_item()
 
-#TODO: this doesn't properly allow to insert items with a count,
-#since a slot can reject if there's too many.
-#need to add logic of filling up slots and moving on.
 func find_insert_location(item: InventoryItem) -> InventorySlot:
 	for slot in slots:
 		if slot.has_place_for_item(item) and slot.can_hold_item(item):
@@ -90,11 +88,13 @@ func find_insert_location(item: InventoryItem) -> InventorySlot:
 func has_insert_location(item: InventoryItem) -> bool:
 	return find_insert_location(item) != null
 
-func try_insert(item: InventoryItem) -> bool:
-	var slot: InventorySlot = find_insert_location(item)
-	if not is_instance_valid(slot): return false
-	slot.insert_item(item)
-	return true
+func try_insert(item: InventoryItem) -> InventoryItem:
+	for slot in slots:
+		if slot.has_place_for_item(item) and slot.can_hold_item(item):
+			item = slot.insert_item(item)
+			if not item:
+				break
+	return item
 
 func get_at(i: int, j: int) -> InventoryItem:
 	return inventory.get_at(i,j)
