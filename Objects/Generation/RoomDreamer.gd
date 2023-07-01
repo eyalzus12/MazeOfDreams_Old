@@ -7,7 +7,7 @@ const DEBUG_DRAW := true
 signal room_dreaming_finished(positions: Array[Vector2], shapes: Array[Shape2D])
 
 @export var starting_room_shape: PackedScene = preload("res://Objects/Generation/RoomShape.tscn")
-@export var generated_room_amount: int = 50
+@export var generated_room_amount: int = 100
 @export var min_room_size: int = 6
 @export var max_room_size: int = 18
 @export var big_room_start: int = 216
@@ -246,7 +246,7 @@ func create_mst() -> Array[ConnectionEdge]:
 			result.append(edge)
 	for edge in room_edge_list:
 		if not edge in result:
-			if rand.chance(.9):
+			if rand.chance(.1):
 				result.append(edge)
 	return result
 

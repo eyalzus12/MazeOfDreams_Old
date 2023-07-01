@@ -60,12 +60,37 @@ func _state_logic(_delta: float) -> void:
 			character.velocity = character.velocity.move_toward(Vector2.ZERO, character.stun_friction)
 	
 	if state in [states.idle, states.move]:
+		var original_velocity := character.velocity
 		character.move_and_slide()
-		if character.is_on_wall():
-			var col = character.get_slide_collision(0)
-			var grazing = is_zero_approx(col.get_normal().dot(character.velocity))
-			if character.in_dash and not grazing:
-				character.velocity = character.velocity.bounce(col.get_normal())
+		#when moving alongside a wall, is_on_wall() reports false
+		#so we need a raycast to testify
+		
+		if character.in_dash:
+			var should_slide := character.is_on_wall()
+			if not should_slide:
+				#create a shape query
+				var shape_params := PhysicsShapeQueryParameters2D.new()
+				shape_params.collision_mask = character.collision_mask
+				shape_params.shape = character.collision.shape
+				shape_params.transform = character.global_transform
+				#go over motions to check
+				var test_vec := original_velocity.orthogonal().normalized() * 0.1
+				var space_state := character.get_world_2d().direct_space_state
+				for test_motion in [-test_vec, test_vec]:
+					#check if there's an intersection and if so, set should_slide to true
+					shape_params.motion = test_motion
+					var intersection := space_state.intersect_shape(shape_params, 1)
+					if not intersection.is_empty():
+						should_slide = true
+						break
+			#slide
+			if should_slide:
+				character.in_dash = false
+				var velocity_length := character.velocity.length()
+				if character.get_slide_collision_count() > 0:
+					var col := character.get_slide_collision(0)
+					var normal := col.get_normal()
+					character.velocity = character.velocity.slide(normal).normalized() * velocity_length
 				character.velocity *= character.dash_bounce_mult
 
 func _get_transition() -> int:

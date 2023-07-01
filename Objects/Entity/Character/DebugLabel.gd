@@ -19,6 +19,7 @@ func update_text(ch: Character) -> void:
 		" in dash: ", ch.in_dash,\
 		"\n",\
 		"velocity: ", ch.velocity,\
+		" velocity speed: ", roundf(ch.velocity.length()),\
 		" position: ", ch.position,\
 		"\n",\
 		"on wall: ", ch.is_on_wall(),\

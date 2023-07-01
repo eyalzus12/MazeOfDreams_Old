@@ -3,8 +3,8 @@ class_name MazeDreamer
 
 const CHARACTER := preload("res://Objects/Entity/Character/Character.tscn")
 
-@onready var room_dreamer: Node2D = $RoomDreamer
-@onready var room_decorator: Node2D = $RoomDecorator
+@onready var room_dreamer: RoomDreamer = $RoomDreamer
+@onready var room_decorator: RoomDecorator = $RoomDecorator
 
 var positions: Array[Vector2]
 var shapes: Array[Shape2D]

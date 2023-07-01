@@ -234,9 +234,9 @@ offset_left = 600.0
 offset_top = 208.0
 offset_right = -16.0
 offset_bottom = -88.0
-max_count = 1000
 r = 10
 c = 10
+max_count = 1000
 inventory = SubResource("Resource_xpdph")
 pickup_target = true
 
@@ -248,30 +248,30 @@ offset_bottom = 224.0
 [node name="EquipWeapon" parent="UILayer/EquipSlots" instance=ExtResource("5_62rkv")]
 layout_mode = 2
 tooltip_text = "Weapons"
-allow_category = Array[String](["Weapon"])
-max_count = 1
 r = 1
 c = 1
+allow_category = Array[String](["Weapon"])
+max_count = 1
 inventory = SubResource("Resource_i0fmo")
 pickup_target = null
 
 [node name="EquipA" parent="UILayer/EquipSlots" instance=ExtResource("5_62rkv")]
 layout_mode = 2
 tooltip_text = "A Modifiers"
-allow_category = Array[String](["A"])
-max_count = 1
 r = 1
 c = 1
+allow_category = Array[String](["A"])
+max_count = 1
 inventory = SubResource("Resource_mfmkk")
 pickup_target = null
 
 [node name="EquipB" parent="UILayer/EquipSlots" instance=ExtResource("5_62rkv")]
 layout_mode = 2
 tooltip_text = "A Modifiers"
-allow_category = Array[String](["B"])
-max_count = 1
 r = 1
 c = 1
+allow_category = Array[String](["B"])
+max_count = 1
 inventory = SubResource("Resource_lba8p")
 pickup_target = null
 

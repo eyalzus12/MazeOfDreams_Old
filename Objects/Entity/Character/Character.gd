@@ -10,6 +10,8 @@ signal attack_hit(who: Area2D)
 @onready var iframes_timer: Timer = $InvincibilityTimer
 
 @onready var hurtbox: Hurtbox = $Hurtbox
+@onready var collision: CollisionShape2D = $Collision
+
 @onready var sprite: Sprite2D = $Sprite
 @onready var debug_label: Label = $UILayer/DebugLabel
 @onready var health_bar: TextureProgressBar = $UILayer/HealthBar
@@ -34,7 +36,7 @@ var current_state: String:
 @export var acceleration: float = 50
 @export var dash_startup: float = 2
 @export var dash_speed: float = 1000
-@export var dash_bounce_mult: float = 1.3
+@export var dash_bounce_mult: float = 1.4
 
 var weapon_slot: InventorySlot
 
