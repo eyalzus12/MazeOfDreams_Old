@@ -107,9 +107,8 @@ func insert_item(item: InventoryItem) -> InventoryItem:
 		else:
 			return item
 	else:
-		var result := contained_item
 		contained_item = item
-		return result
+		return null
 
 func can_remove_item() -> bool:
 	return not is_locked

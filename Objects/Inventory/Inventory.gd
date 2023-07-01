@@ -89,11 +89,18 @@ func has_insert_location(item: InventoryItem) -> bool:
 	return find_insert_location(item) != null
 
 func try_insert(item: InventoryItem) -> InventoryItem:
+	#first try to group stuff together, so ignore empty slots
 	for slot in slots:
-		if slot.has_place_for_item(item) and slot.can_hold_item(item):
+		if slot.contained_item and slot.has_place_for_item(item) and slot.can_hold_item(item):
 			item = slot.insert_item(item)
 			if not item:
-				break
+				return null
+	#now we check for empty slots
+	for slot in slots:
+		if not slot.contained_item and slot.can_hold_item(item):
+			item = slot.insert_item(item)
+			if not item:
+				return null
 	return item
 
 func get_at(i: int, j: int) -> InventoryItem:
