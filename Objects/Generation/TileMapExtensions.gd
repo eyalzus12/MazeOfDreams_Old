@@ -28,7 +28,7 @@ func get_layer_by_name(layer_name: String) -> int:
 		if layer_name == get_layer_name(i):
 			layer_name_cache[layer_name] = i
 			return i
-	push_error("could not find layer name ",layer_name," in tilemap ",self)
+	Logger.error(str("could not find layer name ",layer_name," in tilemap ",self))
 	return -1
 
 func cache_all_sources() -> void:
@@ -45,7 +45,7 @@ func get_source_by_name(source_name: String) -> int:
 		if source_name == tile_set.get_source(id).resource_name:
 			source_name_cache[source_name] = id
 			return id
-	push_error("could not find source name ",source_name," in tilemap ",self)
+	Logger.error(str("could not find source name ",source_name," in tilemap ",self))
 	return -1
 
 #func cache_scene_tiles_for_all_sources() -> void:

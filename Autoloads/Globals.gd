@@ -27,10 +27,16 @@ var old_window_mode: DisplayServer.WindowMode
 
 var god: bool = false
 
+func _ready() -> void:
+	Logger.error("test error")
+	Logger.warn("test warning")
+	Logger.info("test info")
+	Logger.debug("test debug")
+
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed(&"toggle_god"):
 		god = not god
-		print("god" if god else "not god")
+		Logger.info("god" if god else "not god")
 	if Input.is_action_just_pressed(&"close_game"):
 		game_closed.emit()
 		get_tree().quit()

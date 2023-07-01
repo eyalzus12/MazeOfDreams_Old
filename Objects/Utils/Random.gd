@@ -13,8 +13,8 @@ func seed_random() -> void:
 func seed_with(x) -> void:
 	given_seed = x
 	seed = hash(x)
-	print("given seed: ", given_seed)
-	print("hashed seed: ", seed)
+	Logger.info(str("given seed: ", given_seed))
+	Logger.info(str("hashed seed: ", seed))
 
 func random_point_in_circle(r: float) -> Vector2:
 	#random polar

@@ -61,14 +61,14 @@ func return_object(pooled_object: Node) -> void:
 		var possible_origin = pooled_object.scene_file_path
 		#no info, or bad path
 		if possible_origin == "" or not ResourceLoader.exists(possible_origin):
-			push_warning(
+			Logger.warn(str(
 				"trying to return ",
 				pooled_object,
 				" to pool, but it has no origin_object metadata to indicate where to put it.",
 				" additionally, its scene_file_path is empty or invalid.",
 				" this could be caused by the object not being created from a scene or at the pool.",
 				" it will simply be disposed."
-				)
+				))
 			pooled_object.queue_free()
 			return
 		#found origin. set metadata.
@@ -134,12 +134,12 @@ func _exit_tree() -> void:
 	full_clean_pool()
 
 func print_pool_counters() -> void:
-	print("how many times each scene needed a pool fillup:")
+	Logger.info("how many times each scene needed a pool fillup:")
 	for scene in pool_fill_counter.keys():
-		print(pool_fill_counter[scene], " - ", scene.resource_path)
-	print("how many times new instances were created:")
+		Logger.info(str(pool_fill_counter[scene], " - ", scene.resource_path))
+	Logger.info("how many times new instances were created:")
 	for scene in pool_load_counter.keys():
-		print(pool_load_counter[scene], " - ", scene.resource_path)
+		Logger.info(str(pool_load_counter[scene], " - ", scene.resource_path))
 
 func full_clean_pool() -> void:
 	for object in pool.keys():

@@ -101,8 +101,9 @@ func init_spread() -> void:
 	Engine.physics_jitter_fix = 0
 
 func spread_timeout() -> void:
+	check_spread_finish()
 	if finished: return
-	push_error("spreading took too long. report seed ",rand.given_seed," to cheese")
+	Logger.error(str("spreading took too long. report seed ",rand.given_seed," to cheese"))
 	finish_spread()
 
 func check_spread_finish() -> void:
@@ -212,7 +213,7 @@ func get_room_edges() -> Array[ConnectionEdge]:
 	var posarr := PackedVector2Array(big_room_list.map(func(room): return room.global_position))
 	var triangulation := Geometry2D.triangulate_delaunay(posarr)
 	if(triangulation.is_empty()):
-		push_error("room triangulation failed. report seed ",rand.given_seed," to cheese")
+		Logger.error(str("room triangulation failed. report seed ",rand.given_seed," to cheese"))
 		return []
 	var result: Array[ConnectionEdge] = []
 	for i in range(triangulation.size()/3):
