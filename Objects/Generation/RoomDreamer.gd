@@ -56,7 +56,6 @@ var floor_cord_set: Dictionary = {}
 var room_tile_set: Dictionary = {}
 
 var check_timer: Timer
-var timeout_timer: Timer
 
 func create_random_room() -> RoomShape:
 	var room_shape: RoomShape = ObjectPool.load_object(ROOM_SHAPE)
@@ -94,14 +93,15 @@ func init_spread() -> void:
 	draw_final_flag = false
 	use_final_shapes = false
 	create_and_place_rooms()
-	timeout_timer = Globals.add_temp_timer(self, max_spread_wait)
-	timeout_timer.timeout.connect(spread_timeout)
+	Globals.temp_signal(max_spread_wait).connect(spread_timeout)
 	check_timer = Globals.add_loop_timer(self, spread_finish_check_interval)
 	check_timer.timeout.connect(check_spread_finish)
 	Engine.physics_ticks_per_second = 300
 	Engine.max_physics_steps_per_frame = 60
+	Engine.physics_jitter_fix = 0
 
 func spread_timeout() -> void:
+	if finished: return
 	push_error("spreading took too long. report seed ",rand.given_seed," to cheese")
 	finish_spread()
 
@@ -121,7 +121,7 @@ func check_spread_finish() -> void:
 func finish_spread() -> void:
 	Engine.physics_ticks_per_second = 60
 	Engine.max_physics_steps_per_frame = 8
-	timeout_timer.queue_free()
+	Engine.physics_jitter_fix = 0.5
 	check_timer.queue_free()
 	for room in room_list:
 		room.global_position = room.global_position.snapped(tileset.tile_size)
@@ -299,6 +299,7 @@ func create_intersected_room_list() -> Array[RoomShape]:
 			for hallway in hallways_list:
 				if check_hallway_intersection(room, hallway):
 					result.append(room)
+					break
 	return result
 
 func save_final_data() -> void:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=3 uid="uid://ced6li08ssu8o"]
+[gd_scene load_steps=38 format=3 uid="uid://ced6li08ssu8o"]
 
 [ext_resource type="Script" path="res://Objects/Entity/Character/Character.gd" id="1_70khu"]
 [ext_resource type="Texture2D" uid="uid://co1xdjjcr7nwm" path="res://Assets/jessesans.jpg" id="2_ufpbp"]
@@ -6,73 +6,70 @@
 [ext_resource type="Theme" uid="uid://beyjrh481pkj4" path="res://LabelBackgroundTheme.tres" id="4_r3t6d"]
 [ext_resource type="PackedScene" uid="uid://b0vxsub54aedm" path="res://Objects/UI/InventoryGrid/InventoryGrid.tscn" id="5_62rkv"]
 [ext_resource type="Script" path="res://Objects/Entity/Character/DebugLabel.gd" id="5_djjja"]
-[ext_resource type="PackedScene" uid="uid://dk8tierjbr0k8" path="res://Objects/HeldItem/Weapon/Sword/Sword.tscn" id="6_6nb2p"]
-[ext_resource type="Script" path="res://Objects/Item/WeaponItem.gd" id="7_g5flv"]
+[ext_resource type="Resource" uid="uid://4c51nw2gssmx" path="res://Items/Weapons/SwordItem.tres" id="6_a4tjb"]
+[ext_resource type="Script" path="res://Objects/Item/InventoryItem.gd" id="7_t2c4r"]
 [ext_resource type="PackedScene" uid="uid://bku7s3gdgpwmb" path="res://Objects/Hurtbox/Hurtbox.tscn" id="7_yp4o6"]
-[ext_resource type="Texture2D" uid="uid://c1agvd7wnmrgw" path="res://icon.png" id="8_ntgt4"]
+[ext_resource type="Resource" uid="uid://3mm8fpyercst" path="res://Items/Weapons/HammerItem.tres" id="8_fy6fk"]
 [ext_resource type="Script" path="res://Objects/Entity/Character/CharacterStateMachine.gd" id="9_4emhb"]
-[ext_resource type="PackedScene" uid="uid://b5fn6kgg5x0jp" path="res://Objects/HeldItem/Weapon/Hammer/Hammer.tscn" id="9_m2sv4"]
-[ext_resource type="PackedScene" uid="uid://coehm3od7x5u6" path="res://Objects/Modifier/ItemModifier/LaserModifier/LaserModifier.tscn" id="11_tng68"]
+[ext_resource type="Resource" uid="uid://cm4v1gwl3h3nx" path="res://Items/Weapons/FingerNailGunItem.tres" id="9_wcfhn"]
+[ext_resource type="Resource" uid="uid://broxhyhw27lkl" path="res://Items/Modifiers/A/LaserModifierItem.tres" id="10_svs45"]
+[ext_resource type="Resource" uid="uid://s4hp7gy16ppf" path="res://Items/Weapons/FlameThrowerItem.tres" id="11_137f4"]
 [ext_resource type="Script" path="res://Objects/Inventory/InventoryResource.gd" id="11_xjos7"]
-[ext_resource type="Script" path="res://Objects/Item/ModifierItem.gd" id="12_by6am"]
-[ext_resource type="Texture2D" uid="uid://dtd0taqqw30b2" path="res://Assets/d.png" id="13_wnveg"]
-[ext_resource type="PackedScene" uid="uid://c776rdtoa1qfd" path="res://Objects/HeldItem/Weapon/FingerNailGun/FingerNailGun.tscn" id="14_v11df"]
-[ext_resource type="Texture2D" uid="uid://20moa0xynjiq" path="res://Assets/stop doing rpg.jpg" id="15_ekbq2"]
+[ext_resource type="Resource" uid="uid://c63gkirtpmc43" path="res://Items/Test/TestItem.tres" id="12_3x2an"]
 
-[sub_resource type="Resource" id="Resource_iwmyv"]
-script = ExtResource("7_g5flv")
-scene = ExtResource("6_6nb2p")
-item_name = "Sword"
-item_category = "Weapon"
-texture = ExtResource("8_ntgt4")
-extra_info = {}
-meta_info = {}
+[sub_resource type="Resource" id="Resource_fmwdi"]
+script = ExtResource("7_t2c4r")
+item = ExtResource("6_a4tjb")
+count = 1
 
-[sub_resource type="Resource" id="Resource_8vila"]
-script = ExtResource("7_g5flv")
-scene = ExtResource("9_m2sv4")
-item_name = "Hammer"
-item_category = "Weapon"
-texture = ExtResource("2_ufpbp")
-extra_info = {}
-meta_info = {}
+[sub_resource type="Resource" id="Resource_iteyr"]
+script = ExtResource("7_t2c4r")
+item = ExtResource("8_fy6fk")
+count = 1
 
-[sub_resource type="Resource" id="Resource_1c631"]
-script = ExtResource("12_by6am")
-scene = ExtResource("11_tng68")
-item_name = "Laser Modifier"
-item_category = "A"
-texture = ExtResource("13_wnveg")
-extra_info = {}
-meta_info = {}
+[sub_resource type="Resource" id="Resource_rco1t"]
+script = ExtResource("7_t2c4r")
+item = ExtResource("9_wcfhn")
+count = 1
 
-[sub_resource type="Resource" id="Resource_pduml"]
-script = ExtResource("7_g5flv")
-scene = ExtResource("14_v11df")
-item_name = "Finger Nail Gun"
-item_category = "Weapon"
-texture = ExtResource("15_ekbq2")
-extra_info = {}
-meta_info = {}
+[sub_resource type="Resource" id="Resource_1ufyg"]
+script = ExtResource("7_t2c4r")
+item = ExtResource("10_svs45")
+count = 1
+
+[sub_resource type="Resource" id="Resource_h08au"]
+script = ExtResource("7_t2c4r")
+item = ExtResource("11_137f4")
+count = 1
+
+[sub_resource type="Resource" id="Resource_b384x"]
+script = ExtResource("7_t2c4r")
+item = ExtResource("12_3x2an")
+count = 3
+
+[sub_resource type="Resource" id="Resource_gjmqx"]
+script = ExtResource("7_t2c4r")
+item = ExtResource("12_3x2an")
+count = 3
 
 [sub_resource type="Resource" id="Resource_xpdph"]
 script = ExtResource("11_xjos7")
-items = Array[Resource("res://Objects/Item/Item.gd")]([SubResource("Resource_iwmyv"), SubResource("Resource_8vila"), SubResource("Resource_1c631"), SubResource("Resource_pduml"), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null])
+items = Array[ExtResource("7_t2c4r")]([SubResource("Resource_fmwdi"), SubResource("Resource_iteyr"), SubResource("Resource_rco1t"), SubResource("Resource_1ufyg"), SubResource("Resource_h08au"), SubResource("Resource_b384x"), SubResource("Resource_gjmqx"), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null])
 columns = 10
 
 [sub_resource type="Resource" id="Resource_i0fmo"]
 script = ExtResource("11_xjos7")
-items = Array[Resource("res://Objects/Item/Item.gd")]([null])
+items = Array[ExtResource("7_t2c4r")]([null])
 columns = 1
 
 [sub_resource type="Resource" id="Resource_mfmkk"]
 script = ExtResource("11_xjos7")
-items = Array[Resource("res://Objects/Item/Item.gd")]([null])
+items = Array[ExtResource("7_t2c4r")]([null])
 columns = 1
 
 [sub_resource type="Resource" id="Resource_lba8p"]
 script = ExtResource("11_xjos7")
-items = Array[Resource("res://Objects/Item/Item.gd")]([null])
+items = Array[ExtResource("7_t2c4r")]([null])
 columns = 1
 
 [sub_resource type="Animation" id="11"]
@@ -237,6 +234,7 @@ offset_left = 600.0
 offset_top = 208.0
 offset_right = -16.0
 offset_bottom = -88.0
+max_count = 1000
 r = 10
 c = 10
 inventory = SubResource("Resource_xpdph")
@@ -251,25 +249,31 @@ offset_bottom = 224.0
 layout_mode = 2
 tooltip_text = "Weapons"
 allow_category = Array[String](["Weapon"])
+max_count = 1
 r = 1
 c = 1
 inventory = SubResource("Resource_i0fmo")
+pickup_target = null
 
 [node name="EquipA" parent="UILayer/EquipSlots" instance=ExtResource("5_62rkv")]
 layout_mode = 2
 tooltip_text = "A Modifiers"
 allow_category = Array[String](["A"])
+max_count = 1
 r = 1
 c = 1
 inventory = SubResource("Resource_mfmkk")
+pickup_target = null
 
 [node name="EquipB" parent="UILayer/EquipSlots" instance=ExtResource("5_62rkv")]
 layout_mode = 2
 tooltip_text = "A Modifiers"
 allow_category = Array[String](["B"])
+max_count = 1
 r = 1
 c = 1
 inventory = SubResource("Resource_lba8p")
+pickup_target = null
 
 [node name="Camera" type="Camera2D" parent="."]
 position_smoothing_enabled = true

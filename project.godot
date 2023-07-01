@@ -22,6 +22,7 @@ UiLayer="*res://Autoloads/UILayer.tscn"
 Globals="*res://Autoloads/Globals.gd"
 EventBus="*res://Autoloads/EventBus.gd"
 ObjectPool="*res://Autoloads/ObjectPool.gd"
+HeldItemManager="*res://Autoloads/HeldItemManager.gd"
 
 [debug]
 

@@ -1,7 +1,7 @@
 extends Button
 class_name InventorySlot
 
-signal item_change(slot: InventorySlot, from: Item, to: Item)
+signal item_change(slot: InventorySlot, from: InventoryItem, to: InventoryItem)
 
 var agressive_update_icon: bool = false
 
@@ -9,6 +9,7 @@ var agressive_update_icon: bool = false
 @export var block_category: Array[String] = []
 
 @export var is_locked: bool = false
+@export var max_count: int = HeldItemManager.MAX_ITEM_COUNT
 
 @export var inventory: Inventory:
 	set(value):
@@ -28,8 +29,10 @@ var agressive_update_icon: bool = false
 
 var slot_owner: Node2D
 
-var contained_item: Item:
+var contained_item: InventoryItem:
 	set(value):
+		if is_instance_valid(value) and not is_instance_valid(value.item):
+			value = null
 		item_change.emit(self, contained_item, value)
 		inventory.set_at(i,j,value)
 		update_icon()
@@ -42,37 +45,64 @@ func _ready() -> void:
 	update_icon()
 
 func update_icon() -> void:
+#	queue_redraw()
 	if is_instance_valid(contained_item):
-		icon = contained_item.texture
+		icon = contained_item.item.texture
 	else:
 		icon = null
 
+#func _draw() -> void:
+#	if is_instance_valid(contained_item):
+#		contained_item.draw(self, Vector2.ZERO)
+
 func _pressed() -> void:
-	if Globals.dragged_item:
-		if can_hold_item(Globals.dragged_item):
+	if HeldItemManager.dragged_item:
+		if can_hold_item(HeldItemManager.dragged_item):
 			if contained_item:
-				if can_remove_item():
+				#same as current item. add
+				if HeldItemManager.dragged_item.item == contained_item.item:
+					var can_add: int = max_count - contained_item.count
+					var will_add: int = min(can_add, HeldItemManager.dragged_item.count)
+					contained_item.count += will_add
+					HeldItemManager.dragged_item.count -= will_add
+					if HeldItemManager.dragged_item.count == 0: 
+						HeldItemManager.reset_item()
+				#not same. try swap.
+				elif can_remove_item() and HeldItemManager.dragged_item.count <= max_count:
 					#swap items
 					var temp = contained_item
-					contained_item = Globals.dragged_item
-					Globals.dragged_item = temp
-					Globals.dragged_item_slot = self
-					Globals.dragged_item_inventory = inventory
-					Globals.dragged_item_owner = slot_owner
+					contained_item = HeldItemManager.dragged_item
+					HeldItemManager.dragged_item = temp
+					HeldItemManager.dragged_item_slot = self
+					HeldItemManager.dragged_item_inventory = inventory
+					HeldItemManager.dragged_item_owner = slot_owner
 			else:
-				contained_item = Globals.dragged_item
-				Globals.reset_item()
+				contained_item = HeldItemManager.dragged_item
+				HeldItemManager.reset_item()
 	elif contained_item and can_remove_item():
-		Globals.dragged_item = contained_item
-		Globals.dragged_item_slot = self
-		Globals.dragged_item_inventory = inventory
-		Globals.dragged_item_owner = slot_owner
+		HeldItemManager.dragged_item = contained_item
+		HeldItemManager.dragged_item_slot = self
+		HeldItemManager.dragged_item_inventory = inventory
+		HeldItemManager.dragged_item_owner = slot_owner
 		contained_item = null
 
-func can_hold_item(item: Item) -> bool:
-	var block := not block_category.is_empty() and item.item_category in block_category
-	var allow := allow_category.is_empty() or item.item_category in allow_category
+func can_hold_item(item: InventoryItem) -> bool:
+	var block := not block_category.is_empty() and item.item.item_category in block_category
+	var allow := allow_category.is_empty() or item.item.item_category in allow_category
 	return allow and not block
+
+func has_place_for_item(item: InventoryItem) -> bool:
+	if not contained_item:
+		return true
+	if item.item != contained_item.item:
+		return false
+	return (contained_item.count + item.count) <= max_count
+
+func insert_item(item: InventoryItem) -> void:
+	if item and contained_item and item.item == contained_item.item:
+		contained_item.count += item.count
+	else:
+		contained_item = item
 
 func can_remove_item() -> bool:
 	return not is_locked

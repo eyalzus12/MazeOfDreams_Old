@@ -3,7 +3,7 @@ class_name Inventory
 
 const SLOT := preload("res://Objects/UI/InventorySlot/InventorySlot.tscn")
 
-signal item_change(slot: InventorySlot, from: Item, to: Item)
+signal item_change(slot: InventorySlot, from: InventoryItem, to: InventoryItem)
 
 @export var inventory: InventoryResource
 @export var pickup_target: bool
@@ -23,18 +23,19 @@ var is_open: bool:
 		else: _close()
 
 func _ready() -> void:
-	Globals.inventories[self] = null
+	HeldItemManager.inventories[self] = null
 	if inventory:
 		columns = inventory.columns
 
 func _exit_tree() -> void:
-	Globals.inventories.erase(self)
+	HeldItemManager.inventories.erase(self)
 
-func add_slot(i: int, j: int, allow_category: Array, block_category: Array):
+func add_slot(i: int, j: int, allow_category: Array, block_category: Array, max_count: int):
 	if inventory:
 		var slot_container: InventorySlotContainer = ObjectPool.load_object(SLOT,10,20)
 		slot_container.allow_category = allow_category
 		slot_container.block_category = block_category
+		slot_container.max_count = max_count
 		slot_container.inventory = self
 		slot_container.i = i
 		slot_container.j = j
@@ -43,7 +44,7 @@ func add_slot(i: int, j: int, allow_category: Array, block_category: Array):
 		var slot: InventorySlot = slot_container.slot
 		slots.append(slot)
 
-func _item_change(slot: InventorySlot, from: Item, to: Item) -> void:
+func _item_change(slot: InventorySlot, from: InventoryItem, to: InventoryItem) -> void:
 	item_change.emit(slot,from,to)
 
 func open() -> void:
@@ -55,45 +56,48 @@ func toggle() -> void:
 
 func _open() -> void:
 	visible = true
-	Globals.open_inventories[self] = null
+	HeldItemManager.open_inventories[self] = null
 
 func _close() -> void:
 	visible = false
-	Globals.open_inventories.erase(self)
+	HeldItemManager.open_inventories.erase(self)
 	#closing inventory of held item. handle putting it back in.
-	if Globals.dragged_item_inventory == self:
+	if HeldItemManager.dragged_item_inventory == self:
 		#original slot has an item. find available slot.
-		if Globals.dragged_item_slot.contained_item:
-			var has_space := try_insert(Globals.dragged_item)
+		if HeldItemManager.dragged_item_slot.contained_item:
+			var has_space := try_insert(HeldItemManager.dragged_item)
 			if not has_space:
-				Globals.drop_item(Globals.dragged_item, global_position)
+				HeldItemManager.drop_item(HeldItemManager.dragged_item, global_position)
 		#can safetly put in origin slot.
 		else:
-			Globals.dragged_item_slot.contained_item = Globals.dragged_item
-		Globals.reset_item()
+			HeldItemManager.dragged_item_slot.contained_item = HeldItemManager.dragged_item
+		HeldItemManager.reset_item()
 
-#calls Globals.return_dragged_item(), only if it's the inventory that the item is from
+#calls HeldItemManager.return_dragged_item(), only if it's the inventory that the item is from
 func return_dragged_item() -> void:
-	if Globals.dragged_item_inventory == self:
-		Globals.return_dragged_item()
+	if HeldItemManager.dragged_item_inventory == self:
+		HeldItemManager.return_dragged_item()
 
-func find_insert_location(item: Item) -> InventorySlot:
+#TODO: this doesn't properly allow to insert items with a count,
+#since a slot can reject if there's too many.
+#need to add logic of filling up slots and moving on.
+func find_insert_location(item: InventoryItem) -> InventorySlot:
 	for slot in slots:
-		if not slot.contained_item and slot.can_hold_item(item):
+		if slot.has_place_for_item(item) and slot.can_hold_item(item):
 			return slot
 	return null
 
-func has_insert_location(item: Item) -> bool:
+func has_insert_location(item: InventoryItem) -> bool:
 	return find_insert_location(item) != null
 
-func try_insert(item: Item) -> bool:
+func try_insert(item: InventoryItem) -> bool:
 	var slot: InventorySlot = find_insert_location(item)
 	if not is_instance_valid(slot): return false
-	slot.contained_item = item
+	slot.insert_item(item)
 	return true
 
-func get_at(i: int, j: int) -> Item:
+func get_at(i: int, j: int) -> InventoryItem:
 	return inventory.get_at(i,j)
 
-func set_at(i: int, j: int, value: Item) -> void:
+func set_at(i: int, j: int, value: InventoryItem) -> void:
 	inventory.set_at(i,j,value)

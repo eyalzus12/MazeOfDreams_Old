@@ -101,10 +101,13 @@ func on_input(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
 	if not event.is_action(&"player_interact") or not event.is_pressed(): return
 	if not item: return
 	
-	for inventory_ in Globals.inventories:
+	for inventory_ in HeldItemManager.inventories:
 		var inventory: Inventory = inventory_
 		if not inventory.pickup_target: continue
-		var inserted: bool = inventory.try_insert(item)
+		var inventory_item: InventoryItem = InventoryItem.new()
+		inventory_item.item = item
+		inventory_item.count = 1
+		var inserted: bool = inventory.try_insert(inventory_item)
 		if inserted:
 			ObjectPool.return_object(self)
 			return

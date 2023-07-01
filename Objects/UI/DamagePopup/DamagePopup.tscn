@@ -84,11 +84,12 @@ script = ExtResource("1")
 modulate = Color(1, 1, 1, 0.501961)
 
 [node name="DamageLabel" type="Label" parent="LabelBase"]
-offset_left = -80.0
-offset_top = -48.0
-offset_right = -30.0
-offset_bottom = -14.0
-scale = Vector2(3, 3)
+texture_filter = 1
+offset_left = -24.0
+offset_top = -24.0
+offset_right = -4.0
+offset_bottom = 2.0
+scale = Vector2(2, 2)
 text = "-5"
 
 [node name="DamageLabelPlayer" type="AnimationPlayer" parent="LabelBase/DamageLabel"]

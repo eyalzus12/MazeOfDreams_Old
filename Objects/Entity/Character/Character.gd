@@ -98,6 +98,7 @@ var active_effects: Dictionary
 var dash_in_cooldown: bool = false
 var in_dash: bool = false
 
+#!!! not normalized !!!
 var direction: Vector2
 
 var input_vector: Vector2
@@ -129,7 +130,7 @@ func connect_modifier_slots(list: Array[Modifier], slots: InventoryGrid, to_call
 	list.resize(slots.slots.size())
 	slots.item_change.connect(to_call)
 
-func on_weapon_item_change(_slot: InventorySlot, from: Item, to: Item):
+func on_weapon_item_change(_slot: InventorySlot, from: InventoryItem, to: InventoryItem):
 	#no change
 	if from == to:
 		return
@@ -138,10 +139,10 @@ func on_weapon_item_change(_slot: InventorySlot, from: Item, to: Item):
 		weapon = null
 		return
 	#not a weapon item
-	if not to is WeaponItem:
+	if not to.item is WeaponItem:
 		push_error("attempt to switch weapon to non weapon item ", to)
 		return
-	var nto := to as WeaponItem
+	var nto := to.item as WeaponItem
 	#create weapon
 	var new_weapon: Node2D = nto.init_node()
 	#not actually a weapon
@@ -153,7 +154,7 @@ func on_weapon_item_change(_slot: InventorySlot, from: Item, to: Item):
 	var wnew_weapon := new_weapon as Weapon
 	weapon = wnew_weapon
 
-func on_modifier_item_change(slot: InventorySlot, from: Item, to: Item, list: Array[Modifier]):
+func on_modifier_item_change(slot: InventorySlot, from: InventoryItem, to: InventoryItem, list: Array[Modifier]):
 	var index := slot.j
 	
 	#no change
@@ -166,10 +167,10 @@ func on_modifier_item_change(slot: InventorySlot, from: Item, to: Item, list: Ar
 		list[index] = null
 		return
 	#not a modifier item
-	if not to is ModifierItem:
+	if not to.item is ModifierItem:
 		push_error("attempt to switch modifier to non modifier item ", to)
 		return
-	var nto := to as ModifierItem
+	var nto := to.item as ModifierItem
 	#create modifier
 	var new_modifier: Node2D = nto.init_node()
 	#not actually a modifier
@@ -186,9 +187,9 @@ func on_modifier_item_change(slot: InventorySlot, from: Item, to: Item, list: Ar
 		ObjectPool.return_object(list[index])
 	list[index] = mnew_modifier
 
-func on_a_modifier_item_change(slot: InventorySlot, from: Item, to: Item):
+func on_a_modifier_item_change(slot: InventorySlot, from: InventoryItem, to: InventoryItem):
 	on_modifier_item_change(slot,from,to,a_modifiers)
-func on_b_modifier_item_change(slot: InventorySlot, from: Item, to: Item):
+func on_b_modifier_item_change(slot: InventorySlot, from: InventoryItem, to: InventoryItem):
 	on_modifier_item_change(slot,from,to,b_modifiers)
 
 func _physics_process(_delta: float) -> void:
@@ -214,7 +215,8 @@ func on_chest_close(_who: Chest) -> void:
 	pass
 
 func set_direction() -> void:
-	direction = global_position.direction_to(get_global_mouse_position())
+	#don't normalize. faster.
+	direction = (get_global_mouse_position() - global_position)
 
 	if direction.x > 0 and sprite.flip_h:
 		sprite.flip_h = false

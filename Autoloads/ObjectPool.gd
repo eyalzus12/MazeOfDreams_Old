@@ -1,5 +1,6 @@
 extends Node
 
+const UPDATE_POOL_COUNTERS := true
 const DEFAULT_INITIAL_LOAD_AMOUNT := 4
 const DEFAUT_ADDITIONAL_LOAD_AMOUNT := 2
 
@@ -99,8 +100,8 @@ func pool_load_object(object: PackedScene, amount: int) -> void:
 		var pooled_object = object.instantiate()
 		pool[object].push_back(pooled_object)
 		pool_set[object][pooled_object] = null
-		pooled_object_amount += 1
-		pool_load_counter[object] += 1
+	pooled_object_amount += amount
+	pool_load_counter[object] += amount
 	pool_fill_counter[object] += 1
 
 func full_handle_return_queue() -> void:
@@ -110,12 +111,14 @@ func full_handle_return_queue() -> void:
 func handle_return_queue(object: PackedScene) -> void:
 	if not object in return_queue: return
 	var pooled_object_array: Array = return_queue[object]
+	pooled_object_amount += pooled_object_array.size()
 	while pooled_object_array.size() > 0:
 		var pooled_object = pooled_object_array.pop_back()
 		return_queue_set[object].erase(pooled_object)
 		
-		if is_instance_valid(pooled_object.get_parent()):
-			pooled_object.get_parent().remove_child(pooled_object)
+		var parent = pooled_object.get_parent()
+		if is_instance_valid(parent):
+			parent.remove_child(pooled_object)
 		
 		if not object in pool:
 			pool[object] = []
@@ -123,10 +126,9 @@ func handle_return_queue(object: PackedScene) -> void:
 		
 		pool[object].push_back(pooled_object)
 		pool_set[object][pooled_object] = null
-		
-		pooled_object_amount += 1
 
 func _exit_tree() -> void:
+	full_handle_return_queue()
 	if OS.is_debug_build():
 		print_pool_counters()
 	full_clean_pool()
@@ -146,9 +148,9 @@ func full_clean_pool() -> void:
 func clean_pool(object: PackedScene) -> void:
 	if not object in pool: return
 	var pooled_object_array: Array = pool[object]
+	pooled_object_amount -= pooled_object_array.size()
 	while pooled_object_array.size() > 0:
 		var pooled_object = pooled_object_array.pop_back()
 		pool_set[object].erase(pooled_object)
 		
 		pooled_object.queue_free()
-		pooled_object_amount -= 1

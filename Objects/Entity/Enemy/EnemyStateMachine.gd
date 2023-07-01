@@ -32,9 +32,11 @@ func _state_logic(_delta: float) -> void:
 		states.idle:
 			pass
 		states.chase:
-			var dir = enemy.global_position.direction_to(navagent.get_next_path_position())
-			enemy.velocity += ((dir*enemy.speed)-enemy.velocity)*enemy.acceleration
-			enemy.move_and_slide()
+			if is_instance_valid(chase_target):
+				var next_pos := navagent.get_next_path_position()
+				var dir = enemy.global_position.direction_to(next_pos)
+				enemy.velocity += ((dir*enemy.speed)-enemy.velocity)*enemy.acceleration
+				enemy.move_and_slide()
 		states.hurt:
 			enemy.move_and_slide()
 			enemy.velocity = enemy.velocity.move_toward(Vector2.ZERO, enemy.stun_friction)
@@ -45,8 +47,7 @@ func _get_transition() -> int:
 			if is_instance_valid(chase_target):
 				return states.chase
 		states.chase:
-			if \
-				not is_instance_valid(chase_target) and \
+			if not is_instance_valid(chase_target) and \
 				(navagent.is_navigation_finished() or \
 				not navagent.is_target_reachable()):
 				return states.idle
