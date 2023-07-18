@@ -5,9 +5,10 @@ const FINGER_NAIL := preload("res://Objects/HeldItem/Weapon/FingerNailGun/Finger
 @onready var shoot_location := $Base/ShootLocationMarker
 
 func shoot() -> void:
+	ObjectPool.pool_load_object_upto(FINGER_NAIL,15)
 	for i in [-1/2.0,-1/4.0,0,1/4.0,1/2.0]:
 		#load projectile
-		var finger_nail: CharacterProjectile = ObjectPool.load_object(FINGER_NAIL,10,15)
+		var finger_nail: CharacterProjectile = ObjectPool.load_object(FINGER_NAIL,10)
 		finger_nail.projectile_owner = weapon_owner
 		finger_nail.global_position = shoot_location.global_position
 		finger_nail.global_rotation = self.global_rotation + i

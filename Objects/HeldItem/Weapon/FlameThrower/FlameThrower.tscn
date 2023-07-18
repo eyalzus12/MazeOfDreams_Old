@@ -21,6 +21,7 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id="Animation_jv0lp"]
 resource_name = "attack"
+step = 0.05
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -40,11 +41,14 @@ tracks/1/path = NodePath(".")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0.4),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0.4, 0.65),
+"transitions": PackedFloat32Array(1, 1),
 "values": [{
 "args": [],
 "method": &"throw"
+}, {
+"args": [],
+"method": &"end_attack"
 }]
 }
 

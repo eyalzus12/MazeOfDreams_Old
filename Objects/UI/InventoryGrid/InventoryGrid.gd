@@ -16,7 +16,7 @@ func _ready() -> void:
 	if inventory:
 		inventory.ensure_size(r*c)
 		#load slots ahead of time
-		ObjectPool.pool_load_object(SLOT, inventory.size())
+		ObjectPool.pool_load_object_upto(SLOT, inventory.size())
 	super._ready()
 	if inventory:
 		for i in range(c):

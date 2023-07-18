@@ -58,7 +58,7 @@ func decorate_enemies() -> void:
 
 func decorate_chests() -> void:
 	#load ahead of time the approximate numer of needed chests
-	ObjectPool.pool_load_object(CHEST, ceil(positions.size()*0.3))
+	ObjectPool.pool_load_object_upto(CHEST, ceil(positions.size()*0.3))
 	
 	for i in range(positions.size()):
 		if rand.chance(0.3):

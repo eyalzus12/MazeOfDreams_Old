@@ -39,7 +39,7 @@ func load_object(
 	if not object in pool:
 		pool_load_object(object, initial_load_override)
 	#pool empty
-	elif pool[object].size() < 1:
+	elif pool[object].is_empty():
 		pool_load_object(object, additional_load_override)
 	
 	var pooled_object: Node = pool[object].pop_back()
@@ -88,6 +88,17 @@ func return_object(pooled_object: Node) -> void:
 		pooled_object.pool_cleanup()
 	return_queue[object].push_back(pooled_object)
 	return_queue_set[object][pooled_object] = null
+
+#load objects such that there are at least amount of them
+func pool_load_object_upto(object: PackedScene, amount: int) -> void:
+	if not object in pool:
+		pool_load_object(object, amount)
+		return
+	var currently_pooled: int = pool[object].size()
+	if currently_pooled >= amount:
+		return
+	var need_to_load: int = amount - currently_pooled
+	pool_load_object(object, need_to_load)
 
 #load a requested amount of new instances
 func pool_load_object(object: PackedScene, amount: int) -> void:

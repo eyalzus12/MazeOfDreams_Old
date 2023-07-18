@@ -56,31 +56,43 @@ func update_icon() -> void:
 #		contained_item.draw(self, Vector2.ZERO)
 
 func _pressed() -> void:
+	handle_pressed()
+
+func handle_pressed() -> void:
 	if HeldItemManager.dragged_item:
-		if can_hold_item(HeldItemManager.dragged_item):
-			if contained_item:
-				#same as current item. add
-				if HeldItemManager.dragged_item.item == contained_item.item:
-					var item_left := insert_item(HeldItemManager.dragged_item)
-					HeldItemManager.dragged_item = item_left
-				#not same. try swap.
-				elif can_remove_item() and HeldItemManager.dragged_item.count <= max_count:
-					#swap items
-					var temp = contained_item
-					contained_item = HeldItemManager.dragged_item
-					HeldItemManager.dragged_item = temp
-					HeldItemManager.dragged_item_slot = self
-					HeldItemManager.dragged_item_inventory = inventory
-					HeldItemManager.dragged_item_owner = slot_owner
-			else:
-				contained_item = HeldItemManager.dragged_item
-				HeldItemManager.reset_item()
-	elif contained_item and can_remove_item():
-		HeldItemManager.dragged_item = contained_item
-		HeldItemManager.dragged_item_slot = self
-		HeldItemManager.dragged_item_inventory = inventory
-		HeldItemManager.dragged_item_owner = slot_owner
-		contained_item = null
+		try_insert_held()
+	elif contained_item:
+		try_holding()
+
+func try_insert_held() -> void:
+	if not can_hold_item(HeldItemManager.dragged_item):
+		return
+	if contained_item:
+		#same as current item. add
+		if HeldItemManager.dragged_item.item == contained_item.item:
+			var item_left := insert_item(HeldItemManager.dragged_item)
+			HeldItemManager.dragged_item = item_left
+		#not same. try swap.
+		elif can_remove_item() and HeldItemManager.dragged_item.count <= max_count:
+			#swap items
+			var temp = contained_item
+			contained_item = HeldItemManager.dragged_item
+			HeldItemManager.dragged_item = temp
+			HeldItemManager.dragged_item_slot = self
+			HeldItemManager.dragged_item_inventory = inventory
+			HeldItemManager.dragged_item_owner = slot_owner
+	else:
+		contained_item = HeldItemManager.dragged_item
+		HeldItemManager.reset_item()
+
+func try_holding() -> void:
+	if not can_remove_item():
+		return
+	HeldItemManager.dragged_item = contained_item
+	HeldItemManager.dragged_item_slot = self
+	HeldItemManager.dragged_item_inventory = inventory
+	HeldItemManager.dragged_item_owner = slot_owner
+	contained_item = null
 
 func can_hold_item(item: InventoryItem) -> bool:
 	var block := not block_category.is_empty() and item.item.item_category in block_category
