@@ -4,7 +4,7 @@ class_name RoomDecorator
 signal room_decoration_finished()
 
 var rand: Random
-var positions: Array[Vector2]
+var positions: PackedVector2Array
 var shapes: Array[Shape2D]
 var tilemap: TileMapExtensions
 var floor_layer: int:
@@ -29,6 +29,6 @@ func init_decorating() -> void:
 		var bottomright: Vector2 = pos + shape.size/2. - tilemap.tile_set.tile_size/1.
 		var topleftmap: Vector2i = tilemap.global_to_map(topleft)+Vector2i.ONE
 		var bottomrightmap: Vector2i = tilemap.global_to_map(bottomright)-Vector2i.ONE
-		var spawnloc: Vector2i = rand.random_point_between_Vector2i(topleftmap, bottomrightmap)
+		var spawnloc: Vector2i = rand.random_point_in_Rect2i(topleftmap, bottomrightmap)
 		tilemap.set_cell(enemy_layer, spawnloc, enemies_source, Vector2i.ZERO, enemies_tile)
 	room_decoration_finished.emit()

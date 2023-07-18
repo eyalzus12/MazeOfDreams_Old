@@ -1,0 +1,67 @@
+[gd_scene load_steps=15 format=3 uid="uid://cac0lgrok7csu"]
+
+[ext_resource type="Script" path="res://Testing/LootTester.gd" id="1_6oks2"]
+[ext_resource type="Script" path="res://Loot/Provider/SingleLootProvider.gd" id="3_i88eg"]
+[ext_resource type="Resource" uid="uid://4c51nw2gssmx" path="res://Items/Weapons/SwordItem.tres" id="3_jfxxr"]
+[ext_resource type="Script" path="res://Loot/Provider/RepeatedLootProvider.gd" id="5_0c1l1"]
+[ext_resource type="Resource" uid="uid://s4hp7gy16ppf" path="res://Items/Weapons/FlameThrowerItem.tres" id="6_bghfn"]
+[ext_resource type="Script" path="res://Loot/Provider/ShuffleBagLootProvider.gd" id="7_26jpj"]
+[ext_resource type="Resource" uid="uid://3mm8fpyercst" path="res://Items/Weapons/HammerItem.tres" id="7_w6ih7"]
+[ext_resource type="Resource" uid="uid://cm4v1gwl3h3nx" path="res://Items/Weapons/FingerNailGunItem.tres" id="8_fimma"]
+
+[sub_resource type="Resource" id="Resource_lfb8j"]
+script = ExtResource("3_i88eg")
+loot = ExtResource("8_fimma")
+
+[sub_resource type="Resource" id="Resource_2fc3j"]
+script = ExtResource("3_i88eg")
+loot = ExtResource("6_bghfn")
+
+[sub_resource type="Resource" id="Resource_a2xnx"]
+script = ExtResource("3_i88eg")
+loot = ExtResource("7_w6ih7")
+
+[sub_resource type="Resource" id="Resource_oraxr"]
+script = ExtResource("3_i88eg")
+loot = ExtResource("3_jfxxr")
+
+[sub_resource type="Resource" id="Resource_xdi7j"]
+script = ExtResource("7_26jpj")
+options = Array[Resource("res://Loot/Provider/LootProvider.gd")]([SubResource("Resource_lfb8j"), SubResource("Resource_2fc3j"), SubResource("Resource_a2xnx"), SubResource("Resource_oraxr")])
+picks_before_reshuffle = -1
+
+[sub_resource type="Resource" id="Resource_c8epe"]
+script = ExtResource("5_0c1l1")
+min_amount = 1
+max_amount = 10
+option = SubResource("Resource_xdi7j")
+
+[node name="LootTest" type="Node2D"]
+script = ExtResource("1_6oks2")
+provider = SubResource("Resource_c8epe")
+
+[node name="GridContainer" type="GridContainer" parent="."]
+offset_right = 360.0
+offset_bottom = 320.0
+
+[node name="Button" type="Button" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Fetch items"
+
+[node name="LineEdit" type="LineEdit" parent="GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+placeholder_text = "Input Seed"
+
+[node name="Button2" type="Button" parent="GridContainer"]
+layout_mode = 2
+text = "Set Seed"
+
+[node name="Label" type="Label" parent="GridContainer"]
+layout_mode = 2
+
+[connection signal="pressed" from="GridContainer/Button" to="." method="fetch_item"]
+[connection signal="pressed" from="GridContainer/Button2" to="." method="update_seed"]

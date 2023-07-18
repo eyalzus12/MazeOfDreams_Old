@@ -9,8 +9,8 @@ var effect_owner: Node
 var effect_type: String: get = get_effect_type
 
 func get_effect_type() -> String:
-	if has_meta("effect_type"):
-		return get_meta("effect_type")
+	if has_meta(&"effect_type"):
+		return get_meta(&"effect_type")
 	return ""
 
 func _ready() -> void:

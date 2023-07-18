@@ -4,7 +4,7 @@ class_name RoomDreamer
 const ROOM_SHAPE := preload("res://Objects/Generation/RoomShape.tscn")
 const DEBUG_DRAW := true
 
-signal room_dreaming_finished(positions: Array[Vector2], shapes: Array[Shape2D])
+signal room_dreaming_finished(positions: PackedVector2Array, shapes: Array[Shape2D])
 
 @export var starting_room_shape: PackedScene = preload("res://Objects/Generation/RoomShape.tscn")
 @export var generated_room_amount: int = 100
@@ -39,7 +39,7 @@ var room_edge_list: Array[ConnectionEdge] = []
 var mst_edge_list: Array[ConnectionEdge] = []
 var hallways_list: Array[HallwaySegment] = []
 var final_room_list: Array[RoomShape] = []
-var final_positions: Array[Vector2] = []
+var final_positions: PackedVector2Array = []
 var final_shapes: Array[Shape2D] = []
 
 var hallway_intersections_list: Array[Vector2i] = []

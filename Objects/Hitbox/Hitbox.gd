@@ -32,7 +32,6 @@ var masks: Array:
 		temp.assign(value)
 		hitbox_masks = temp
 
-
 @export var active: bool:
 	set(value):
 		active = value

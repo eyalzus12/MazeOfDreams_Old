@@ -6,7 +6,7 @@ const CHARACTER := preload("res://Objects/Entity/Character/Character.tscn")
 @onready var room_dreamer: RoomDreamer = $RoomDreamer
 @onready var room_decorator: RoomDecorator = $RoomDecorator
 
-var positions: Array[Vector2]
+var positions: PackedVector2Array
 var shapes: Array[Shape2D]
 @onready var tilemap: TileMapExtensions = $TileMap
 
@@ -37,7 +37,7 @@ func decorate_rooms() -> void:
 	room_decorator.room_decoration_finished.connect(on_room_decoration_finished)
 	room_decorator.init_decorating()
 
-func on_room_dreaming_finished(positions_: Array[Vector2], shapes_: Array[Shape2D]) -> void:
+func on_room_dreaming_finished(positions_: PackedVector2Array, shapes_: Array[Shape2D]) -> void:
 	Logger.logs("room dreaming finished")
 	positions = positions_
 	shapes = shapes_
