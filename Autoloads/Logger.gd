@@ -27,6 +27,7 @@ func _process(_delta: float) -> void:
 		info_list.clear()
 	if not log_list.is_empty():
 		print_rich("\n".join(log_list))
+		log_list.clear()
 	if not debug_list.is_empty():
 		print_rich("\n".join(debug_list))
 		debug_list.clear()

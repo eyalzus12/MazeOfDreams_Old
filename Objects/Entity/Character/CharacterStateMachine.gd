@@ -90,7 +90,10 @@ func _state_logic(_delta: float) -> void:
 				if character.get_slide_collision_count() > 0:
 					var col := character.get_slide_collision(0)
 					var normal := col.get_normal()
-					character.velocity = character.velocity.slide(normal).normalized() * velocity_length
+					if normal.dot(character.velocity) == -1:
+						character.velocity = Vector2.ZERO
+					else:
+						character.velocity = character.velocity.slide(normal).normalized() * velocity_length
 				character.velocity *= character.dash_bounce_mult
 
 func _get_transition() -> int:

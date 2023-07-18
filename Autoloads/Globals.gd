@@ -37,7 +37,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed(&"toggle_god"):
 		god = not god
-		Logger.info(str("[Globals.gd] _process: ","god" if god else "not god"))
+		Logger.logs(str("god" if god else "not god"))
 	if Input.is_action_just_pressed(&"close_game"):
 		game_closed.emit()
 		get_tree().quit()
