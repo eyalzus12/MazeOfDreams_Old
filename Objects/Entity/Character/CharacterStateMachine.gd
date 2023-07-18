@@ -24,7 +24,6 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action(&"player_attack") and not event.is_echo() and event.is_pressed():
 		if not state in [states.hurt] and is_instance_valid(character.weapon) and not character.weapon.is_attacking:
 			character.weapon.attack()
-	
 
 func _state_logic(_delta: float) -> void:
 	character.set_inputs()
@@ -102,7 +101,7 @@ func _get_transition() -> int:
 			if character.input_vector != Vector2.ZERO:
 				return states.move
 		states.move:
-			if !character.dash_in_cooldown and Input.is_action_just_pressed("player_dash"):
+			if !character.dash_in_cooldown and Input.is_action_just_pressed(&"player_dash"):
 				return states.dash
 			elif character.input_vector == Vector2.ZERO:
 				return states.idle

@@ -11,10 +11,10 @@ signal attack_hit(who: Area2D)
 			await ready
 		weapon_owner = value
 		if weapon_owner:
-			if weapon_owner.has_meta("hitbox_layers"):
-				hitbox.layers = weapon_owner.get_meta("hitbox_layers")
-			if weapon_owner.has_meta("hitbox_masks"):
-				hitbox.masks = weapon_owner.get_meta("hitbox_masks")
+			if weapon_owner.has_meta(&"hitbox_layers"):
+				hitbox.layers = weapon_owner.get_meta(&"hitbox_layers")
+			if weapon_owner.has_meta(&"hitbox_masks"):
+				hitbox.masks = weapon_owner.get_meta(&"hitbox_masks")
 			hitbox.hitbox_owner = weapon_owner
 
 @onready var hitbox: Hitbox = $Base/Sprite2D/Hitbox
@@ -38,6 +38,7 @@ func on_hit(area: Area2D) -> void:
 func attack() -> void:
 	if not animation_player: return
 	if not animation_player.has_animation(&"attack"): return
+	end_animation()
 	animation_player.play(&"attack")
 	emit_signal(&"attack_started")
 	is_attacking = true
@@ -45,8 +46,16 @@ func attack() -> void:
 func on_animation_finished(anim_name: StringName) -> void:
 	match anim_name:
 		&"attack":
-			emit_signal(&"attack_ended")
-			is_attacking = false
-			animation_player.play(&"RESET")
-			animation_player.advance(0)
-			animation_player.stop()
+			end_attack()
+			end_animation()
+
+func end_animation() -> void:
+	animation_player.play(&"RESET")
+	animation_player.advance(0)
+	animation_player.stop()
+
+func end_attack() -> void:
+	if not is_attacking:
+		return
+	emit_signal(&"attack_ended")
+	is_attacking = false

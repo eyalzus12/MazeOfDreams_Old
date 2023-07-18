@@ -114,16 +114,16 @@ var down: bool
 var debug_active: bool = false
 
 func _ready() -> void:
+	#connect to event bus
 	if not EventBus.chest_opened.is_connected(on_chest_open):
 		EventBus.chest_opened.connect(on_chest_open)
 	if not EventBus.chest_closed.is_connected(on_chest_close):
 		EventBus.chest_closed.connect(on_chest_close)
-	
-	#weapon slots
+	#connect to weapon slots
 	weapon_slot = weapon_slots.slots[0]
 	if not weapon_slot.item_change.is_connected(on_weapon_item_change):
 		weapon_slot.item_change.connect(on_weapon_item_change)
-	#modifier slots
+	#connect to modifier slots
 	connect_modifier_slots(a_modifiers, a_slots, on_a_modifier_item_change)
 	connect_modifier_slots(b_modifiers, b_slots, on_b_modifier_item_change)
 
