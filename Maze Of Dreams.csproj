@@ -1,10 +1,9 @@
-<Project Sdk="Godot.NET.Sdk/4.0.0">
+<Project Sdk="Godot.NET.Sdk/4.1.1">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>MazeOfDreams</RootNamespace>
     <AssemblyName>Maze Of Dreams</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="GodotOnReady" Version="1.2.3" />
   </ItemGroup>
 </Project>
