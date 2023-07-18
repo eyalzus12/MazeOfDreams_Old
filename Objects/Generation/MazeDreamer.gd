@@ -18,6 +18,7 @@ func seed_with(x) -> void:
 func _ready() -> void:
 	Logger.logs("maze dreaming started")
 	rand.seed_random()
+	Globals.generation_rand = rand
 	dream_rooms()
 
 func dream_rooms() -> void:
@@ -46,6 +47,9 @@ func on_room_dreaming_finished(positions_: PackedVector2Array, shapes_: Array[Sh
 func on_room_decoration_finished() -> void:
 	Logger.logs("room decorating finished")
 	Logger.logs("maze dreaming finished")
+	
+	Globals.gameplay_rand = rand #should change this later
+	
 	var character := ObjectPool.load_object(CHARACTER)
 	character.global_position = positions[0]
 	add_child(character)

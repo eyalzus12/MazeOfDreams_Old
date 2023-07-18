@@ -314,3 +314,23 @@ func remove_effect(effect: Effect) -> void:
 	if not effect.effect_type in active_effects:
 		return
 	active_effects.erase(effect.effect_type)
+
+func pool_cleanup() -> void:
+	for effect in active_effects.values():
+		ObjectPool.return_object(effect)
+	active_effects.clear()
+	
+	if weapon:
+		ObjectPool.return_object(weapon)
+	weapon = null
+	
+	for a in a_modifiers: ObjectPool.return_object(a)
+	a_modifiers.clear()
+	
+	for b in b_modifiers: ObjectPool.return_object(b)
+	b_modifiers.clear()
+	
+	weapon_slots.pool_cleanup()
+	a_slots.pool_cleanup()
+	b_slots.pool_cleanup()
+	inventory.pool_cleanup()

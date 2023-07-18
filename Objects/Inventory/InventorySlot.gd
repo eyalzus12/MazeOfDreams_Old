@@ -101,6 +101,7 @@ func insert_item(item: InventoryItem) -> InventoryItem:
 		var can_add: int = max_item_count - contained_item.count
 		var will_add: int = min(can_add, item.count)
 		contained_item.count += will_add
+		update_icon()
 		item.count -= will_add
 		if item.count == 0:
 			return null

@@ -8,7 +8,7 @@ const NUMBER_FONT := preload("res://CONSOLA.TTF")
 		if count == 0:
 			return null
 		return item
-@export var count: int = 0:
+@export var count: int = 1:
 	set(value):
 		if value == 0:
 			item = null

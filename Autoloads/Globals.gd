@@ -25,14 +25,13 @@ const PHYSICS_LAYERS: Dictionary = {
 
 var old_window_mode: DisplayServer.WindowMode
 
+var generation_rand: Random
+var gameplay_rand: Random
+
 var god: bool = false
 
 func _ready() -> void:
-	Logger.error("test error")
-	Logger.warn("test warning")
-	Logger.info("test info")
 	Logger.logs("test log")
-	Logger.debug("test debug")
 
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed(&"toggle_god"):

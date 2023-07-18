@@ -1,11 +1,17 @@
-[gd_scene load_steps=11 format=3 uid="uid://det0xgoqsndr6"]
+[gd_scene load_steps=22 format=3 uid="uid://det0xgoqsndr6"]
 
 [ext_resource type="Script" path="res://Objects/Generation/RoomDreamer.gd" id="1_n8esk"]
 [ext_resource type="Script" path="res://Objects/Generation/MazeDreamer.gd" id="1_uueyu"]
 [ext_resource type="Texture2D" uid="uid://caqtl6mt5ollh" path="res://Assets/basic_template.png" id="3_lkfn3"]
 [ext_resource type="PackedScene" uid="uid://lcitiwkqtt70" path="res://Objects/Entity/Enemy/Enemy.tscn" id="4_d3ukt"]
+[ext_resource type="PackedScene" uid="uid://ctu1tasavfknc" path="res://Objects/Chest/Chest.tscn" id="4_hapgm"]
 [ext_resource type="Script" path="res://Objects/Generation/TileMapExtensions.gd" id="5_d8c67"]
 [ext_resource type="Script" path="res://Objects/Generation/RoomDecorator.gd" id="6_u0drl"]
+[ext_resource type="Resource" uid="uid://s4hp7gy16ppf" path="res://Items/Weapons/FlameThrowerItem.tres" id="8_dowhx"]
+[ext_resource type="Script" path="res://Loot/Provider/SingleLootProvider.gd" id="9_vigm2"]
+[ext_resource type="Resource" uid="uid://cm4v1gwl3h3nx" path="res://Items/Weapons/FingerNailGunItem.tres" id="10_jvr7h"]
+[ext_resource type="Script" path="res://Loot/Provider/RandomLootProvider.gd" id="11_itlip"]
+[ext_resource type="Script" path="res://Loot/Provider/RepeatedLootProvider.gd" id="12_hg54p"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_47bss"]
 vertices = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
@@ -495,6 +501,10 @@ texture_region_size = Vector2i(32, 32)
 resource_name = "Enemies"
 scenes/0/scene = ExtResource("4_d3ukt")
 
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_wxptj"]
+resource_name = "Chests"
+scenes/1/scene = ExtResource("4_hapgm")
+
 [sub_resource type="TileSet" id="TileSet_hb32b"]
 tile_size = Vector2i(32, 32)
 physics_layer_0/collision_layer = 1
@@ -504,6 +514,25 @@ terrain_set_0/terrain_0/color = Color(0.5, 0.34375, 0.25, 1)
 navigation_layer_0/layers = 1
 sources/0 = SubResource("TileSetAtlasSource_1do77")
 sources/1 = SubResource("TileSetScenesCollectionSource_4yxll")
+sources/2 = SubResource("TileSetScenesCollectionSource_wxptj")
+
+[sub_resource type="Resource" id="Resource_jirpi"]
+script = ExtResource("9_vigm2")
+loot = ExtResource("8_dowhx")
+
+[sub_resource type="Resource" id="Resource_2w53t"]
+script = ExtResource("9_vigm2")
+loot = ExtResource("10_jvr7h")
+
+[sub_resource type="Resource" id="Resource_3mb2i"]
+script = ExtResource("11_itlip")
+options = Array[Resource("res://Loot/Provider/LootProvider.gd")]([SubResource("Resource_jirpi"), SubResource("Resource_2w53t")])
+
+[sub_resource type="Resource" id="Resource_21pr6"]
+script = ExtResource("12_hg54p")
+min_amount = 1
+max_amount = 1
+option = SubResource("Resource_3mb2i")
 
 [node name="MazeDreamer" type="Node2D"]
 script = ExtResource("1_uueyu")
@@ -526,6 +555,13 @@ layer_2/y_sort_enabled = false
 layer_2/y_sort_origin = 0
 layer_2/z_index = 0
 layer_2/tile_data = PackedInt32Array()
+layer_3/name = "chests"
+layer_3/enabled = true
+layer_3/modulate = Color(1, 1, 1, 1)
+layer_3/y_sort_enabled = false
+layer_3/y_sort_origin = 0
+layer_3/z_index = 0
+layer_3/tile_data = PackedInt32Array()
 script = ExtResource("5_d8c67")
 
 [node name="RoomDreamer" type="Node2D" parent="."]
@@ -534,3 +570,4 @@ script = ExtResource("1_n8esk")
 
 [node name="RoomDecorator" type="Node2D" parent="."]
 script = ExtResource("6_u0drl")
+test_provider = SubResource("Resource_21pr6")

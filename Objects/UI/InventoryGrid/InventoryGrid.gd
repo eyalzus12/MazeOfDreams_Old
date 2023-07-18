@@ -9,6 +9,14 @@ class_name InventoryGrid
 @export var c: int
 
 func _ready() -> void:
+	#EXTEREMLY HACKY FIX
+	#local to scene refuses to work
+	inventory = inventory.duplicate()
+	
+	if inventory:
+		inventory.ensure_size(r*c)
+		#load slots ahead of time
+		ObjectPool.pool_load_object(SLOT, inventory.size())
 	super._ready()
 	if inventory:
 		for i in range(c):
